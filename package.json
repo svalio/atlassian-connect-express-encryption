@@ -28,7 +28,9 @@
     "type": "git",
     "url": "http://bitbucket.org/atlassian/node-p3"
   },
-  "author": "Robert Bergman",
+  "author": {
+    "name": "Robert Bergman"
+  },
   "contributors": [
     {
       "name": "Rich Manalang"
