@@ -16,6 +16,7 @@
     "optimist": "~0.4.0",
     "colors": "~0.6.0"
   },
+  "main": "index.js",
   "bin": {
       "ap3-keygen": "./bin/ap3-keygen"
   },
