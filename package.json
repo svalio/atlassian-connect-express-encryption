@@ -1,0 +1,37 @@
+{
+  "name": "node-ap3",
+  "version": "0.1.0",
+  "description": "A set of helpful tools and libs for creating P3 addons",
+  "dependencies": {
+    "express": "~3.1.0",
+    "request": "~2.16.6",
+    "jade": "~0.28.2",
+    "underscore": "~1.4.4",
+    "redis": "~0.8.2",
+    "hiredis": "~0.1.15",
+    "crypto": "0.0.3",
+    "q": "~0.9.2",
+    "xml2json": "~0.3.2",
+    "client-sessions": "~0.1.1",
+    "optimist": "~0.4.0",
+    "colors": "~0.6.0"
+  },
+  "bin": {
+      "ap3-keygen": "./bin/ap3-keygen"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://bitbucket.org/atlassian/node-p3"
+  },
+  "author": "Robert Bergman",
+  "contributors": [
+    {
+      "name": "Rich Manalang"
+    }
+  ],
+  "license": "Apache 2.0"
+}
