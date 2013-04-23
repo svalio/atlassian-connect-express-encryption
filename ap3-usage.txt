@@ -1,0 +1,7 @@
+ap3 -- CLI for Atlassian Plugins 3 Add-ons
+
+Usage: ap3 [-h|--help] <command> [<args>]
+
+The most commonly used ap3 commands are:
+    keygen      Generate public and private RSA keys
+    new         Generate a new Plugins 3 Add-on scaffold
