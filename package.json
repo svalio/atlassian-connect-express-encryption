@@ -1,5 +1,5 @@
 {
-  "name": "node-ap3",
+  "name": "ap3",
   "version": "0.2.3",
   "description": "Helper package for Atlassian Plugins 3 add-ons running on Express",
   "dependencies": {
@@ -35,7 +35,7 @@
     "confluence",
     "express",
     "web"
-  ]
+  ],
   "author": {
     "name": "Robert Bergman"
   },
