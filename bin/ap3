@@ -26,7 +26,7 @@ var validCmds = [
   }
 ];
 var argv = require('optimist')
-  .usage(fs.readFileSync(fs.readFileSync(__dirname + "/ap3-usage.txt").toString())
+  .usage(fs.readFileSync(fs.readFileSync(__dirname + "/ap3-usage.txt").toString()))
   .describe('h','Show usage')
   .alias('h','help')
   .check(checkCommands)
