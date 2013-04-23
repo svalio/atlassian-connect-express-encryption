@@ -27,6 +27,15 @@
     "type": "git",
     "url": "http://bitbucket.org/atlassian/node-ap3"
   },
+  "keywords": [
+    "atlassian",
+    "plugins",
+    "add-ons",
+    "jira",
+    "confluence",
+    "express",
+    "web"
+  ]
   "author": {
     "name": "Robert Bergman"
   },
