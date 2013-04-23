@@ -1,6 +1,6 @@
 {
   "name": "ap3",
-  "version": "0.2.3",
+  "version": "0.2.6",
   "description": "Helper package for Atlassian Plugins 3 add-ons running on Express",
   "dependencies": {
     "express": "~3.1.0",
@@ -17,7 +17,8 @@
     "temp": "~0.5.0",
     "adm-zip":  "~0.4.3",
     "read": "~1.0.4",
-    "rimraf": "~2.1.4"
+    "rimraf": "~2.1.4",
+    "jsonminify": "~0.1.0"
   },
   "main": "index.js",
   "bin": {
