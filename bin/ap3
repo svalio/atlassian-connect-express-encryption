@@ -93,7 +93,7 @@ switch(cmd){
                 " has been created." + (" cd " + params[0]).green.bold +
                 " then run " + "npm install".green.bold +
                 " to install all dependencies.").yellow);
-              open("https://bitbucket.org/atlassian/node-ap3/wiki/Express%20Web%20App%20for%20Atlassian%20Plugins%203");
+              open("https://bitbucket.org/atlassian/node-ap3/wiki/Getting%20Started.md#!getting-started");
             });
           }
         });
