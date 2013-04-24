@@ -83,11 +83,15 @@ switch(cmd){
               zip.extractAllTo(dirPath, true);
               zipEntries.forEach(function(zipEntry){
                 zipDir = zipEntry.entryName.split('/')[0];
-                var path = [params[0],zipEntry.entryName.split('/').slice(1).join('/')].join('/');
+                var path = [params[0],zipEntry.entryName.split('/')
+                  .slice(1).join('/')].join('/');
                 console.log(("  " + path).yellow);
               });
               fs.renameSync([dirPath,zipDir].join('/'), params[0]);
-              console.log(("\n"+params[0].green.bold +" has been created." + (" cd " + params[0]).green.bold + " then run " + "npm install".green.bold + " to install all dependencies.").yellow)
+              console.log(("\n"+params[0].green.bold +
+                " has been created." + (" cd " + params[0]).green.bold +
+                " then run " + "npm install".green.bold +
+                " to install all dependencies.").yellow)
             });
           }
         });
@@ -104,7 +108,7 @@ function checkCommands(argv){
     return true;
   }
 
-  if(argv._.length === 0){
+  if(argv._.length === 0 || argv.h){
     throw "";
   }
 
