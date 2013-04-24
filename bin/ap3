@@ -1,12 +1,14 @@
 #!/usr/bin/env node
-var fs = require("fs");
-var colors = require("colors");
-var _ = require("underscore");
-var temp = require('temp');
-var https = require("https");
-var AdmZip = require('adm-zip');
-var read = require('read');
-var rimraf = require('rimraf');
+var fs = require("fs")
+  , colors = require("colors")
+  , _ = require("underscore")
+  , temp = require('temp')
+  , https = require("https")
+  , AdmZip = require('adm-zip')
+  , read = require('read')
+  , rimraf = require('rimraf')
+  , pkg = require('../package.json');
+
 var validCmds = [
   {
     "cmd": "help",
@@ -29,6 +31,8 @@ var argv = require('optimist')
   .usage(fs.readFileSync(__dirname + "/ap3-usage.txt").toString())
   .describe('h','Show usage')
   .alias('h','help')
+  .describe('v','Show version')
+  .alias('v','version')
   .check(checkCommands)
   .argv;
 
@@ -95,6 +99,11 @@ switch(cmd){
 }
 
 function checkCommands(argv){
+  if(argv.v) {
+    console.log(("ap3 version " + pkg.version).bold);
+    return true;
+  }
+
   if(argv._.length === 0){
     throw "";
   }
@@ -106,6 +115,7 @@ function checkCommands(argv){
   if(cmd.toLowerCase() === "help") {
     throw "";
   }
+
   var validCmd = _.where(validCmds, {cmd: cmd.toLowerCase()})
   if(validCmd.length > 0) {
     checkParams(params, validCmd[0])
