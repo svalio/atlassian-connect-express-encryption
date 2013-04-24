@@ -1,3 +1,3 @@
-# Atlassian Plugins 3 lib for Express
+# ap3: Node package for Express based Atlassian Plugins 3 Add-ons
 
-This npm library is a collection of useful node modules for speeding up your P3 add-on development. It's currently experimental at this point and is in active development.
+TODO
