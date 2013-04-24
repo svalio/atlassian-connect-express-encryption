@@ -7,7 +7,8 @@ var fs = require("fs")
   , AdmZip = require('adm-zip')
   , read = require('read')
   , rimraf = require('rimraf')
-  , pkg = require('../package.json');
+  , pkg = require('../package.json')
+  , open = require('open');
 
 var validCmds = [
   {
@@ -91,7 +92,8 @@ switch(cmd){
               console.log(("\n"+params[0].green.bold +
                 " has been created." + (" cd " + params[0]).green.bold +
                 " then run " + "npm install".green.bold +
-                " to install all dependencies.").yellow)
+                " to install all dependencies.").yellow);
+              open("https://bitbucket.org/atlassian/node-ap3/wiki/Express%20Web%20App%20for%20Atlassian%20Plugins%203");
             });
           }
         });
