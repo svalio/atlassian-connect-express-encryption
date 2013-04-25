@@ -16,11 +16,9 @@ var fs = require("fs")
 
 var notifier = updateNotifier({
   updateCheckInterval: 0,
-  // packagePath: path.join(__dirname, '..','package.json')
   packageName: pkg.name,
   packageVersion: pkg.version
 });
-// console.log(notifier.update)
 if (notifier.update) {
   notifier.notify(("Update available: ".bold + notifier.update.latest + " (current: " +
     notifier.update.current + ")\nRun " + "npm update -g ap3".underline.red +

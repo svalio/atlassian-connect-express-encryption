@@ -1,6 +1,6 @@
 {
   "name": "ap3",
-  "version": "0.2.20",
+  "version": "0.2.21",
   "description": "Helper package for Atlassian Plugins 3 add-ons running on Express",
   "dependencies": {
     "express": "~3.1.0",
