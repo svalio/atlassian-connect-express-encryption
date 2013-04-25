@@ -8,7 +8,25 @@ var fs = require("fs")
   , read = require('read')
   , rimraf = require('rimraf')
   , pkg = require('../package.json')
+  , updateNotifier = require('update-notifier')
+  , path = require('path')
+  , pkg = require(path.join(__dirname, '..','package.json'))
+  , npm = require('npm')
   , open = require('open');
+
+var notifier = updateNotifier({
+  updateCheckInterval: 0,
+  // packagePath: path.join(__dirname, '..','package.json')
+  packageName: pkg.name,
+  packageVersion: pkg.version
+});
+// console.log(notifier.update)
+if (notifier.update) {
+  notifier.notify(("Update available: ".bold + notifier.update.latest + " (current: " +
+    notifier.update.current + ")\nRun " + "npm update -g ap3".underline.red +
+    " to update"));
+  return;
+}
 
 var validCmds = [
   {
