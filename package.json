@@ -1,6 +1,6 @@
 {
   "name": "ap3",
-  "version": "0.2.26",
+  "version": "0.2.27",
   "description": "Atlassian Plugins 3 library for Express",
   "dependencies": {
     "express": "~3.1.0",
