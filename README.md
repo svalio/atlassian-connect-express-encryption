@@ -14,7 +14,7 @@ It's important to understand that [Express](http://expressjs.com/) by itself is 
 
 ## Getting Started
 
-The fastest way to get started is it install the `ap3-cli` tool. The CLI makes it possible to generate an add-on scaffold very quickly. To install:
+The fastest way to get started is it install the `ap3-cli` tool. The CLI makes it possible to generate an `ap3` enabled add-on scaffold very quickly. To install:
 
     npm i -g ap3-cli
 
