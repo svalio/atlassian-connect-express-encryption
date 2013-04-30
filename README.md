@@ -24,7 +24,7 @@ You first need to have node.js installed. If you don't already have it, you can 
 
 Equipped with node.js, you can use its package manager utility npm to install AP3. From the command line, enter:
 
-`sudo npm i -g ap3` 
+`[sudo] npm i -g ap3-cli` 
 
 Now you can create your add-on project. 
 
@@ -45,10 +45,7 @@ This gives you the project scaffolding.
 What's next?
 -----
 
-The project's Getting Started wiki takes you from there (it should pop up automatically in your browser), but a few next steps are: 
+The project's Getting Started wiki takes you from there (it should pop up automatically in your browser), but you will have to round out the new app by first running:
 
-* installing project dependencies:  'ap3 install'
-* Create security keys: 'ap3-keygen'
-
-
+`npm install`
 
