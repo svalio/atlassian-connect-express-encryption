@@ -47,5 +47,5 @@ What's next?
 
 The project's Getting Started wiki takes you from there (it should pop up automatically in your browser), but you will have to round out the new app by first running:
 
-`npm install`
+`cd myproject && npm install`
 
