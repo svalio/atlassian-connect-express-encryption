@@ -22,11 +22,73 @@ It's important to understand that [Express](http://expressjs.com/) by itself is 
 
 ## Getting Started
 
-The fastest way to get started is it install the `feebs-cli` tool. The CLI makes it possible to generate an `feebs` enabled add-on scaffold very quickly. To install:
+The fastest way to get started is to install the `feebs-cli` tool. The CLI makes it possible to generate an `feebs` enabled add-on scaffold very quickly. To install:
 
     npm i -g feebs-cli
 
-Once installed, check out the [README](https://npmjs.org/package/feebs-cli#readme).
+### Create a project
+
+Let's start by creating an add-on project:
+
+    feebs new <project_name>
+
+This will create the following code:
+
+    .
+    ├── README.md
+    ├── app.js
+    ├── atlassian-plugin.xml
+    ├── config.json
+    ├── package.json
+    ├── private-key.pem
+    ├── public
+    │   ├── css
+    │   │   └── main.css
+    │   └── js
+    │       └── main.js
+    ├── public-key.pem
+    ├── routes
+    │   └── index.js
+    └── views
+        ├── example.jade
+        └── layout.jade
+
+### Install dependencies
+
+Go into your new project directory, then install the dependencies:
+
+    npm install
+
+### Setting up a development environment
+
+At this point, you're all set to run your add-on, but you'll need to have a host (i.e., JIRA or Confluence) for your add-on. You have a few options:
+
+1. You can do all your development work locally using the [p3-dev-env-vagrant Vagrant box](https://bitbucket.org/rmanalan/p3-dev-env-vagrant). This Vagrant box will set up a local JIRA or Confluence VM (using [VirtualBox](https://www.virtualbox.org/)). This is by far the most flexible option.
+2. Soon you'll be able to register a local add-on inside an Atlassian OnDemand instance in development mode. STAY TUNED!
+
+### Running your Add-on Server
+
+If you've chosen the first option and have a running instance of the Vagrant box, you're all set. Now all you need to do to run your add-on inside your local JIRA or Confluence instance is:
+
+    node app.js
+
+This will boot up your Express server on the default port of 3000 and do the following:
+
+* Register your add-on's `atlassian-plugin.xml` (at <http://$hostname:3000/atlassian-plugin.xml>) with the host
+* Start watching for changes to your `atlassian-plugin.xml`. If the file is modified, `feebs` will re-register your add-on with the host.
+
+### The Dev Loop
+
+At this point, you can start building your add-on. Changes to views will load automatically, however, if you make changes to any JavaScript, you will need to restart Express. If you want your server to automatically restart when your JavaScript changes, you may want to consider using [nodemon](https://npmjs.org/package/nodemon) or the like.
+
+As you've noticed, `feebs` automatically registers your add-on with the host when it's started. Another nice feature is that it automatically de-registers it at shutdown `<ctrl-c>`.
+
+### Configuration
+
+The configuration for your add-on is done in two files:
+
+* `./config.json` -- This file contains the configuration for each runtime environment your plugin runs in. The file has comments to help you understand the settings available.
+* `./atlassian-plugin.xml` -- This file is a manifest of all the "plugin points" your add-on uses. To see all of the available plugin point options check out the interactive guides for [JIRA](http://atlassian-connect.herokuapp.com/help#jira/atlassian-plugin) or [Confluence](http://atlassian-connect.herokuapp.com/help#confluence/atlassian-plugin).
 
 ## Recipes
 
@@ -44,4 +106,4 @@ The `feebs` tools are currently experimental. With that said, feel free to [repo
 
 ## Contributing
 
-Even though this is just an exploratory project at this point, it's also open source [Apache 2.0](https://bitbucket.org/atlassian/node-feebs-cli/src/master/LICENSE.txt). So, please feel free to fork and send us pull requests.
+Even though this is just an exploratory project at this point, it's also open source [Apache 2.0](https://bitbucket.org/atlassian/node-feebs/src/master/LICENSE.txt). So, please feel free to fork and send us pull requests.
