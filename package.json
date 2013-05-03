@@ -1,7 +1,7 @@
 {
-  "name": "ap3",
-  "version": "0.3.1",
-  "description": "Atlassian Plugins 3 library for Express",
+  "name": "feebs",
+  "version": "0.4.0",
+  "description": "Library for building Atlassian Add-ons on top of Express",
   "dependencies": {
     "express": "~3.1.0",
     "request": "~2.16.6",
@@ -20,12 +20,13 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "http://bitbucket.org/atlassian/node-ap3"
+    "url": "http://bitbucket.org/atlassian/node-feebs"
   },
   "keywords": [
     "atlassian",
     "plugins",
     "add-ons",
+    "atlassian connect"
     "jira",
     "confluence",
     "express",
