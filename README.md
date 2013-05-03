@@ -22,7 +22,7 @@ It's important to understand that [Express](http://expressjs.com/) by itself is 
 
 ## Getting Started
 
-The fastest way to get started is to install the `feebs-cli` tool. The CLI makes it possible to generate an `feebs` enabled add-on scaffold very quickly. To install:
+The fastest way to get started is to install the `feebs-cli` tool. The CLI makes it possible to generate a `feebs` enabled add-on scaffold very quickly. To install:
 
     npm i -g feebs-cli
 
