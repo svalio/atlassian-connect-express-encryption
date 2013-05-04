@@ -74,7 +74,7 @@ If you've chosen the first option and have a running instance of the Vagrant box
 
 This will boot up your Express server on the default port of 3000 and do the following:
 
-* Register your add-on's `atlassian-plugin.xml` (at <http://$hostname:3000/atlassian-plugin.xml>) with the host
+* Register your add-on's `atlassian-plugin.xml` (at <http://localhost:3000/atlassian-plugin.xml>) with the host
 * Start watching for changes to your `atlassian-plugin.xml`. If the file is modified, `feebs` will re-register your add-on with the host.
 
 ### The Dev Loop
