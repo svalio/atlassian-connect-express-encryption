@@ -90,7 +90,7 @@ The configuration for your add-on is done in two files:
 * `./config.json` -- This file contains the configuration for each runtime environment your plugin runs in. The file has comments to help you understand the settings available.
 * `./atlassian-plugin.xml` -- This file is a manifest of all the "plugin points" your add-on uses. To see all of the available plugin point options check out the interactive guides for [JIRA](http://atlassian-connect.herokuapp.com/help#jira/atlassian-plugin) or [Confluence](http://atlassian-connect.herokuapp.com/help#confluence/atlassian-plugin).
 
-#### `config.json`
+#### config.json
 
 The `./config.json` file contains all of the settings for the add-on server. This file is broken into environments.
 
@@ -145,7 +145,7 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
     }
 
 
-### `atlassian-plugin.xml`
+### atlassian-plugin.xml
 
 The `atlassian-plugin.xml` describes what your add-on will do. There are three main parts to the descriptor: meta information that describes your add-on (i.e., name, description, key, etc.), permissions and authentication information, and a list of the components your add-on will extend. This descriptor is sent to the host (i.e., JIRA or Confluence) when your add-on is installed.
 
