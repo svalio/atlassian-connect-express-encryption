@@ -88,7 +88,7 @@ As you've noticed, `feebs` automatically registers your add-on with the host whe
 The configuration for your add-on is done in two files:
 
 * `./config.json` -- This file contains the configuration for each runtime environment your plugin runs in. The file has comments to help you understand the settings available.
-* `./atlassian-plugin.xml` -- This file is a manifest of all the extension points your add-on uses. To see all of the available plugin point options check out the interactive guides for [JIRA](http://atlassian-connect.herokuapp.com/help#jira/atlassian-plugin) or [Confluence](http://atlassian-connect.herokuapp.com/help#confluence/atlassian-plugin).
+* `./atlassian-plugin.xml` -- This file is a manifest of all the extension points your add-on uses. To see all of the available extension point options check out the interactive guides for [JIRA](http://atlassian-connect.herokuapp.com/help#jira/atlassian-plugin) or [Confluence](http://atlassian-connect.herokuapp.com/help#confluence/atlassian-plugin).
 
 #### config.json
 
