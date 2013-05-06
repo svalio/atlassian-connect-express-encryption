@@ -186,7 +186,7 @@ Simply adding the `addon.authenticate()` middleware will protect your resource. 
 
 ## Getting Help or Support
 
-The `feebs` tools are currently experimental. With that said, feel free to [report issues](https://bitbucket.org/atlassian/node-feebs/issues?status=new&status=open). If you want to learn more about Atlassian's Plugins 3 framework, you can visit <https://developers.atlassian.com>.
+The `feebs` tools are currently experimental. With that said, feel free to [report issues](https://bitbucket.org/atlassian/node-feebs/issues?status=new&status=open). If you want to learn more about Atlassian Connect, you can visit <https://developers.atlassian.com>.
 
 ## Contributing
 
