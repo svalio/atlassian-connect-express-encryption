@@ -187,7 +187,7 @@ Simply adding the `addon.authenticate()` middleware will protect your resource. 
 
 Deploying Node.js apps on Heroku is covered [here](https://devcenter.heroku.com/articles/nodejs#declare-process-types-with-procfile).
 
-Before you start, install the [Heroku Toolbelt](https://toolbelt.heroku.com/.
+Before you start, install the [Heroku Toolbelt](https://toolbelt.heroku.com/).
 
 Next, create the app on Heroku:
 
