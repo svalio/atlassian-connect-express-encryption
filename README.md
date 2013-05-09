@@ -183,6 +183,36 @@ Simply adding the `addon.authenticate()` middleware will protect your resource. 
       ...
     });
 
+### How to deploy to Heroku
+
+Deploying Node.js apps on Heroku is covered [here](https://devcenter.heroku.com/articles/nodejs#declare-process-types-with-procfile).
+
+Before you start, install the [Heroku Toolbelt](https://toolbelt.heroku.com/.
+
+Next, create the app on Heroku:
+
+    heroku apps:create <add-on-name>
+
+Then you have to set the public and private key as environment variables in Heroku (you don't ever want to commit these `*.pem` files into your scm).
+
+    heroku config:set AP3_PUBLIC_KEY="`cat public-key.pem`"
+    heroku config:set AP3_PRIVATE_KEY="`cat private-key.pem`"
+
+Next, let's store our registration information in a Postgres database. In development, you were likely using the memory store. In production, you'll want to use a real database.
+
+    heroku addons:add heroku-postgresql:dev
+
+Lastly, let's deploy!
+
+    git push heroku master
+
+It will take a minute or two for Heroku to spin up your add-on. It will need to install node and all of it's dependencies. When it's done, you'll be given the URL where your add-on is deployed, however, you'll still need to register it on your Atlassian instance.
+
+Currently, you can't register to an OnDemand instance directly. Atlassian is working on this... more info soon. However, if you're running your own instance of JIRA or Confluence with the `remotable-plugins` plugin (i.e., Atlassian Connect), you can run this curl command to install your add-on:
+
+    curl -v -u <sysadmin-user> -X POST -d url=<heroku-url-to-your-atlassian-plugin.xml> http://<your-atlassian-hostname><:port>/<context>/rest/remotable-plugins/latest/installer
+
+You'll get a `200` HTTP status if the registration is successful.
 
 ## Getting Help or Support
 
