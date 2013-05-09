@@ -198,6 +198,10 @@ Then you have to set the public and private key as environment variables in Hero
     heroku config:set AP3_PUBLIC_KEY="`cat public-key.pem`"
     heroku config:set AP3_PRIVATE_KEY="`cat private-key.pem`"
 
+You'll also need to make sure that your `NODE_ENV` is set to `production`:
+
+    heroku config:set NODE_ENV="production"
+
 Next, let's store our registration information in a Postgres database. In development, you were likely using the memory store. In production, you'll want to use a real database.
 
     heroku addons:add heroku-postgresql:dev
