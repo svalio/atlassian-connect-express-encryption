@@ -226,7 +226,13 @@ You'll get a `200` HTTP status if the registration is successful.
 
 ## Troubleshooting
 
-### I get 
+### "Unable to connect and retrieve descriptor from http://localhost:3000/atlassian-plugin.xml, message is: java.net.ConnectException: Connection refused"
+
+You'll get this error if JIRA or Confluence can't access `http://localhost:3000/atlassian-plugin.xml`. This could happen if you're using the Vagrant boxes and your machine's hostname is set to `localhost` instead of something else. One way to debug this is to see what `hostname` returns:
+
+    $ hostname
+
+If it returns `localhost`, change it. On a OS X, you'll need to set a proper "Computer Name" in System Preferences > Sharing.
 
 ## Getting Help or Support
 
