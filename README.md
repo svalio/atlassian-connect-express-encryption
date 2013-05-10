@@ -154,6 +154,12 @@ To see all of the available settings in the `atlassian-plugin.xml`, visit the in
 * [JIRA](http://atlassian-connect.herokuapp.com/help#jira/webhook)
 * [Confluence](http://atlassian-connect.herokuapp.com/help#confluence/webhook)
 
+## Sample Add-ons using `feebs`
+
+* [Sequence Diagramr](https://bitbucket.org/rmanalan/sequence-diagramr) -- a simple Confluence remote macro for creating UML sequence diagrams
+* [Tim's Word Cloud]() -- a macro that takes the contents of a page and constructs an SVG based word cloud
+* [TaskMaster](https://bitbucket.org/mrdon/taskmaster-plugin) -- create JIRA subtasks like a ninja
+
 ## Recipes
 
 ### How to secure a route with OAuth
@@ -217,6 +223,10 @@ Currently, you can't register to an OnDemand instance directly. Atlassian is wor
     curl -v -u <sysadmin-user> -X POST -d url=<heroku-url-to-your-atlassian-plugin.xml> http://<your-atlassian-hostname><:port>/<context>/rest/remotable-plugins/latest/installer
 
 You'll get a `200` HTTP status if the registration is successful.
+
+## Troubleshooting
+
+### I get 
 
 ## Getting Help or Support
 
