@@ -157,7 +157,7 @@ To see all of the available settings in the `atlassian-plugin.xml`, visit the in
 ## Sample Add-ons using `feebs`
 
 * [Sequence Diagramr](https://bitbucket.org/rmanalan/sequence-diagramr) -- a simple Confluence remote macro for creating UML sequence diagrams
-* [Tim's Word Cloud]() -- a macro that takes the contents of a page and constructs an SVG based word cloud
+* [Tim's Word Cloud](https://bitbucket.org/tpettersen/confluence-ap3-word-cloud) -- a macro that takes the contents of a page and constructs an SVG based word cloud
 * [TaskMaster](https://bitbucket.org/mrdon/taskmaster-plugin) -- create JIRA subtasks like a ninja
 
 ## Recipes
