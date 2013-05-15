@@ -1,6 +1,6 @@
 # feebs: Node.js package for Express based Atlassian Add-ons
 
-`feebs` is a toolkit for creating Atlassian Connect based Add-ons with [Node.js](http://nodejs.org/). Atlassian Connect is a distributed component model for creating Atlassian Add-ons. Add-ons built with Atlassian Connect extend Atlassian products over standard web protocols and APIs.
+`feebs` is a toolkit for creating [Atlassian Connect](https://developer.atlassian.com/display/AC/Atlassian+Connect) based Add-ons with [Node.js](http://nodejs.org/). Atlassian Connect is a distributed component model for creating Atlassian Add-ons. Add-ons built with Atlassian Connect extend Atlassian products over standard web protocols and APIs.
 
 ## About Feebs, the name
 
@@ -236,7 +236,7 @@ If it returns `localhost`, change it. On a OS X, you'll need to set a proper "Co
 
 ## Getting Help or Support
 
-The `feebs` tools are currently experimental. With that said, feel free to [report issues](https://bitbucket.org/atlassian/node-feebs/issues?status=new&status=open). If you want to learn more about Atlassian Connect, you can visit <https://developers.atlassian.com>.
+The `feebs` tools are currently experimental. With that said, feel free to [report issues](https://bitbucket.org/atlassian/node-feebs/issues?status=new&status=open). If you want to learn more about Atlassian Connect, you can visit <https://developer.atlassian.com/display/AC>.
 
 ## Contributing
 
