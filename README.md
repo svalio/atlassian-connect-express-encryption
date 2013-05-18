@@ -179,12 +179,12 @@ To learn more about how Handlebars works in Expressjs, take a look at the [expre
 
 `feebs` injects a handful of useful context variables into your render context. You can access any of these within your templates:
 
-    * `title`: the add-on's name (derived from the `atlassian-plugin.xml`)
-    * `appKey`: the application key defined in the `atlassian-plugin.xml`
-    * `localBaseUrl`: the base URI of the add-on
-    * `hostBaseUrl`: the base URI of the host (includes the context path if available)
-    * `hostStylesheetUrl`: the URL to the base CSS file for Connect add-ons. This stylesheet is a bare minimum set of styles to help you get started. It's not a full AUI stylesheet.
-    * `hostScriptUrl`: the URL to the Connect JS client. This JS file contains the code that will establish the seamless iframe bridge between the add-on and it's parent. It also contains a handful of methods and objects for accessing data through the parent (look for the `AP` JS object).
+    * __title__: the add-on's name (derived from the `atlassian-plugin.xml`)
+    * __appKey__: the application key defined in the `atlassian-plugin.xml`
+    * __localBaseUrl__: the base URI of the add-on
+    * __hostBaseUrl__: the base URI of the host (includes the context path if available)
+    * __hostStylesheetUrl__: the URL to the base CSS file for Connect add-ons. This stylesheet is a bare minimum set of styles to help you get started. It's not a full AUI stylesheet.
+    * __hostScriptUrl__: the URL to the Connect JS client. This JS file contains the code that will establish the seamless iframe bridge between the add-on and it's parent. It also contains a handful of methods and objects for accessing data through the parent (look for the `AP` JS object).
 
 You can access any of the variables above as normal Handlebars variables. For example, to generate a link in your page that links elsewhere in the host:
 
