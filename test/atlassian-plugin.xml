@@ -1,0 +1,27 @@
+<atlassian-plugin key="my-test-app-key" name="My Test App Name" plugins-version="2"
+  xmlns="https://remoteapps.jira.com/rest/remotable-plugins/1/installer/schema/atlassian-plugin">
+
+  <plugin-info>
+    <description>My test app description.</description>
+    <version>1</version>
+    <vendor name="My Company" url="http://example.com"/>
+    <permissions>
+      <permission>create_oauth_link</permission>
+    </permissions>
+    <param name="configure.url">/plugins/servlet/remotable-plugins/my-app-key/config-page</param>
+  </plugin-info>
+
+
+  <remote-plugin-container key="container" display-url="@localBaseUrl@">
+    <oauth>
+      <public-key>
+@publicKey@
+      </public-key>
+    </oauth>
+  </remote-plugin-container>
+
+  <webhook key="installed" event="remote_plugin_installed" url="/installed"/>
+  <general-page key="hello-world-page-in-jira" name="Hello World" section="system.top.navigation.bar" url="/hello-world"/>
+  <general-page key="hello-world-page-in-confluence" name="Hello World" section="system.user" url="/hello-world"/>
+
+</atlassian-plugin>
