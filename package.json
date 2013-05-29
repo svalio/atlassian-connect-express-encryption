@@ -24,6 +24,7 @@
     "type": "git",
     "url": "http://bitbucket.org/atlassian/node-feebs"
   },
+  "homepage": "https://bitbucket.org/atlassian/node-feebs",
   "keywords": [
     "atlassian",
     "plugins",
@@ -34,16 +35,18 @@
     "express",
     "web"
   ],
-  "author": {
-    "name": "Robert Bergman"
-  },
+  "author": "Atlassian",
   "contributors": [
     {
-      "name": "Rich Manalang"
+    "name": "Robert Bergman"
+    },
+    {
+      "name": "Rich Manalang",
+      "email": "rmanalang@atlassian.com"
     },
     {
       "name": "Tim Pettersen"
     }
   ],
-  "license": "Apache 2.0"
+  "license": "Apache-2.0"
 }
