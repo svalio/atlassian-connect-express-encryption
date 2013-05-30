@@ -18,7 +18,8 @@
   },
   "main": "index.js",
   "devDependencies": {
-    "mocha": "*"
+    "mocha": "*",
+    "sinon": "*"
   },
   "repository": {
     "type": "git",

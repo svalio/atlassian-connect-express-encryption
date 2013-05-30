@@ -6,7 +6,7 @@ var app = express();
 var feebs = require('../index');
 var addon = {};
 
-describe('addon.config', function(){
+describe('Configuration', function(){
   var server = {};
 
   before(function(done){
