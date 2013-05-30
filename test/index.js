@@ -2,4 +2,5 @@
 process.env.FEEBS_OPTS = 'test nooauth';
 
 require('./config_test.js');
+require('./descriptor_test.js');
 require('./registration_test.js');
