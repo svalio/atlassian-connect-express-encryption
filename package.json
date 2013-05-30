@@ -35,6 +35,9 @@
     "express",
     "web"
   ],
+  "scripts": {
+    "test": "mocha test"
+  },
   "author": "Atlassian",
   "contributors": [
     {
