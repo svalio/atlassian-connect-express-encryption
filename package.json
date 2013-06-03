@@ -12,6 +12,7 @@
     "xml2json": "~0.3.2",
     "pg": "~1.1.0",
     "pg-hstore": "~1.0.3",
+    "jugglingdb": "~0.2.0",
     "colors": "~0.6.0",
     "uglify-js": "~2.2.5",
     "localtunnel": "0.0.4"
