@@ -41,7 +41,7 @@ describe('Store', function(){
     addon = feebs(app, {
       config: {
         development: {
-          "hosts": [
+          hosts: [
             "http://admin:admin@localhost:3001/confluence"
           ]
         }
@@ -56,8 +56,9 @@ describe('Store', function(){
   });
 
   after(function(done){
-    server.close();
-    done();
+    server.close(function(){
+      done();
+    });
   });
 
   function createOrUpdateSchema(model){
@@ -75,9 +76,11 @@ describe('Store', function(){
   }
 
   it('should store client info', function(done){
-    addon.settings.get(addOnSettings.clientKey).then(function(settings){
-      assert(settings.clientKey, addOnSettings.clientKey);
-      done();
+    addon.on('host_settings_saved', function(err, settings){
+      addon.settings.get(addOnSettings.clientKey).then(function(settings){
+        assert(settings.clientKey, addOnSettings.clientKey);
+        done();
+      }).then(null, done);
     });
   });
 
