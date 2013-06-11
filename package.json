@@ -39,7 +39,7 @@
     "web"
   ],
   "scripts": {
-    "test": "mocha index"
+    "test": "mocha test"
   },
   "author": "Atlassian",
   "contributors": [
