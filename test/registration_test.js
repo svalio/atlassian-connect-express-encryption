@@ -1,3 +1,4 @@
+process.env.NODE_DEBUG = 'request';
 var helper = require('./test_helper');
 var assert = require('assert');
 var http = require('http');
@@ -38,7 +39,7 @@ describe('Auto registration', function(){
       res.send(204);
     });
     app.delete(/uninstaller/, function(req, res){
-      res.send(200);
+      res.send(204);
     });
 
     addon = feebs(app, {
@@ -80,17 +81,29 @@ describe('Auto registration', function(){
     addon.on('addon_registered', function(){ eventFired(timer, done); });
   });
 
-  // it('should store the host details after installation', function(done){
-  //   var timer = testIfEventCalled();
-  //   addon.on('host_settings_saved', function(key, settings){
-  //     addon.settings.get(key).then(function(d){
-  //       assert.deepEqual(d, settings);
-  //       eventFired(timer, done, function(done){
-  //         done();
-  //       });
-  //     });
-  //   });
-  // });
+  it('should store the host details after installation', function(done){
+    var timer = testIfEventCalled();
+    addon.on('host_settings_saved', function(key, settings){
+      addon.settings.get(key).then(function(d){
+        assert.deepEqual(JSON.parse(d.settings), settings);
+        eventFired(timer, done);
+      });
+    });
+    request({
+      url: 'http://localhost:3001/installed',
+      method: 'POST',
+      json: {
+        baseUrl: 'http://localhost:3001/confluence',
+        publicKey: 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqgmc8W+aK5kc30gl7fhrmT++GalK1T/CvCN9SqW8M7Zr8QnWx8+Ml5zIgExhc7nuFr9Jh15g1FlbQfU2cvhAVoSbNxyDiyEmA0hajJwp59D7+rjVree6B/0a1O91BAIWGgttRigGSuQFytHQ22Yd6lNaM1tw1Pu63cLyTkmDlvwIDAQAB',
+        description: 'host.consumer.default.description',
+        pluginsVersion: '0.6.1010',
+        clientKey: 'Confluence:5413647675',
+        serverVersion: '4307',
+        key: 'webhook-inspector',
+        productType: 'confluence'
+      }
+    });
+  });
 
   it('should have webhook listener for remote_plugin_installed', function(done){
     assert.equal(EventEmitter.listenerCount(addon, 'remote_plugin_installed'), 1);
@@ -100,7 +113,19 @@ describe('Auto registration', function(){
   it('should also deregister if a SIGINT is encountered', function(done){
     process.kill(process.pid, 'SIGINT');
     var timer = testIfEventCalled();
-    addon.on('addon_deregistered', function(){ eventFired(timer, done); });
+    addon.on('addon_deregistered', function(){
+      eventFired(timer, done, function(done){  });
+      addon.settings.get('Confluence:5413647675').then(
+        function(settings){
+          assert(false, "settings not deleted");
+          done();
+        },
+        function(err){
+          assert(true, "settings deleted");
+          done();
+        }
+      );
+    });
   });
 
 });
