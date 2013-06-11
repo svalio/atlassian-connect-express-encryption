@@ -2,7 +2,7 @@
 
 [![Build Status](https://drone.io/bitbucket.org/atlassian/node-feebs/status.png)](https://drone.io/bitbucket.org/atlassian/node-feebs/latest)
 
-`feebs` is a toolkit for creating [Atlassian Connect](https://developer.atlassian.com/display/AC/Atlassian+Connect) based Add-ons with [Node.js](http://nodejs.org/). Atlassian Connect is a distributed component model for creating Atlassian Add-ons. Add-ons built with Atlassian Connect extend Atlassian products over standard web protocols and APIs.
+`feebs` is a toolkit for creating [Atlassian Connect](https://developer.atlassian.com/display/AC/Atlassian+Connect) based Add-ons with [Node.js](http://nodejs.org/). Atlassian Connect is a distributed component model for creating Atlassian add-ons. Add-ons built with Atlassian Connect extend Atlassian applications over standard web protocols and APIs.
 
 ## About Feebs, the name
 
@@ -14,9 +14,9 @@ Feebs is a common nickname for Phoebe. Together, they help create new offspring 
 
 The `feebs` package helps you get started developing add-ons quickly, using Node.js and Express as the add-on server.  
 
-It's important to understand that [Express](http://expressjs.com/) by itself is a web app framework for Node. `feebs` just provides a library of middleware and convenience helpers that make it easier to build Atlassian Add-ons. Specifically, `feebs` adds:
+It's important to understand that [Express](http://expressjs.com/) by itself is a web app framework for Node. `feebs` just provides a library of middleware and convenience helpers that make it easier to build Atlassian add-ons. Specifically, `feebs` adds:
 
-* An optimized dev loop by handling registration and deregistration to consuming host for you at startup and shutdown
+* An optimized dev loop by handling registration and deregistration on the target Atlassian application for you at startup and shutdown
 * A filesystem watcher that detects changes to `atlassian-plugin.xml`. When changes are detected, the add-on is re-registered with the host(s)
 * Automatic OAuth authentication of inbound requests as well as OAuth signing for outbound requests back to the host
 * Automatic persistence of host details (i.e., client key, host public key, host base url, etc.)
@@ -34,7 +34,7 @@ Let's start by creating an add-on project:
 
     feebs new <project_name>
 
-This will create the following code:
+This creates a new project home directory with the following contents:
 
     .
     ├── README.md
@@ -57,16 +57,16 @@ This will create the following code:
 
 ### Install dependencies
 
-Go into your new project directory, then install the dependencies:
+Change to the new project directory and install dependencies:
 
     npm install
 
 ### Setting up a development environment
 
-At this point, you're all set to run your add-on, but you'll need to have a host (i.e., JIRA or Confluence) for your add-on. You have a few options:
+At this point, you're all set to run your add-on, but you still need the target application (i.e., JIRA or Confluence) for your add-on. You have a few options:
 
 1. You can do all your development work locally using an Atlassian Connect Vagrant box ([JIRA](https://bitbucket.org/rmanalan/atlassian-connect-jira-vagrant) or [Confluence](https://bitbucket.org/rmanalan/atlassian-connect-confluence-vagrant)). This Vagrant box will set up a local JIRA or Confluence VM (using [VirtualBox](https://www.virtualbox.org/)). This is by far the most flexible option.
-2. Soon you'll be able to register a local add-on inside an Atlassian OnDemand instance in development mode. STAY TUNED!
+2. Register the local add-on inside an Atlassian OnDemand instance in development mode. See [instructions in the Atlassian Connect doc](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-Registertheadd-on) for more information. 
 
 ### Running your Add-on Server
 
@@ -81,16 +81,16 @@ This will boot up your Express server on the default port of 3000 and do the fol
 
 ### The Dev Loop
 
-At this point, you can start building your add-on. Changes to views will load automatically, however, if you make changes to any JavaScript, you will need to restart Express. If you want your server to automatically restart when your JavaScript changes, you may want to consider using [nodemon](https://npmjs.org/package/nodemon) or the like.
+At this point, you can start building your add-on. Changes to views load automatically, however, if you make changes to any JavaScript, you need to restart Express. If you want your server to automatically restart when your JavaScript changes, consider using [nodemon](https://npmjs.org/package/nodemon) or the like.
 
-As you've noticed, `feebs` automatically registers your add-on with the host when it's started. Another nice feature is that it automatically de-registers it at shutdown `<ctrl-c>`.
+As you've noticed, `feebs` automatically registers your add-on with the target application when it's started. Another nice feature is that it automatically de-registers it at shutdown `<ctrl-c>`.
 
 ### Configuration
 
 The configuration for your add-on is done in two files:
 
-* `./config.json` -- This file contains the configuration for each runtime environment your plugin runs in. The file has comments to help you understand the settings available.
-* `./atlassian-plugin.xml` -- This file is a manifest of all the extension points your add-on uses. To see all of the available extension point options check out the interactive guides for [JIRA](http://atlassian-connect.herokuapp.com/help#jira/atlassian-plugin) or [Confluence](http://atlassian-connect.herokuapp.com/help#confluence/atlassian-plugin).
+* `./config.json` -- This file contains the configuration for each runtime environment your plugin runs in. The file has comments to help you understand available settings.
+* `./atlassian-plugin.xml` -- This file is a manifest of all the extension points your add-on uses. To see all of the available extension point options, check out the interactive guides for [JIRA](http://atlassian-connect.herokuapp.com/help#jira/atlassian-plugin) or [Confluence](http://atlassian-connect.herokuapp.com/help#confluence/atlassian-plugin).
 
 #### config.json
 
@@ -159,7 +159,7 @@ To see all of the available settings in the `atlassian-plugin.xml`, visit the in
 ## Sample Add-ons using `feebs`
 
 * [Sequence Diagramr](https://bitbucket.org/rmanalan/sequence-diagramr) -- a simple Confluence remote macro for creating UML sequence diagrams
-* [Tim's Word Cloud](https://bitbucket.org/tpettersen/confluence-ap3-word-cloud) -- a macro that takes the contents of a page and constructs an SVG based word cloud
+* [Tim's Word Cloud](https://bitbucket.org/tpettersen/confluence-ap3-word-cloud) -- a macro that takes the contents of a page and constructs an SVG-based word cloud
 * [TaskMaster](https://bitbucket.org/mrdon/taskmaster-plugin) -- create JIRA subtasks like a ninja
 * [Atlassian Connect Webhook Inspector](https://bitbucket.org/rmanalan/webhook-inspector) -- a simple tool to log webhooks fired in Atlassian apps for development purposes.
 
@@ -181,12 +181,12 @@ To learn more about how Handlebars works in Expressjs, take a look at the [expre
 
 `feebs` injects a handful of useful context variables into your render context. You can access any of these within your templates:
 
-* `title`: the add-on's name (derived from the `atlassian-plugin.xml`)
-* `appKey`: the application key defined in the `atlassian-plugin.xml`
+* `title`: the add-on's name (derived from `atlassian-plugin.xml`)
+* `appKey`: the application key defined in `atlassian-plugin.xml`
 * `localBaseUrl`: the base URI of the add-on
-* `hostBaseUrl`: the base URI of the host (includes the context path if available)
+* `hostBaseUrl`: the base URI of the target application (includes the context path if available)
 * `hostStylesheetUrl`: the URL to the base CSS file for Connect add-ons. This stylesheet is a bare minimum set of styles to help you get started. It's not a full AUI stylesheet.
-* `hostScriptUrl`: the URL to the Connect JS client. This JS file contains the code that will establish the seamless iframe bridge between the add-on and it's parent. It also contains a handful of methods and objects for accessing data through the parent (look for the `AP` JS object).
+* `hostScriptUrl`: the URL to the Connect JS client. This JS file contains the code that will establish the seamless iframe bridge between the add-on and its parent. It also contains a handful of methods and objects for accessing data through the parent (look for the `AP` JS object).
 
 You can access any of the variables above as normal Handlebars variables. For example, to generate a link in your page that links elsewhere in the host:
 
@@ -210,16 +210,25 @@ Add-ons are secured through [two-legged OAuth](http://todo). To simplify OAuth v
         );
     };
 
-Simply adding the `addon.authenticate()` middleware will protect your resource. To understand how Express middleware works, read up on the [Connect framework](http://www.senchalabs.org/connect/) which is what Express uses as it's middleware framework.
+Simply adding the `addon.authenticate()` middleware will protect your resource. To understand how Express middleware works, read up on the [Connect framework](http://www.senchalabs.org/connect/) which is what Express uses as its middleware framework.
 
 ### How to send a signed outbound HTTP request back to the host
 
-`feebs` bundles and extends the awesome [request](https://github.com/mikeal/request) HTTP client. To make OAuth signed request back to the host, all you have to do is use `request` the way it was designed but use a relative path as your URL back to the host's REST APIs. If `request` finds that you're using a relative URL, it will get signed. If you use an absolute URL, it bypasses signing.
+`feebs` bundles and extends the awesome [request](https://github.com/mikeal/request) HTTP client. To make an OAuth-signed request back to the host, all you have to do is use `request` the way it was designed, but use a relative path as your URL back to the host's REST APIs. If `request` finds that you're using a relative URL, it will get signed. If you use an absolute URL, it bypasses signing.
 
     var httpClient = addon.httpClient(req);
     httpClient.get('/', function(err, resp, body){
       ...
     });
+
+
+If not in a request context, you can perform the equivalent operation as follows:  
+
+    var httpClient = addon.httpClient( { hostBaseUrl: baseUrl, userId: userId, appKey: appKey } )
+    httpClient.get('/', function(err, resp, body){
+      ...
+    });
+
 
 ### How to deploy to Heroku
 
@@ -248,7 +257,7 @@ Lastly, let's deploy!
 
     git push heroku master
 
-It will take a minute or two for Heroku to spin up your add-on. It will need to install node and all of it's dependencies. When it's done, you'll be given the URL where your add-on is deployed, however, you'll still need to register it on your Atlassian instance.
+It will take a minute or two for Heroku to spin up your add-on. It will need to install node and all of its dependencies. When it's done, you'll be given the URL where your add-on is deployed, however, you'll still need to register it on your Atlassian instance.
 
 Currently, you can't register to an OnDemand instance directly. Atlassian is working on this... more info soon. However, if you're running your own instance of JIRA or Confluence with the `remotable-plugins` plugin (i.e., Atlassian Connect), you can run this curl command to install your add-on:
 
