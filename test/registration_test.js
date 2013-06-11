@@ -1,4 +1,3 @@
-process.env.NODE_DEBUG = 'request';
 var helper = require('./test_helper');
 var assert = require('assert');
 var http = require('http');
