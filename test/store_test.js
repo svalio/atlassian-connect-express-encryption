@@ -6,6 +6,7 @@ var app = express();
 var feebs = require('../index');
 var request = require('request')
 var RSVP = require('rsvp');
+var Schema = require('jugglingdb').Schema;
 var addon = {};
 
 describe('Store', function(){
@@ -41,6 +42,13 @@ describe('Store', function(){
     addon = feebs(app, {
       config: {
         development: {
+          store: {
+            type: 'postgres',
+            opts: {
+              database: 'postgres',
+              username: 'rmanalang'
+            }
+          },
           hosts: [
             "http://admin:admin@localhost:3001/confluence"
           ]
@@ -77,25 +85,50 @@ describe('Store', function(){
 
   it('should store client info', function(done){
     addon.on('host_settings_saved', function(err, settings){
-      addon.settings.get(addOnSettings.clientKey).then(function(settings){
+      addon.settings.get('clientInfo', addOnSettings.clientKey).then(function(settings){
         assert(settings.clientKey, addOnSettings.clientKey);
         done();
       }).then(null, done);
     });
   });
 
+  it('should allow storing arbitrary key/values', function(done){
+    addon.settings.set('arbitrarySetting', 'someValue', addOnSettings.clientKey).then(function(setting){
+      assert(setting.val, 'someValue');
+      done();
+    })
+  });
+
+  it('should allow storing arbitrary key/values as JSON', function(done){
+    addon.settings.set('arbitrarySetting2', { data: 1}, addOnSettings.clientKey).then(function(setting){
+      assert(setting.val, { data: 1});
+      done();
+    })
+  });
+
   it('should allow storage of arbitrary models', function(done){
     var User = addon.schema.define('User', {
       name:         String,
-      email:        String
+      email:        String,
+      bio:          Schema.JSON
     });
     createOrUpdateSchema(User).then(function(){
       User.create({
         name: "Rich",
-        email: "rich@example.com"
+        email: "rich@example.com",
+        bio: {
+          description: "Male 6' tall",
+          favoriteColors: [
+            "blue",
+            "green"
+          ]
+        }
       }, function(err, model){
         assert.equal(model.name, "Rich");
-        done();
+        User.all({ name: "Rich" }, function(err, user){
+          assert.equal(user[0].name, model.name);
+          done();
+        });
       });
     });
   });

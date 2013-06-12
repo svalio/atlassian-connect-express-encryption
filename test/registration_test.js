@@ -81,11 +81,10 @@ describe('Auto registration', function(){
   });
 
   it('should store the host details after installation', function(done){
-    var timer = testIfEventCalled();
     addon.on('host_settings_saved', function(key, settings){
-      addon.settings.get(key).then(function(d){
-        assert.deepEqual(JSON.parse(d.settings), settings);
-        eventFired(timer, done);
+      addon.settings.get('clientInfo', key).then(function(d){
+        assert.deepEqual(d.val, settings);
+        done();
       });
     });
     request({
