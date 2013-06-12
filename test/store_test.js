@@ -42,13 +42,6 @@ describe('Store', function(){
     addon = feebs(app, {
       config: {
         development: {
-          store: {
-            type: 'postgres',
-            opts: {
-              database: 'postgres',
-              username: 'rmanalang'
-            }
-          },
           hosts: [
             "http://admin:admin@localhost:3001/confluence"
           ]
@@ -94,7 +87,7 @@ describe('Store', function(){
 
   it('should allow storing arbitrary key/values', function(done){
     addon.settings.set('arbitrarySetting', 'someValue', addOnSettings.clientKey).then(function(setting){
-      assert(setting.val, 'someValue');
+      assert(setting.val, '\"someValue\"');
       done();
     })
   });
