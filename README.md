@@ -66,7 +66,7 @@ Change to the new project directory and install dependencies:
 At this point, you're all set to run your add-on, but you still need the target application (i.e., JIRA or Confluence) for your add-on. You have a few options:
 
 1. You can do all your development work locally using an Atlassian Connect Vagrant box ([JIRA](https://bitbucket.org/rmanalan/atlassian-connect-jira-vagrant) or [Confluence](https://bitbucket.org/rmanalan/atlassian-connect-confluence-vagrant)). This Vagrant box will set up a local JIRA or Confluence VM (using [VirtualBox](https://www.virtualbox.org/)). This is by far the most flexible option.
-2. Register the local add-on inside an Atlassian OnDemand instance in development mode. See [instructions in the Atlassian Connect doc](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-Registertheadd-on) for more information. 
+2. Install the add-on in an Atlassian OnDemand instance. See [instructions in the Atlassian Connect doc](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-Registertheadd-on) for more information. 
 
 ### Running your Add-on Server
 
@@ -240,30 +240,28 @@ Next, create the app on Heroku:
 
     heroku apps:create <add-on-name>
 
-Then you have to set the public and private key as environment variables in Heroku (you don't ever want to commit these `*.pem` files into your scm).
+Then set the public and private key as environment variables in Heroku (you don't ever want to commit these `*.pem` files into your scm).
 
-    heroku config:set AP3_PUBLIC_KEY="`cat public-key.pem`"
-    heroku config:set AP3_PRIVATE_KEY="`cat private-key.pem`"
+    heroku config:set AP3_PUBLIC_KEY="`cat public-key.pem`" --app <add-on-name>
+    heroku config:set AP3_PRIVATE_KEY="`cat private-key.pem`" --app <add-on-name>
 
 You'll also need to make sure that your `NODE_ENV` is set to `production`:
 
-    heroku config:set NODE_ENV="production"
+    heroku config:set NODE_ENV="production" --app <add-on-name>
 
 Next, let's store our registration information in a Postgres database. In development, you were likely using the memory store. In production, you'll want to use a real database.
 
-    heroku addons:add heroku-postgresql:dev
+    heroku addons:add heroku-postgresql:dev --app <add-on-name>
 
-Lastly, let's deploy!
+Lastly, let's add the project files to Heroku and deploy! From your project directory:
 
+    git remote add heroku git@heroku.com:<add-on-name>.git
     git push heroku master
 
 It will take a minute or two for Heroku to spin up your add-on. It will need to install node and all of its dependencies. When it's done, you'll be given the URL where your add-on is deployed, however, you'll still need to register it on your Atlassian instance.
 
-Currently, you can't register to an OnDemand instance directly. Atlassian is working on this... more info soon. However, if you're running your own instance of JIRA or Confluence with the `remotable-plugins` plugin (i.e., Atlassian Connect), you can run this curl command to install your add-on:
+If you're running an OnDemand instance of JIRA or Confluence locally, you can install from UPM. See complete [instructions in the Atlassian Connect doc](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-Registertheadd-on) for more information.
 
-    curl -v -u <sysadmin-user> -X POST -d url=<heroku-url-to-your-atlassian-plugin.xml> http://<your-atlassian-hostname><:port>/<context>/rest/remotable-plugins/latest/installer
-
-You'll get a `200` HTTP status if the registration is successful.
 
 ## Troubleshooting
 
