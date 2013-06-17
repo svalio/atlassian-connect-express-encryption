@@ -253,7 +253,9 @@ Next, let's store our registration information in a Postgres database. In develo
 
     heroku addons:add heroku-postgresql:dev --app <add-on-name>
 
-Lastly, let's add the project files to Heroku and deploy! From your project directory:
+Lastly, let's add the project files to Heroku and deploy! 
+
+If you aren't already there, switch to your project home directory. This should be the location of your `package.json` file. From there, run these commands:
 
     git remote add heroku git@heroku.com:<add-on-name>.git
     git push heroku master
