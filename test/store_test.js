@@ -8,6 +8,7 @@ var request = require('request')
 var RSVP = require('rsvp');
 var Schema = require('jugglingdb').Schema;
 var addon = {};
+var spy = require("sinon").spy;
 
 describe('Store', function(){
   var server = {};
@@ -39,11 +40,19 @@ describe('Store', function(){
       res.send(200);
     });
 
+    feebs.store.register("teststore", function (logger, opts) {
+      var store = require("../lib/store/jugglingdb")(logger, opts);
+      spy(store, "get");
+      spy(store, "set");
+      spy(store, "del");
+      return store;
+    });
+
     addon = feebs(app, {
       config: {
         development: {
           store: {
-            type: ""
+            adapter: "teststore"
           },
           hosts: [
             "http://admin:admin@localhost:3001/confluence"
@@ -128,4 +137,21 @@ describe('Store', function(){
       });
     });
   });
+
+  it('should work with a custom store', function (done) {
+    var promises = [
+      addon.settings.set('custom key', 'custom value'),
+      addon.settings.get('custom key'),
+      addon.settings.del('custom key')
+    ];
+    RSVP.all(promises).then(function () {
+      assert.ok(addon.settings.set.callCount > 0);
+      assert.ok(addon.settings.get.callCount > 0);
+      assert.ok(addon.settings.del.callCount > 0);
+      done();
+    }, function (err) {
+      assert.fail(err);
+    });
+  });
+
 });
