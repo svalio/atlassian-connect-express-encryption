@@ -42,6 +42,9 @@ describe('Store', function(){
     addon = feebs(app, {
       config: {
         development: {
+          store: {
+            type: ""
+          },
           hosts: [
             "http://admin:admin@localhost:3001/confluence"
           ]
