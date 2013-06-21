@@ -52,7 +52,8 @@ describe('Store', function(){
       config: {
         development: {
           store: {
-            adapter: "teststore"
+            adapter: "teststore",
+            type: "memory"
           },
           hosts: [
             "http://admin:admin@localhost:3001/confluence"
@@ -74,20 +75,6 @@ describe('Store', function(){
     });
   });
 
-  function createOrUpdateSchema(model){
-    var promise = new RSVP.Promise;
-    model.schema.isActual(function(err, actual){
-      if (!actual) {
-        model.schema.autoupdate(function(){
-          promise.resolve();
-        });
-      } else {
-        promise.resolve();
-      }
-    });
-    return promise;
-  }
-
   it('should store client info', function(done){
     addon.on('host_settings_saved', function(err, settings){
       addon.settings.get('clientInfo', addOnSettings.clientKey).then(function(settings){
@@ -105,37 +92,42 @@ describe('Store', function(){
   });
 
   it('should allow storing arbitrary key/values as JSON', function(done){
-    addon.settings.set('arbitrarySetting2', { data: 1}, addOnSettings.clientKey).then(function(setting){
+    addon.settings.set('arbitrarySetting2', {data: 1}, addOnSettings.clientKey).then(function(setting){
       assert(setting.val, { data: 1});
       done();
     })
   });
 
   it('should allow storage of arbitrary models', function(done){
-    var User = addon.schema.define('User', {
+    addon.schema.extend('User', {
       name:         String,
       email:        String,
       bio:          Schema.JSON
-    });
-    createOrUpdateSchema(User).then(function(){
-      User.create({
-        name: "Rich",
-        email: "rich@example.com",
-        bio: {
-          description: "Male 6' tall",
-          favoriteColors: [
-            "blue",
-            "green"
-          ]
-        }
-      }, function(err, model){
-        assert.equal(model.name, "Rich");
-        User.all({ name: "Rich" }, function(err, user){
-          assert.equal(user[0].name, model.name);
-          done();
+    }).then(
+      function (User) {
+        User.create({
+          name: "Rich",
+          email: "rich@example.com",
+          bio: {
+            description: "Male 6' tall",
+            favoriteColors: [
+              "blue",
+              "green"
+            ]
+          }
+        }, function(err, model){
+          assert.equal(model.name, "Rich");
+          User.all({ name: "Rich" }, function(err, user){
+            assert.equal(user[0].name, model.name);
+            done();
+          });
         });
-      });
-    });
+      },
+      function (err) {
+        console.error(err);
+        assert.fail();
+      }
+    );
   });
 
   it('should work with a custom store', function (done) {
