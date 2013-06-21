@@ -115,11 +115,11 @@ describe('Auto registration', function(){
       eventFired(timer, done, function(done){  });
       addon.settings.get('Confluence:5413647675').then(
         function(settings){
-          assert(false, "settings not deleted");
+          assert(!settings, "settings deleted");
           done();
         },
         function(err){
-          assert(true, "settings deleted");
+          assert.fail("settings not deleted " + err.toString());
           done();
         }
       );
