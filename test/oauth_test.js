@@ -14,7 +14,11 @@ describe('OAuth', function(){
   before(function(done){
     app.set('env','development');
     app.use(express.bodyParser());
-    addon = feebs(app, {});
+    addon = feebs(app, {
+      config: {
+        development: {}
+      }
+    });
 
     server = http.createServer(app).listen(3001, function(){
       addon.register();
