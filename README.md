@@ -97,55 +97,73 @@ The configuration for your add-on is done in two files:
 The `./config.json` file contains all of the settings for the add-on server. This file is broken into environments.
 
     {
-      // This is the default environment. To change your app to
-      // use a different env, set NODE_ENV 
-      // (http://expressjs.com/api.html#app.configure)
-      // "development" is the default environent.
+      // This is the default environment. To change your app to use
+      // a different env, set NODE_ENV (http://expressjs.com/api.html#app.configure)
       "development": {
 
-        // Used as the base URL to run the server on. This is
-        // optional and often used only in "production" mode.
-        // "localBaseUrl": "http://localhost"
-
-        // Express will listen on this port
+        // this is the port your Express server will listen on
         "port": 3000,
 
-        // feebs currently provides two types of stores (memory
-        // and postgres) to store the host client information
-        // (i.e., client key, host public key, etc.). Default
-        // is "memory"
+        // Feebs currently integrates with JugglingDB for persistence
+        // to store the host client information (i.e., client key, host public
+        // key, etc). When no adapter is specified, it defaults to JugglingDB's
+        // fallback memory storage.
         //
+        // To specify a backend for JugglingDB other than "memory", set the
+        // "type" value to one of Juggling's other supported types.  See
+        // https://github.com/1602/jugglingdb for more information.
+        //
+        // To use your own storage adapter, add the key
+        // "adapter" to the following configuration, and replace "type" and
+        // "connection" with any values your adapter expects.  Then make sure
+        // that you register your adapter factory with the following code in
+        // app.js:
+        //
+        //   feebs.store.register(adapterName, factoryFn)
+        //
+        // See node-feebs/lib/store/index.js and the default jugglingdb.js
+        // files for examples.  The default values are as follows:
         // "store": {
+        //   "adapter": "jugglingdb",
+        //   "type": "memory"
+        // },
+        //
+        // To instead configure, say, a PostgreSQL store, the following could be
+        // used:
+        // "store": {
+        //   "adapter": "jugglingdb",
         //   "type": "postgres",
-        //   "connection": "postgres://localhost/pglocal"
+        //   "url": "postgres://localhost/my_addon_database"
         // },
 
-        // Your add-on will be registered with the following hosts
-        // upon startup. In order to take advantage of the automatic 
-        // registration/deregistration, you need to make sure that 
-        // your Express app calls `addon.register()` (see app.js).
+        // Your add-on will be registered with the following hosts upon startup.
+        // In order to take advantage of the automatic registration/deregistration,
+        // you need to make sure that your express app calls `addon.register()`
+        // (see app.js). Also, you don't need to specify the user/pwd in the URL
+        // as in the examples below. If you don't provide a user/pwd, you will be
+        // prompted the first time you start the server.
         "hosts": [
           "http://admin:admin@localhost:1990/confluence",
           "http://admin:admin@localhost:2990/jira"
         ]
       },
 
-      // "production" is the environment you'll typically use
-      // in "production" -- duh!
       "production": {
         "port": "$PORT",
-        // In "production" mode, you'll want to set the URL
-        // where your app will reside.
-        "localBaseUrl": "https://your-subdomain.herokuapps.com",
-        // You won't want to use the "memory" store in production
-        // mode.
+        "localBaseUrl": "https://your-subdomain.herokuapp.com",
         "store": {
           "type": "postgres",
-          "connection": "$DATABASE_URL"
-        }
+          "url": "$DATABASE_URL"
+        },
+
+        // Make sure that your add-on can only be registered by the hosts on
+        // these domains.
+        "whitelist": [
+          "*.atlassian.net",
+          "*.jira.com"
+        ]
       }
     }
-
 
 ### atlassian-plugin.xml
 
