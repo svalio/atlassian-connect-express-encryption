@@ -33,7 +33,7 @@ describe('Store', function(){
     });
     app.post(/installer/, function(req,res){
       request({
-        url: 'http://localhost:3001/installed',
+        url: 'http://localhost:3001/enabled',
         method: 'POST',
         json: addOnSettings
       });
@@ -63,16 +63,12 @@ describe('Store', function(){
     });
 
     server = http.createServer(app).listen(3001, function(){
-      addon.register().then(function(){
-        done();
-      });
+      addon.register().then(done);
     });
   });
 
   after(function(done){
-    server.close(function(){
-      done();
-    });
+    server.close(done);
   });
 
   it('should store client info', function(done){
@@ -124,8 +120,7 @@ describe('Store', function(){
         });
       },
       function (err) {
-        console.error(err);
-        assert.fail();
+        assert.fail(err.toString());
       }
     );
   });

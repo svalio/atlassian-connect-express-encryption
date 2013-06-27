@@ -20,7 +20,7 @@
     </oauth>
   </remote-plugin-container>
 
-  <webhook key="installed" event="remote_plugin_installed" url="/installed"/>
+  <webhook key="enabled" event="remote_plugin_enabled" url="/enabled"/>
   <general-page key="hello-world-page-in-jira" name="Hello World" section="system.top.navigation.bar" url="/hello-world"/>
   <general-page key="hello-world-page-in-confluence" name="Hello World" section="system.user" url="/hello-world"/>
 
