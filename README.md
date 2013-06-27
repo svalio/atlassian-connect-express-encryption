@@ -242,8 +242,8 @@ Next, create the app on Heroku:
 
 Then set the public and private key as environment variables in Heroku (you don't ever want to commit these `*.pem` files into your scm).
 
-    heroku config:set PUBLIC_KEY="`cat public-key.pem`" --app <add-on-name>
-    heroku config:set PRIVATE_KEY="`cat private-key.pem`" --app <add-on-name>
+    heroku config:set FEEBS_PUBLIC_KEY="`cat public-key.pem`" --app <add-on-name>
+    heroku config:set FEEBS_PRIVATE_KEY="`cat private-key.pem`" --app <add-on-name>
 
 You'll also need to make sure that your `NODE_ENV` is set to `production`:
 
