@@ -122,19 +122,22 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         //   feebs.store.register(adapterName, factoryFn)
         //
         // See node-feebs/lib/store/index.js and the default jugglingdb.js
-        // files for examples.  The default values are as follows:
-        // "store": {
-        //   "adapter": "jugglingdb",
-        //   "type": "memory"
-        // },
+        // files for code demonstrating how to write a conformant adapter.  The
+        // default values are as follows:
+        //
+        //   "store": {
+        //     "adapter": "jugglingdb",
+        //     "type": "memory"
+        //   },
         //
         // To instead configure, say, a PostgreSQL store, the following could be
         // used:
-        // "store": {
-        //   "adapter": "jugglingdb",
-        //   "type": "postgres",
-        //   "url": "postgres://localhost/my_addon_database"
-        // },
+        //
+        //   "store": {
+        //     "adapter": "jugglingdb",
+        //     "type": "postgres",
+        //     "url": "postgres://localhost/my_addon_database"
+        //   },
 
         // Your add-on will be registered with the following hosts upon startup.
         // In order to take advantage of the automatic registration/deregistration,
@@ -235,18 +238,20 @@ Simply adding the `addon.authenticate()` middleware will protect your resource. 
 `feebs` bundles and extends the awesome [request](https://github.com/mikeal/request) HTTP client. To make an OAuth-signed request back to the host, all you have to do is use `request` the way it was designed, but use a relative path as your URL back to the host's REST APIs. If `request` finds that you're using a relative URL, it will get signed. If you use an absolute URL, it bypasses signing.
 
     var httpClient = addon.httpClient(req);
-    httpClient.get('/', function(err, resp, body){
+    httpClient.get('/', function(err, res, body){
       ...
     });
 
+If not in a request context, you can perform the equivalent operation as follows:
 
-If not in a request context, you can perform the equivalent operation as follows:  
-
-    var httpClient = addon.httpClient( { hostBaseUrl: baseUrl, userId: userId, appKey: appKey } )
-    httpClient.get('/', function(err, resp, body){
+    var httpClient = addon.httpClient({
+      hostBaseUrl: baseUrl,
+      userId: userId,
+      appKey: appKey
+    });
+    httpClient.get('/', function(err, res, body){
       ...
     });
-
 
 ### How to deploy to Heroku
 
@@ -282,7 +287,6 @@ It will take a minute or two for Heroku to spin up your add-on. It will need to 
 
 If you're running an OnDemand instance of JIRA or Confluence locally, you can install from UPM. See complete [instructions in the Atlassian Connect doc](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-Registertheadd-on) for more information.
 
-
 ## Troubleshooting
 
 ### "Unable to connect and retrieve descriptor from http://localhost:3000/atlassian-plugin.xml, message is: java.net.ConnectException: Connection refused"
@@ -292,6 +296,14 @@ You'll get this error if JIRA or Confluence can't access `http://localhost:3000/
     $ hostname
 
 If it returns `localhost`, change it. On a OS X, you'll need to set a proper "Computer Name" in System Preferences > Sharing.
+
+### Debugging HTTP Traffic
+
+Several tools exist to help snoop the HTTP traffic between your add-on and the host server:
+
+* Enable node-request's HTTP logging by starting your app with `NODE_DEBUG=request node app`
+* Check out the HTTP-debugging proxies [Charles](http://www.charlesproxy.com/) and [Fiddler](http://fiddler2.com/)
+* Try local TCP sniffing with [justniffer](http://justniffer.sourceforge.net/) by running something like `justniffer -i eth0 -r`, substituting the correct interface value
 
 ## Getting Help or Support
 
