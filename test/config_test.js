@@ -13,11 +13,11 @@ describe('Configuration', function(){
     app.set('env','development');
     addon = feebs(app, {
       config: {
-        "custom": "global",
+        "customShadowed": "global",
         "customGlobal": "foo",
         "development": {
           "watch": false,
-          "custom": "env",
+          "customShadowed": "env",
           "customEnv": "bar"
         }
       }
@@ -43,7 +43,7 @@ describe('Configuration', function(){
   });
 
   it('should allow prefer env values over globals', function(done){
-    assert.equal(addon.config.custom(), "env");
+    assert.equal(addon.config.customShadowed(), "env");
     done();
   });
 
