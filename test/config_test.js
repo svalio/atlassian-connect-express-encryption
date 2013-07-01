@@ -13,8 +13,12 @@ describe('Configuration', function(){
     app.set('env','development');
     addon = feebs(app, {
       config: {
+        "custom": "global",
+        "customGlobal": "foo",
         "development": {
-          "watch": false
+          "watch": false,
+          "custom": "env",
+          "customEnv": "bar"
         }
       }
     });
@@ -33,8 +37,23 @@ describe('Configuration', function(){
     done();
   });
 
-  it('should allow you to disable re-registration on plugin.xml change',function(done){
+  it('should allow you to disable re-registration on plugin.xml change', function(done){
     assert(!addon.config.watch());
+    done();
+  });
+
+  it('should allow prefer env values over globals', function(done){
+    assert.equal(addon.config.custom(), "env");
+    done();
+  });
+
+  it('should allow access to custom global values', function(done){
+    assert.equal(addon.config.customGlobal(), "foo");
+    done();
+  });
+
+  it('should allow access to custom env-specific values', function(done){
+    assert.equal(addon.config.customEnv(), "bar");
     done();
   });
 
