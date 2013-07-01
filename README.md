@@ -151,11 +151,23 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         ]
       },
 
+      // This is the production add-on configuration, which is enabled by setting
+      // the NODE_ENV=production environment variable.
       "production": {
+        // On a PaaS host like Heroku, the runtime environment will provide the
+        // HTTP port to you via the PORT environement variable, so we configure
+        // that to be honored here.
         "port": "$PORT",
+        // This is the public URL to your production add-on.
         "localBaseUrl": "https://your-subdomain.herokuapp.com",
         "store": {
+          // You won't want to use the memory store in production, or your install
+          // registrations will be forgotten any time your app restarts.  Here
+          // we tell feebs to use the PostgreSQL backend for the default
+          // JugglingDB adapter.
           "type": "postgres",
+          // Again, a PaaS host like Heroku will probably provide the db connection
+          // URL to you through the environment, so we tell feebs to use that value.
           "url": "$DATABASE_URL"
         },
 
