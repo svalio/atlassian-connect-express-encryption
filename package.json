@@ -14,7 +14,8 @@
     "colors": "~0.6.0",
     "uglify-js": "~2.2.5",
     "localtunnel": "0.0.4",
-    "rsvp": "~1.2.0"
+    "rsvp": "~1.2.0",
+    "JSONPath": "~0.9.1"
   },
   "main": "index.js",
   "devDependencies": {
@@ -42,7 +43,7 @@
   "author": "Atlassian",
   "contributors": [
     {
-    "name": "Robert Bergman"
+      "name": "Robert Bergman"
     },
     {
       "name": "Rich Manalang",
