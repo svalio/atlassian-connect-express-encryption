@@ -43,7 +43,8 @@
   "author": "Atlassian",
   "contributors": [
     {
-      "name": "Robert Bergman"
+      "name": "Robert Bergman",
+      "email": "rbergman@atlassian.com"
     },
     {
       "name": "Rich Manalang",
