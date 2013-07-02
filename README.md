@@ -97,55 +97,98 @@ The configuration for your add-on is done in two files:
 The `./config.json` file contains all of the settings for the add-on server. This file is broken into environments.
 
     {
-      // This is the default environment. To change your app to
-      // use a different env, set NODE_ENV 
-      // (http://expressjs.com/api.html#app.configure)
-      // "development" is the default environent.
+      // This is the add-on's basic information.  These values can be contributed to
+      // atlassian-plugin.xml via template replacement.
+      "key": "my-test-app-key",
+      "name": "My Test App Name",
+      "description": "My test app description.",
+      "version": "1",
+      "vendorName": "My Company",
+      "vendorUrl": "http://example.com",
+      "documentationUrl": "http://example.com",
+
+      // This is the default environment. To change your app to use
+      // a different env, set NODE_ENV (http://expressjs.com/api.html#app.configure)
       "development": {
 
-        // Used as the base URL to run the server on. This is
-        // optional and often used only in "production" mode.
-        // "localBaseUrl": "http://localhost"
-
-        // Express will listen on this port
+        // This is the port your Express server will listen on
         "port": 3000,
 
-        // feebs currently provides two types of stores (memory
-        // and postgres) to store the host client information
-        // (i.e., client key, host public key, etc.). Default
-        // is "memory"
+        // Feebs currently integrates with JugglingDB for persistence
+        // to store the host client information (i.e., client key, host public
+        // key, etc). When no adapter is specified, it defaults to JugglingDB's
+        // fallback memory storage.
         //
-        // "store": {
-        //   "type": "postgres",
-        //   "connection": "postgres://localhost/pglocal"
-        // },
+        // To specify a backend for JugglingDB other than "memory", set the
+        // "type" value to one of Juggling's other supported types.  See
+        // https://github.com/1602/jugglingdb for more information.
+        //
+        // To use your own storage adapter, add the key
+        // "adapter" to the following configuration, and replace "type" and
+        // "connection" with any values your adapter expects.  Then make sure
+        // that you register your adapter factory with the following code in
+        // app.js:
+        //
+        //   feebs.store.register(adapterName, factoryFn)
+        //
+        // See node-feebs/lib/store/index.js and the default jugglingdb.js
+        // files for code demonstrating how to write a conformant adapter.  The
+        // default values are as follows:
+        //
+        //   "store": {
+        //     "adapter": "jugglingdb",
+        //     "type": "memory"
+        //   },
+        //
+        // To instead configure, say, a PostgreSQL store, the following could be
+        // used:
+        //
+        //   "store": {
+        //     "adapter": "jugglingdb",
+        //     "type": "postgres",
+        //     "url": "postgres://localhost/my_addon_database"
+        //   },
 
-        // Your add-on will be registered with the following hosts
-        // upon startup. In order to take advantage of the automatic 
-        // registration/deregistration, you need to make sure that 
-        // your Express app calls `addon.register()` (see app.js).
+        // Your add-on will be registered with the following hosts upon startup.
+        // In order to take advantage of the automatic registration/deregistration,
+        // you need to make sure that your express app calls `addon.register()`
+        // (see app.js). Also, you don't need to specify the user/pwd in the URL
+        // as in the examples below. If you don't provide a user/pwd, you will be
+        // prompted the first time you start the server.
         "hosts": [
           "http://admin:admin@localhost:1990/confluence",
           "http://admin:admin@localhost:2990/jira"
         ]
       },
 
-      // "production" is the environment you'll typically use
-      // in "production" -- duh!
+      // This is the production add-on configuration, which is enabled by setting
+      // the NODE_ENV=production environment variable.
       "production": {
+        // On a PaaS host like Heroku, the runtime environment will provide the
+        // HTTP port to you via the PORT environement variable, so we configure
+        // that to be honored here.
         "port": "$PORT",
-        // In "production" mode, you'll want to set the URL
-        // where your app will reside.
-        "localBaseUrl": "https://your-subdomain.herokuapps.com",
-        // You won't want to use the "memory" store in production
-        // mode.
+        // This is the public URL to your production add-on.
+        "localBaseUrl": "https://your-subdomain.herokuapp.com",
         "store": {
+          // You won't want to use the memory store in production, or your install
+          // registrations will be forgotten any time your app restarts.  Here
+          // we tell feebs to use the PostgreSQL backend for the default
+          // JugglingDB adapter.
           "type": "postgres",
-          "connection": "$DATABASE_URL"
-        }
+          // Again, a PaaS host like Heroku will probably provide the db connection
+          // URL to you through the environment, so we tell feebs to use that value.
+          "url": "$DATABASE_URL"
+        },
+
+        // Make sure that your add-on can only be registered by the hosts on
+        // these domains.
+        "whitelist": [
+          "*.atlassian.net",
+          "*.jira.com"
+        ]
       }
     }
-
 
 ### atlassian-plugin.xml
 
@@ -217,18 +260,20 @@ Simply adding the `addon.authenticate()` middleware will protect your resource. 
 `feebs` bundles and extends the awesome [request](https://github.com/mikeal/request) HTTP client. To make an OAuth-signed request back to the host, all you have to do is use `request` the way it was designed, but use a relative path as your URL back to the host's REST APIs. If `request` finds that you're using a relative URL, it will get signed. If you use an absolute URL, it bypasses signing.
 
     var httpClient = addon.httpClient(req);
-    httpClient.get('/', function(err, resp, body){
+    httpClient.get('/', function(err, res, body){
       ...
     });
 
+If not in a request context, you can perform the equivalent operation as follows:
 
-If not in a request context, you can perform the equivalent operation as follows:  
-
-    var httpClient = addon.httpClient( { hostBaseUrl: baseUrl, userId: userId, appKey: appKey } )
-    httpClient.get('/', function(err, resp, body){
+    var httpClient = addon.httpClient({
+      hostBaseUrl: baseUrl,
+      userId: userId,
+      appKey: appKey
+    });
+    httpClient.get('/', function(err, res, body){
       ...
     });
-
 
 ### How to deploy to Heroku
 
@@ -242,8 +287,8 @@ Next, create the app on Heroku:
 
 Then set the public and private key as environment variables in Heroku (you don't ever want to commit these `*.pem` files into your scm).
 
-    heroku config:set AP3_PUBLIC_KEY="`cat public-key.pem`" --app <add-on-name>
-    heroku config:set AP3_PRIVATE_KEY="`cat private-key.pem`" --app <add-on-name>
+    heroku config:set FEEBS_PUBLIC_KEY="`cat public-key.pem`" --app <add-on-name>
+    heroku config:set FEEBS_PRIVATE_KEY="`cat private-key.pem`" --app <add-on-name>
 
 You'll also need to make sure that your `NODE_ENV` is set to `production`:
 
@@ -264,7 +309,6 @@ It will take a minute or two for Heroku to spin up your add-on. It will need to 
 
 If you're running an OnDemand instance of JIRA or Confluence locally, you can install from UPM. See complete [instructions in the Atlassian Connect doc](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-Registertheadd-on) for more information.
 
-
 ## Troubleshooting
 
 ### "Unable to connect and retrieve descriptor from http://localhost:3000/atlassian-plugin.xml, message is: java.net.ConnectException: Connection refused"
@@ -274,6 +318,14 @@ You'll get this error if JIRA or Confluence can't access `http://localhost:3000/
     $ hostname
 
 If it returns `localhost`, change it. On a OS X, you'll need to set a proper "Computer Name" in System Preferences > Sharing.
+
+### Debugging HTTP Traffic
+
+Several tools exist to help snoop the HTTP traffic between your add-on and the host server:
+
+* Enable node-request's HTTP logging by starting your app with `NODE_DEBUG=request node app`
+* Check out the HTTP-debugging proxies [Charles](http://www.charlesproxy.com/) and [Fiddler](http://fiddler2.com/)
+* Try local TCP sniffing with [justniffer](http://justniffer.sourceforge.net/) by running something like `justniffer -i eth0 -r`, substituting the correct interface value
 
 ## Getting Help or Support
 

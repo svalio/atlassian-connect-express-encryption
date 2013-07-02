@@ -13,12 +13,18 @@ describe('Descriptor', function(){
     app.set('env','development');
     addon = feebs(app, {
       config: {
-        development:{}
+        key: 'my-test-app-key',
+        name: 'My Test App Name',
+        description: 'My test app description.',
+        version: '1',
+        vendorName: 'My Company',
+        vendorUrl: 'http://example.com',
+        permissions: ['create_oauth_link'],
+        documentationUrl: 'http://example.com',
+        development: {}
       }
     });
-    server = http.createServer(app).listen(3001, function(){
-      done();
-    });
+    server = http.createServer(app).listen(3001, done);
   });
 
   after(function(done){
@@ -31,5 +37,17 @@ describe('Descriptor', function(){
     done();
   });
 
+  it('should have variables replaced from the addon config', function(done){
+    assert.equal(addon.descriptor.key(), 'my-test-app-key');
+    assert.equal(addon.descriptor.name(), 'My Test App Name');
+    assert.equal(addon.descriptor.description(), 'My test app description.');
+    assert.equal(addon.descriptor.version(), '1');
+    assert.equal(addon.descriptor.vendorName(), 'My Company');
+    assert.equal(addon.descriptor.vendorUrl(), 'http://example.com');
+    assert.deepEqual(addon.descriptor.permissions(), ['create_oauth_link']);
+    assert.equal(addon.descriptor.documentationUrl(), 'http://example.com');
+    assert.equal(addon.descriptor.configureUrl(), '/plugins/servlet/remotable-plugins/my-test-app-key/config-page');
+    done();
+  });
 
 });

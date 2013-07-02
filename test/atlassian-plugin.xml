@@ -1,26 +1,31 @@
-<atlassian-plugin key="my-test-app-key" name="My Test App Name" plugins-version="2"
+<atlassian-plugin key="{{key}}" name="{{name}}" plugins-version="2"
   xmlns="https://remoteapps.jira.com/rest/remotable-plugins/1/installer/schema/atlassian-plugin">
 
   <plugin-info>
-    <description>My test app description.</description>
-    <version>1</version>
-    <vendor name="My Company" url="http://example.com"/>
+    <description>{{description}}</description>
+    <version>{{version}}</version>
+    <vendor name="{{vendorName}}" url="{{vendorUrl}}"/>
     <permissions>
-      <permission>create_oauth_link</permission>
+      {{#each permissions}}
+      <permission>{{item}}</permission>
+      {{/each}}
     </permissions>
-    <param name="configure.url">/plugins/servlet/remotable-plugins/my-app-key/config-page</param>
+    {{#if documentationUrl}}
+    <param name="documentation.url">{{documentationUrl}}</param>
+    {{/if}}
+    <param name="configure.url">/plugins/servlet/remotable-plugins/{{key}}/config-page</param>
   </plugin-info>
 
-
-  <remote-plugin-container key="container" display-url="@localBaseUrl@">
+  <remote-plugin-container key="container" display-url="{{localBaseUrl}}">
     <oauth>
       <public-key>
-@publicKey@
+{{publicKey}}
       </public-key>
     </oauth>
   </remote-plugin-container>
 
-  <webhook key="installed" event="remote_plugin_installed" url="/installed"/>
+  <webhook key="enabled" event="remote_plugin_enabled" url="/enabled"/>
+
   <general-page key="hello-world-page-in-jira" name="Hello World" section="system.top.navigation.bar" url="/hello-world"/>
   <general-page key="hello-world-page-in-confluence" name="Hello World" section="system.user" url="/hello-world"/>
 

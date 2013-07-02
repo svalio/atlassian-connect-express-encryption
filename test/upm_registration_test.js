@@ -18,11 +18,16 @@ describe('Auto registration', function(){
     app.use(express.bodyParser());
 
     // mock host
-    app.get(/consumer/, function(req, res){
+    app.get(/consumer/, function(req,res){
       res.contentType('xml');
       res.send("<consumer><key>Confluence:5413647675</key></consumer>");
     });
-    app.post(/installer/, function(req,res){
+    app.head(/plugins\/1.0/, function(res, res){
+      res.setHeader("upm-token", "123");
+      res.send(200);
+    });
+    app.post(/plugins\/1.0/, function(req, res){
+      assert(req.param("token"), "123");
       request({
         url: 'http://localhost:3001/enabled',
         method: 'POST',
@@ -37,10 +42,10 @@ describe('Auto registration', function(){
           productType: 'confluence'
         }
       });
-      res.send(200);
+      res.send(202);
     });
-    app.delete(/uninstaller/, function(req, res){
-      res.send(204);
+    app.delete(/plugins\/1.0\/(.*?)-key/, function(req, res){
+      res.send(200);
     });
 
     addon = feebs(app, {
@@ -128,7 +133,7 @@ describe('Auto registration', function(){
       eventFired(timer, done, function () {});
       addon.settings.get('Confluence:5413647675').then(
         function(settings){
-          assert(!settings, "settings not deleted");
+          assert(!settings, 'settings not deleted');
           done();
         }
       );
