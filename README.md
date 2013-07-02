@@ -97,11 +97,21 @@ The configuration for your add-on is done in two files:
 The `./config.json` file contains all of the settings for the add-on server. This file is broken into environments.
 
     {
+      // This is the add-on's basic information.  These values can be contributed to
+      // atlassian-plugin.xml via template replacement.
+      "key": "my-test-app-key",
+      "name": "My Test App Name",
+      "description": "My test app description.",
+      "version": "1",
+      "vendorName": "My Company",
+      "vendorUrl": "http://example.com",
+      "documentationUrl": "http://example.com",
+
       // This is the default environment. To change your app to use
       // a different env, set NODE_ENV (http://expressjs.com/api.html#app.configure)
       "development": {
 
-        // this is the port your Express server will listen on
+        // This is the port your Express server will listen on
         "port": 3000,
 
         // Feebs currently integrates with JugglingDB for persistence
