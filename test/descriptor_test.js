@@ -45,8 +45,10 @@ describe('Descriptor', function(){
     assert.equal(addon.descriptor.vendorName(), 'My Company');
     assert.equal(addon.descriptor.vendorUrl(), 'http://example.com');
     assert.deepEqual(addon.descriptor.permissions(), ['create_oauth_link']);
+    assert.equal(typeof addon.descriptor.documentationUrl(), 'string');
     assert.equal(addon.descriptor.documentationUrl(), 'http://example.com');
     assert.equal(addon.descriptor.configureUrl(), '/plugins/servlet/remotable-plugins/my-test-app-key/config-page');
+    assert.equal(typeof addon.descriptor.configureUrl(), 'string');
     done();
   });
 
