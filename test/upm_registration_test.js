@@ -5,9 +5,10 @@ var express = require('express');
 var app = express();
 var feebs = require('../index');
 var request = require('request')
-var addon = {};
+var spy = require('sinon').spy;
+var logger = require('./logger');
 var EventEmitter = require("events").EventEmitter;
-var spy = require("sinon").spy;
+var addon = {};
 
 describe('Auto registration', function(){
   var server = {};
@@ -56,7 +57,7 @@ describe('Auto registration', function(){
           ]
         }
       }
-    });
+    }, logger);
     server = http.createServer(app).listen(3001, function(){
       regPromise = addon.register().then(done);
       spy(regPromise, "resolve");

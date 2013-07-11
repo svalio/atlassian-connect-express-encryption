@@ -1,5 +1,5 @@
-// disable logging and oauth verification during tests
-process.env.FEEBS_OPTS = 'test nooauth';
+// disable oauth verification during tests
+process.env.FEEBS_OPTS = 'no-oauth';
 
 require('./config_test.js');
 require('./descriptor_test.js');

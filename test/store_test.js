@@ -7,8 +7,9 @@ var feebs = require('../index');
 var request = require('request')
 var RSVP = require('rsvp');
 var Schema = require('jugglingdb').Schema;
-var addon = {};
+var logger = require('./logger');
 var spy = require("sinon").spy;
+var addon = {};
 
 describe('Store', function(){
   var server = {};
@@ -60,7 +61,7 @@ describe('Store', function(){
           ]
         }
       }
-    });
+    }, logger);
 
     server = http.createServer(app).listen(3001, function(){
       addon.register().then(done);

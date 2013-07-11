@@ -4,13 +4,14 @@ var http = require('http');
 var express = require('express');
 var app = express();
 var feebs = require('../index');
+var logger = require('./logger');
 var addon = {};
 
 describe('Configuration', function(){
   var server = {};
 
   before(function(done){
-    app.set('env','development');
+    app.set('env', 'development');
     addon = feebs(app, {
       config: {
         "customShadowed": "global",
@@ -21,7 +22,7 @@ describe('Configuration', function(){
           "customEnv": "bar"
         }
       }
-    });
+    }, logger);
     server = http.createServer(app).listen(3001, function(){
       done();
     });

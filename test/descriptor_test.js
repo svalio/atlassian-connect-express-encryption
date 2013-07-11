@@ -4,6 +4,7 @@ var http = require('http');
 var express = require('express');
 var app = express();
 var feebs = require('../index');
+var logger = require('./logger');
 var addon = {};
 
 describe('Descriptor', function(){
@@ -23,7 +24,7 @@ describe('Descriptor', function(){
         documentationUrl: 'http://example.com',
         development: {}
       }
-    });
+    }, logger);
     server = http.createServer(app).listen(3001, done);
   });
 
@@ -45,8 +46,12 @@ describe('Descriptor', function(){
     assert.equal(addon.descriptor.vendorName(), 'My Company');
     assert.equal(addon.descriptor.vendorUrl(), 'http://example.com');
     assert.deepEqual(addon.descriptor.permissions(), ['create_oauth_link']);
-    assert.equal(addon.descriptor.documentationUrl(), 'http://example.com');
-    assert.equal(addon.descriptor.configureUrl(), '/plugins/servlet/remotable-plugins/my-test-app-key/config-page');
+    var docUrl = addon.descriptor.documentationUrl();
+    assert.equal(typeof docUrl, 'string');
+    assert.equal(docUrl, 'http://example.com');
+    var configUrl = addon.descriptor.configureUrl();
+    assert.equal(typeof configUrl, 'string');
+    assert.equal(configUrl, '/plugins/servlet/remotable-plugins/my-test-app-key/config-page');
     done();
   });
 

@@ -6,6 +6,7 @@ var app = express();
 var feebs = require('../index');
 var request = require('request')
 var sinon = require('sinon');
+var logger = require('./logger');
 var addon = {};
 
 describe('OAuth', function(){
@@ -18,7 +19,7 @@ describe('OAuth', function(){
       config: {
         development: {}
       }
-    });
+    }, logger);
 
     server = http.createServer(app).listen(3001, function(){
       addon.register();
