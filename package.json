@@ -1,6 +1,6 @@
 {
-  "name": "feebs",
-  "version": "0.5.2",
+  "name": "atlassian-connect-express",
+  "version": "0.6.0",
   "description": "Library for building Atlassian Add-ons on top of Express",
   "dependencies": {
     "express": "~3.3.4",
@@ -24,9 +24,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://bitbucket.org/atlassian/node-feebs"
+    "url": "http://bitbucket.org/atlassian/atlassian-connect-express"
   },
-  "homepage": "https://bitbucket.org/atlassian/node-feebs",
+  "homepage": "https://bitbucket.org/atlassian/atlassian-connect-express",
   "keywords": [
     "atlassian",
     "plugins",
@@ -51,7 +51,8 @@
       "email": "rmanalang@atlassian.com"
     },
     {
-      "name": "Tim Pettersen"
+      "name": "Tim Pettersen",
+      "email": "tim@atlassian.com"
     }
   ],
   "license": "Apache-2.0"
