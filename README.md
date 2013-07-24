@@ -18,7 +18,7 @@ It's important to understand that [Express](http://expressjs.com/) by itself is 
 
 ## Getting Started
 
-The fastest way to get started is to install the `atlas-connect` tool. The CLI makes it possible to generate a `atlassian-connect-express` enabled add-on scaffold very quickly. To install:
+The fastest way to get started is to install the `atlas-connect` CLI tool. The CLI makes it possible to generate a `atlassian-connect-express` enabled add-on scaffold very quickly. To install:
 
     npm i -g atlas-connect
 
