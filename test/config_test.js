@@ -3,7 +3,7 @@ var assert = require('assert');
 var http = require('http');
 var express = require('express');
 var app = express();
-var feebs = require('../index');
+var ac = require('../index');
 var logger = require('./logger');
 var addon = {};
 
@@ -12,7 +12,7 @@ describe('Configuration', function(){
 
   before(function(done){
     app.set('env', 'development');
-    addon = feebs(app, {
+    addon = ac(app, {
       config: {
         "customShadowed": "global",
         "customGlobal": "foo",

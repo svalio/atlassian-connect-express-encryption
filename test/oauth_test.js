@@ -3,7 +3,7 @@ var assert = require('assert');
 var http = require('http');
 var express = require('express');
 var app = express();
-var feebs = require('../index');
+var ac = require('../index');
 var request = require('request')
 var sinon = require('sinon');
 var logger = require('./logger');
@@ -15,7 +15,7 @@ describe('OAuth', function(){
   before(function(done){
     app.set('env','development');
     app.use(express.bodyParser());
-    addon = feebs(app, {
+    addon = ac(app, {
       config: {
         development: {}
       }

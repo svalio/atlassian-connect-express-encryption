@@ -1,20 +1,14 @@
-# feebs: Node.js package for Express based Atlassian Add-ons
+# atlassian-connect-express: Node.js package for Express based Atlassian Add-ons
 
-[![Build Status](https://drone.io/bitbucket.org/atlassian/node-feebs/status.png)](https://drone.io/bitbucket.org/atlassian/node-feebs/latest)
+[![Build Status](https://drone.io/bitbucket.org/atlassian/atlassian-connect-express/status.png)](https://drone.io/bitbucket.org/atlassian/atlassian-connect-express/latest)
 
-`feebs` is a toolkit for creating [Atlassian Connect](https://developer.atlassian.com/display/AC/Atlassian+Connect) based Add-ons with [Node.js](http://nodejs.org/). Atlassian Connect is a distributed component model for creating Atlassian add-ons. Add-ons built with Atlassian Connect extend Atlassian applications over standard web protocols and APIs.
+`atlassian-connect-express` is a toolkit for creating [Atlassian Connect](https://developer.atlassian.com/display/AC/Atlassian+Connect) based Add-ons with [Node.js](http://nodejs.org/). Atlassian Connect is a distributed component model for creating Atlassian add-ons. Add-ons built with Atlassian Connect extend Atlassian applications over standard web protocols and APIs.
 
-## About Feebs, the name
+## More about `atlassian-connect-express`
 
-[Atlas](http://en.wikipedia.org/wiki/Atlas_(mythology)) (in Greek mythology) was the primordial Titan who held up the celestial sphere. Atlas is paired with [Phoebe](http://en.wikipedia.org/wiki/Phoebe_(mythology)) and governs the moon.
+The `atlassian-connect-express` package helps you get started developing add-ons quickly, using Node.js and Express as the add-on server.  
 
-Feebs is a common nickname for Phoebe. Together, they help create new offspring for Atlassian's products.
-
-## More about `feebs`
-
-The `feebs` package helps you get started developing add-ons quickly, using Node.js and Express as the add-on server.  
-
-It's important to understand that [Express](http://expressjs.com/) by itself is a web app framework for Node. `feebs` just provides a library of middleware and convenience helpers that make it easier to build Atlassian add-ons. Specifically, `feebs` adds:
+It's important to understand that [Express](http://expressjs.com/) by itself is a web app framework for Node. `atlassian-connect-express` just provides a library of middleware and convenience helpers that make it easier to build Atlassian add-ons. Specifically, `atlassian-connect-express` adds:
 
 * An optimized dev loop by handling registration and deregistration on the target Atlassian application for you at startup and shutdown
 * A filesystem watcher that detects changes to `atlassian-plugin.xml`. When changes are detected, the add-on is re-registered with the host(s)
@@ -24,15 +18,15 @@ It's important to understand that [Express](http://expressjs.com/) by itself is 
 
 ## Getting Started
 
-The fastest way to get started is to install the `feebs-cli` tool. The CLI makes it possible to generate a `feebs` enabled add-on scaffold very quickly. To install:
+The fastest way to get started is to install the `atlas-connect` tool. The CLI makes it possible to generate a `atlassian-connect-express` enabled add-on scaffold very quickly. To install:
 
-    npm i -g feebs-cli
+    npm i -g atlas-connect
 
 ### Create a project
 
 Let's start by creating an add-on project:
 
-    feebs new <project_name>
+    atlas-connect new <project_name>
 
 This creates a new project home directory with the following contents:
 
@@ -77,13 +71,13 @@ If you've chosen the first option and have a running instance of the Vagrant box
 This will boot up your Express server on the default port of 3000 and do the following:
 
 * Register your add-on's `atlassian-plugin.xml` (at <http://localhost:3000/atlassian-plugin.xml>) with the host
-* Start watching for changes to your `atlassian-plugin.xml`. If the file is modified, `feebs` will re-register your add-on with the host.
+* Start watching for changes to your `atlassian-plugin.xml`. If the file is modified, `atlassian-connect-express` will re-register your add-on with the host.
 
 ### The Dev Loop
 
 At this point, you can start building your add-on. Changes to views load automatically, however, if you make changes to any JavaScript, you need to restart Express. If you want your server to automatically restart when your JavaScript changes, consider using [nodemon](https://npmjs.org/package/nodemon) or the like.
 
-As you've noticed, `feebs` automatically registers your add-on with the target application when it's started. Another nice feature is that it automatically de-registers it at shutdown `<ctrl-c>`.
+As you've noticed, `atlassian-connect-express` automatically registers your add-on with the target application when it's started. Another nice feature is that it automatically de-registers it at shutdown `<ctrl-c>`.
 
 ### Configuration
 
@@ -114,7 +108,7 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         // This is the port your Express server will listen on
         "port": 3000,
 
-        // Feebs currently integrates with JugglingDB for persistence
+        // atlassian-connect-express currently integrates with JugglingDB for persistence
         // to store the host client information (i.e., client key, host public
         // key, etc). When no adapter is specified, it defaults to JugglingDB's
         // fallback memory storage.
@@ -129,9 +123,9 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         // that you register your adapter factory with the following code in
         // app.js:
         //
-        //   feebs.store.register(adapterName, factoryFn)
+        //   ac.store.register(adapterName, factoryFn)
         //
-        // See node-feebs/lib/store/index.js and the default jugglingdb.js
+        // See atlassian-connect-express/lib/store/index.js and the default jugglingdb.js
         // files for code demonstrating how to write a conformant adapter.  The
         // default values are as follows:
         //
@@ -173,11 +167,11 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         "store": {
           // You won't want to use the memory store in production, or your install
           // registrations will be forgotten any time your app restarts.  Here
-          // we tell feebs to use the PostgreSQL backend for the default
+          // we tell atlassian-connect-express to use the PostgreSQL backend for the default
           // JugglingDB adapter.
           "type": "postgres",
           // Again, a PaaS host like Heroku will probably provide the db connection
-          // URL to you through the environment, so we tell feebs to use that value.
+          // URL to you through the environment, so we tell atlassian-connect-express to use that value.
           "url": "$DATABASE_URL"
         },
 
@@ -199,16 +193,16 @@ To see all of the available settings in the `atlassian-plugin.xml`, visit the in
 * [JIRA](http://atlassian-connect.herokuapp.com/help#jira/webhook)
 * [Confluence](http://atlassian-connect.herokuapp.com/help#confluence/webhook)
 
-## Sample Add-ons using `feebs`
+## Sample Add-ons using `atlassian-connect-express`
 
 * [Sequence Diagramr](https://bitbucket.org/rmanalan/sequence-diagramr) -- a simple Confluence remote macro for creating UML sequence diagrams
 * [Tim's Word Cloud](https://bitbucket.org/tpettersen/confluence-word-cloud) -- a macro that takes the contents of a page and constructs an SVG-based word cloud
 * [TaskMaster](https://bitbucket.org/mrdon/taskmaster-plugin) -- create JIRA subtasks like a ninja
 * [Atlassian Connect Webhook Inspector](https://bitbucket.org/rmanalan/webhook-inspector) -- a simple tool to log webhooks fired in Atlassian apps for development purposes.
 
-## The `feebs` scaffold
+## The `atlassian-connect-express` scaffold
 
-When you generate a new `feebs` add-on, you're actually just downloading a copy of the [Atlassian Connect Expressjs template](https://bitbucket.org/atlassian/atlassian-connect-expressjs-template/).
+When you generate a new `atlassian-connect-express` add-on, you're actually just downloading a copy of the [Atlassian Connect Expressjs template](https://bitbucket.org/atlassian/atlassian-connect-expressjs-template/).
 
 ### Handlebars layouts and templates
 
@@ -222,7 +216,7 @@ To learn more about how Handlebars works in Expressjs, take a look at the [expre
 
 ### Special context variables
 
-`feebs` injects a handful of useful context variables into your render context. You can access any of these within your templates:
+`atlassian-connect-express` injects a handful of useful context variables into your render context. You can access any of these within your templates:
 
 * `title`: the add-on's name (derived from `atlassian-plugin.xml`)
 * `appKey`: the application key defined in `atlassian-plugin.xml`
@@ -239,7 +233,7 @@ You can access any of the variables above as normal Handlebars variables. For ex
 
 ### How to secure a route with OAuth
 
-Add-ons are secured through [two-legged OAuth](http://todo). To simplify OAuth verification on your routes, you can simply add a `feebs` middleware to your route:
+Add-ons are secured through [two-legged OAuth](http://todo). To simplify OAuth verification on your routes, you can simply add a `atlassian-connect-express` middleware to your route:
 
     module.exports = function (app, addon) {
         app.get('/protected-resource',
@@ -257,7 +251,7 @@ Simply adding the `addon.authenticate()` middleware will protect your resource. 
 
 ### How to send a signed outbound HTTP request back to the host
 
-`feebs` bundles and extends the awesome [request](https://github.com/mikeal/request) HTTP client. To make an OAuth-signed request back to the host, all you have to do is use `request` the way it was designed, but use a relative path as your URL back to the host's REST APIs. If `request` finds that you're using a relative URL, it will get signed. If you use an absolute URL, it bypasses signing.
+`atlassian-connect-express` bundles and extends the awesome [request](https://github.com/mikeal/request) HTTP client. To make an OAuth-signed request back to the host, all you have to do is use `request` the way it was designed, but use a relative path as your URL back to the host's REST APIs. If `request` finds that you're using a relative URL, it will get signed. If you use an absolute URL, it bypasses signing.
 
     var httpClient = addon.httpClient(req);
     httpClient.get('/', function(err, res, body){
@@ -287,8 +281,8 @@ Next, create the app on Heroku:
 
 Then set the public and private key as environment variables in Heroku (you don't ever want to commit these `*.pem` files into your scm).
 
-    heroku config:set FEEBS_PUBLIC_KEY="`cat public-key.pem`" --app <add-on-name>
-    heroku config:set FEEBS_PRIVATE_KEY="`cat private-key.pem`" --app <add-on-name>
+    heroku config:set AC_PUBLIC_KEY="`cat public-key.pem`" --app <add-on-name>
+    heroku config:set AC_PRIVATE_KEY="`cat private-key.pem`" --app <add-on-name>
 
 You'll also need to make sure that your `NODE_ENV` is set to `production`:
 
@@ -329,8 +323,8 @@ Several tools exist to help snoop the HTTP traffic between your add-on and the h
 
 ## Getting Help or Support
 
-The `feebs` tools are currently experimental. With that said, feel free to [report issues](https://bitbucket.org/atlassian/node-feebs/issues?status=new&status=open). If you want to learn more about Atlassian Connect, you can visit <https://developer.atlassian.com/display/AC>.
+The `atlassian-connect-express` tools are currently experimental. With that said, feel free to [report issues](https://bitbucket.org/atlassian/atlassian-connect-express/issues?status=new&status=open). If you want to learn more about Atlassian Connect, you can visit <https://developer.atlassian.com/display/AC>.
 
 ## Contributing
 
-Even though this is just an exploratory project at this point, it's also open source [Apache 2.0](https://bitbucket.org/atlassian/node-feebs/src/master/LICENSE.txt). So, please feel free to fork and send us pull requests.
+Even though this is just an exploratory project at this point, it's also open source [Apache 2.0](https://bitbucket.org/atlassian/atlassian-connect-express/src/master/LICENSE.txt). So, please feel free to fork and send us pull requests.

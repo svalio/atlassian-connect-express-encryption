@@ -3,7 +3,7 @@ var assert = require('assert');
 var http = require('http');
 var express = require('express');
 var app = express();
-var feebs = require('../index');
+var ac = require('../index');
 var request = require('request')
 var RSVP = require('rsvp');
 var Schema = require('jugglingdb').Schema;
@@ -41,7 +41,7 @@ describe('Store', function(){
       res.send(200);
     });
 
-    feebs.store.register("teststore", function (logger, opts) {
+    ac.store.register("teststore", function (logger, opts) {
       var store = require("../lib/store/jugglingdb")(logger, opts);
       spy(store, "get");
       spy(store, "set");
@@ -49,7 +49,7 @@ describe('Store', function(){
       return store;
     });
 
-    addon = feebs(app, {
+    addon = ac(app, {
       config: {
         development: {
           store: {

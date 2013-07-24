@@ -3,7 +3,7 @@ var assert = require('assert');
 var http = require('http');
 var express = require('express');
 var app = express();
-var feebs = require('../index');
+var ac = require('../index');
 var request = require('request')
 var logger = require('./logger');
 var spy = require("sinon").spy;
@@ -44,7 +44,7 @@ describe('Auto registration', function(){
       res.send(204);
     });
 
-    addon = feebs(app, {
+    addon = ac(app, {
       config: {
         "development": {
           "hosts": [

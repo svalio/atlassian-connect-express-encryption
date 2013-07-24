@@ -1,4 +1,4 @@
-process.env.FEEBS_PRIVATE_KEY = "-----BEGIN RSA PRIVATE KEY-----\
+process.env.AC_PRIVATE_KEY = "-----BEGIN RSA PRIVATE KEY-----\
 MIIEpAIBAAKCAQEArVjfm73LwTC/S8M/Mwx9RYhNdEYqodULD/+jrT+Ser4PhcYw\
 51DY3xbR3boZIn0GdNzVzWfoXoaiq24hvNsnxJc4pRyUn8RKr3DjTdqeuR64CWTq\
 AckNjXUpWscj2ryCnLpl6zAbE3agE96wrt4KeBGxnvriZaROEpJmWpNt7f4NdKww\
@@ -26,7 +26,7 @@ VodIoKZ2seX58PKlDyRjwLURdZReqaBvriqbaZEjYi6Alc/VpwUZxOEfVugoSCt7\
 pDUMvuFeY29lOKCQUDeszDrmFUMST8yHunacrWjx1yEm9AhIRYivaQ==\
 -----END RSA PRIVATE KEY-----";
 
-process.env.FEEBS_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\
+process.env.AC_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArVjfm73LwTC/S8M/Mwx9\
 RYhNdEYqodULD/+jrT+Ser4PhcYw51DY3xbR3boZIn0GdNzVzWfoXoaiq24hvNsn\
 xJc4pRyUn8RKr3DjTdqeuR64CWTqAckNjXUpWscj2ryCnLpl6zAbE3agE96wrt4K\
