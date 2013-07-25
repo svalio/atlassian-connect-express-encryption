@@ -323,7 +323,7 @@ Several tools exist to help snoop the HTTP traffic between your add-on and the h
 
 ## Getting Help or Support
 
-The `atlassian-connect-express` tools are currently experimental. With that said, feel free to [report issues](https://bitbucket.org/atlassian/atlassian-connect-express/issues?status=new&status=open). If you want to learn more about Atlassian Connect, you can visit <https://developer.atlassian.com/display/AC>.
+You can get help by emailing <atlassian-connect-dev@googlegroups.com> or report bugs on our [JIRA](https://ecosystem.atlassian.net/browse/AC). If you want to learn more about Atlassian Connect, you can visit <https://developer.atlassian.com/display/AC>.
 
 ## Contributing
 
