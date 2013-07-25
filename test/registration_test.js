@@ -10,7 +10,7 @@ var spy = require("sinon").spy;
 var EventEmitter = require("events").EventEmitter;
 var addon = {};
 
-describe('Auto registration', function(){
+describe('Auto registration (Connect, deprecated)', function(){
   var server = {};
   var regPromise;
 

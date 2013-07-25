@@ -10,7 +10,7 @@ var logger = require('./logger');
 var EventEmitter = require("events").EventEmitter;
 var addon = {};
 
-describe('Auto registration', function(){
+describe('Auto registration (UPM)', function(){
   var server = {};
   var regPromise;
 
