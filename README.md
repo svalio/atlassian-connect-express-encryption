@@ -144,7 +144,7 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         //   },
         //
         // You will also need an appropriate JugglingDB driver if you choose something
-        // other than the default `type`.  In the PostgreSQL case you'd need to
+        // other than the default "type".  In the PostgreSQL case you'd need to
         // run the following command to add the proper support:
         //
         //   $ npm install -S jugglingdb-postgres
