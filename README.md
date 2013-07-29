@@ -142,6 +142,12 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         //     "type": "postgres",
         //     "url": "postgres://localhost/my_addon_database"
         //   },
+        //
+        // You will also need an appropriate JugglingDB driver if you choose something
+        // other than the default `type`.  In the PostgreSQL case you'd need to
+        // run the following command to add the proper support:
+        //
+        //   $ npm install -S jugglingdb-postgres
 
         // Your add-on will be registered with the following hosts upon startup.
         // In order to take advantage of the automatic registration/deregistration,
