@@ -75,22 +75,22 @@ describe('Store', function(){
   it('should store client info', function(done){
     addon.on('host_settings_saved', function(err, settings){
       addon.settings.get('clientInfo', addOnSettings.clientKey).then(function(settings){
-        assert(settings.clientKey, addOnSettings.clientKey);
+        assert.equal(settings.clientKey, addOnSettings.clientKey);
         done();
-      }).then(null, done);
+      });
     });
   });
 
   it('should allow storing arbitrary key/values', function(done){
     addon.settings.set('arbitrarySetting', 'someValue', addOnSettings.clientKey).then(function(setting){
-      assert(setting.val, '\"someValue\"');
+      assert.equal(setting, 'someValue');
       done();
     })
   });
 
   it('should allow storing arbitrary key/values as JSON', function(done){
     addon.settings.set('arbitrarySetting2', {data: 1}, addOnSettings.clientKey).then(function(setting){
-      assert(setting.val, { data: 1});
+      assert.deepEqual(setting, {data: 1});
       done();
     })
   });
