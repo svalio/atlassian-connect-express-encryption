@@ -70,15 +70,19 @@ describe('Descriptor', function(){
 
   it('should list webhooks', function(done){
     var webhooks = addon.descriptor.webhooks();
-    assert.equal(webhooks.length, 1);
+    assert.equal(webhooks.length, 2);
+    var enabled = webhooks[0];
+    assert.equal(enabled.key, 'enabled');
+    assert.equal(enabled.event, 'remote_plugin_enabled');
+    assert.equal(enabled.url, '/enabled');
+    var testHook = webhooks[1];
+    assert.equal(testHook.key, 'test_hook');
+    assert.equal(testHook.event, 'remote_plugin_test_hook');
+    assert.equal(testHook.url, '/test-hook');
     webhooks = addon.descriptor.webhooks('foo');
     assert.equal(webhooks.length, 0);
     webhooks = addon.descriptor.webhooks('remote_plugin_enabled');
     assert.equal(webhooks.length, 1);
-    var webhook = webhooks[0];
-    assert.equal(webhook.key, 'enabled');
-    assert.equal(webhook.event, 'remote_plugin_enabled');
-    assert.equal(webhook.url, '/enabled');
     done();
   });
 
