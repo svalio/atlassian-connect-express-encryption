@@ -87,11 +87,14 @@ describe('Webhook', function(){
   });
 
   it('should perform special oauth verification for the enabled webhook', function(done){
-    var spy = sinon.spy();
-    addon.once('enabled_webhook_oauth_verification_triggered', spy);
+    var triggered = sinon.spy();
+    addon.once('webhook_oauth_verification_triggered', triggered);
+    var successful = sinon.spy();
+    addon.once('enabled_webhook_oauth_verification_successful', successful);
 
     addon.once('remote_plugin_enabled', function (key, body, req) {
-      assert(spy.called);
+      assert(triggered.called);
+      assert(successful.called);
       done();
     });
 
@@ -99,11 +102,14 @@ describe('Webhook', function(){
   });
 
   it('should perform normal oauth verification for other webhooks', function(done){
-    var spy = sinon.spy();
-    addon.once('other_webhook_oauth_verification_triggered', spy);
+    var triggered = sinon.spy();
+    addon.once('webhook_oauth_verification_triggered', triggered);
+    var successful = sinon.spy();
+    addon.once('other_webhook_oauth_verification_successful', successful);
 
     addon.once('remote_plugin_test_hook', function (key, body, req) {
-      assert(spy.called);
+      assert(triggered.called);
+      assert(successful.called);
       done();
     });
 

@@ -91,7 +91,7 @@ describe('Auto registration (UPM)', function(){
   it('should store the host details after installation', function(done){
     addon.on('host_settings_saved', function(key, settings){
       addon.settings.get('clientInfo', key).then(function(d){
-        assert.deepEqual(d.val, settings);
+        assert.deepEqual(d, settings);
         done();
       });
     });

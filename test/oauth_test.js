@@ -51,8 +51,10 @@ describe('OAuth', function(){
   });
 
   it('should oauth-verify routes that require authentication', function(done){
-    var spy = sinon.spy();
-    addon.once('oauth_verification_triggered', spy);
+    var triggered = sinon.spy();
+    addon.once('oauth_verification_triggered', triggered);
+    var successful = sinon.spy();
+    addon.once('oauth_verification_successful', successful);
 
     app.get(
       '/oauth-pass',
@@ -69,15 +71,18 @@ describe('OAuth', function(){
     request(signedUrl, {jar: false}, function (err, res) {
       assert.equal(err, null);
       assert.equal(res.statusCode, 204);
-      assert(spy.called);
+      assert.ok(triggered.called);
+      assert.ok(successful.called);
       done();
     });
 
   });
 
   it('should fail to oauth-verify with an unknown client key', function(done){
-    var spy = sinon.spy();
-    addon.once('oauth_verification_triggered', spy);
+    var triggered = sinon.spy();
+    addon.once('oauth_verification_triggered', triggered);
+    var successful = sinon.spy();
+    addon.once('oauth_verification_successful', successful);
 
     app.get(
       '/oauth-unknown-key',
@@ -95,15 +100,19 @@ describe('OAuth', function(){
       assert.equal(err, null);
       assert.equal(res.statusCode, 401);
       assert.equal(res.body, 'OAuth consumer unknownClientKey not approved to make requests.');
-      assert(spy.called);
+      assert.ok(triggered.called);
+      assert.ok(!successful.called);
+      addon.removeListener('oauth_verification_successful', successful);
       done();
     });
 
   });
 
   it('should fail to oauth-verify when signed with a bad private key', function(done){
-    var spy = sinon.spy();
-    addon.once('oauth_verification_triggered', spy);
+    var triggered = sinon.spy();
+    addon.once('oauth_verification_triggered', triggered);
+    var successful = sinon.spy();
+    addon.once('oauth_verification_successful', successful);
 
     app.get(
       '/oauth-bad-private-key',
@@ -122,15 +131,19 @@ describe('OAuth', function(){
       assert.equal(err, null);
       assert.equal(res.statusCode, 401);
       assert.equal(res.body, 'OAuth request not authenticated: Invalid signature');
-      assert(spy.called);
+      assert.ok(triggered.called);
+      assert.ok(!successful.called);
+      addon.removeListener('oauth_verification_successful', successful);
       done();
     });
 
   });
 
   it('should not oauth-verify unprotected routes', function(done){
-    var spy = sinon.spy();
-    addon.once('oauth_verification_triggered', spy);
+    var triggered = sinon.spy();
+    addon.once('oauth_verification_triggered', triggered);
+    var successful = sinon.spy();
+    addon.once('oauth_verification_successful', successful);
 
     app.get(
       '/unprotected',
@@ -143,8 +156,10 @@ describe('OAuth', function(){
       assert.equal(err, null);
       assert.equal(res.statusCode, 200);
       assert.equal(res.body, 'Yay');
-      assert.ok(!spy.called);
-      addon.removeListener('oauth_verification_triggered', spy);
+      assert.ok(!triggered.called);
+      addon.removeListener('oauth_verification_successful', triggered);
+      assert.ok(!successful.called);
+      addon.removeListener('oauth_verification_successful', successful);
       done();
     });
 
