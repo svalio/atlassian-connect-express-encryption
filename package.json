@@ -20,7 +20,8 @@
   "main": "index.js",
   "devDependencies": {
     "mocha": "*",
-    "sinon": "*"
+    "sinon": "*",
+    "xunit-file": "*"
   },
   "repository": {
     "type": "git",
@@ -38,8 +39,7 @@
     "web"
   ],
   "scripts": {
-    "test": "mocha test",
-    "bamboo-test": "mocha -R xunit test"
+    "test": "mocha test"
   },
   "author": "Atlassian",
   "contributors": [
