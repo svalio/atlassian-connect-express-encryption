@@ -64,7 +64,7 @@ describe('Descriptor', function(){
     assert.equal(docUrl, 'http://example.com');
     var configUrl = addon.descriptor.configureUrl();
     assert.equal(typeof configUrl, 'string');
-    assert.equal(configUrl, '/plugins/servlet/remotable-plugins/my-test-app-key/config-page');
+    assert.equal(configUrl, '/plugins/servlet/atlassian-connect/my-test-app-key/config-page');
     done();
   });
 
