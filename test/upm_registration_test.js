@@ -60,7 +60,6 @@ describe('Auto registration (UPM)', function(){
     }, logger);
     server = http.createServer(app).listen(3001, function(){
       regPromise = addon.register().then(done);
-      spy(regPromise, "resolve");
     });
   });
 
