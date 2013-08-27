@@ -16,6 +16,7 @@ describe('Auto registration (Connect, deprecated)', function(){
 
   before(function(done){
     app.set('env','development');
+    process.env.AC_OPTS = 'no-oauth';
     app.use(express.bodyParser());
 
     // mock host
@@ -55,7 +56,6 @@ describe('Auto registration (Connect, deprecated)', function(){
     }, logger);
     server = http.createServer(app).listen(3001, function(){
       regPromise = addon.register().then(done);
-      spy(regPromise, "resolve");
     });
   });
 

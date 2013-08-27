@@ -16,22 +16,27 @@ module.exports = function (logger, opts) {
   return {
 
     get: function (key, clientKey) {
-      var promise = new RSVP.Promise();
-      promise.resolve(store(clientKey)[key]);
+      var promise = new RSVP.Promise(function(resolve) {
+        resolve(store(clientKey)[key]);
+      });
       return promise;
     },
 
     set: function (key, val, clientKey) {
-      var promise = new RSVP.Promise();
-      store(clientKey)[key] = val;
-      promise.resolve();
+      var promise = new RSVP.Promise(function(resolve) {
+        store(clientKey)[key] = val;
+        resolve();
+
+      });
       return promise;
     },
 
     del: function (key, clientKey) {
-      var promise = new RSVP.Promise();
-      delete store(clientKey)[key];
-      promise.resolve();
+      var promise = new RSVP.Promise(function(resolve) {
+        delete store(clientKey)[key];
+        resolve();
+
+      });
       return promise;
     }
 
