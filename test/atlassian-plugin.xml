@@ -1,5 +1,5 @@
 <atlassian-plugin key="{{key}}" name="{{name}}" plugins-version="2"
-  xmlns="https://remoteapps.jira.com/rest/remotable-plugins/1/installer/schema/atlassian-plugin">
+  xmlns="https://remoteapps.jira.com/rest/atlassian-connect/1/installer/schema/atlassian-plugin">
 
   <plugin-info>
     <description>{{description}}</description>
@@ -13,7 +13,7 @@
     {{#if documentationUrl}}
     <param name="documentation.url">{{documentationUrl}}</param>
     {{/if}}
-    <param name="configure.url">/plugins/servlet/remotable-plugins/{{key}}/config-page</param>
+    <param name="configure.url">/plugins/servlet/atlassian-connect/{{key}}/config-page</param>
   </plugin-info>
 
   <remote-plugin-container key="container" display-url="{{localBaseUrl}}">

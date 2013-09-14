@@ -1,6 +1,6 @@
 {
   "name": "atlassian-connect-express",
-  "version": "0.7.0",
+  "version": "0.8.2",
   "description": "Library for building Atlassian Add-ons on top of Express",
   "dependencies": {
     "express": "~3.3.4",
@@ -20,7 +20,8 @@
   "main": "index.js",
   "devDependencies": {
     "mocha": "*",
-    "sinon": "*"
+    "sinon": "*",
+    "xunit-file": "*"
   },
   "repository": {
     "type": "git",
