@@ -1,0 +1,58 @@
+{
+    "key": "my-test-app-key",
+    "name": "My Test App Name",
+    "version": "1",
+    "description": "My test app description.",
+    "vendor": {
+        "name": "My Company",
+        "url": "http://example.com"
+    },
+    "links": {
+        "self": "%%BASE_URI%%/capabilities",
+        "homepage": "http://www.example.com"
+    },
+    "capabilities": {
+        "connect-container": {
+            "displayUrl": "%%BASE_URI%%",
+            "oauth": {
+                "publicKey": "%%PUBLIC_KEY%%"
+            }
+        },
+        "web-items": {
+            "link": "/my-general-page",
+            "location": "atl.admin/menu",
+            "context": "addon",
+            "weight": 100,
+            "dialog": false,
+            "styleClasses": [
+                "ac-link",
+                "aui-link"
+            ],
+            "tooltip": {
+                "value": "click me!",
+                "i18n": "click.me"
+            },
+            "icon": {
+                "width": 16,
+                "height": 16,
+                "url": "/some/icon.png"
+            },
+            "conditions": [],
+            "params": {},
+            "name": {
+                "value": "My Web Item",
+                "i18n": "my.webitem"
+            }
+        },
+        "webhooks": [
+            {
+                "event": "plugin_enabled",
+                "url": "/enabled"
+            },
+            {
+                "event": "plugin_test_hook",
+                "url": "/test-hook"
+            }
+        ]
+    }
+}

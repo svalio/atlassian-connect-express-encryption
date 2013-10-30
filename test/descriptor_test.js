@@ -5,6 +5,7 @@ var express = require('express');
 var app = express();
 var ac = require('../index');
 var logger = require('./logger');
+var _ = require('underscore');
 var addon = {};
 
 describe('Descriptor', function(){
@@ -39,49 +40,46 @@ describe('Descriptor', function(){
   });
 
   it('should have variables replaced from the addon config', function(done){
-    var key = addon.descriptor.key();
+    var key = addon.descriptor.key;
     assert.equal(typeof key, 'string');
     assert.equal(key, 'my-test-app-key');
-    var name = addon.descriptor.name();
+    var name = addon.descriptor.name;
     assert.equal(typeof name, 'string');
     assert.equal(name, 'My Test App Name');
-    var description = addon.descriptor.description();
+    var description = addon.descriptor.description;
     assert.equal(typeof description, 'string');
     assert.equal(description, 'My test app description.');
-    var version = addon.descriptor.version();
+    var version = addon.descriptor.version;
     assert.equal(typeof version, 'string');
     assert.equal(version, '1');
-    var vendorName = addon.descriptor.vendorName();
+    var vendorName = addon.descriptor.vendor.name;
     assert.equal(typeof vendorName, 'string');
     assert.equal(vendorName, 'My Company');
-    var vendorUrl = addon.descriptor.vendorUrl();
+    var vendorUrl = addon.descriptor.vendor.url;
     assert.equal(typeof vendorUrl, 'string');
     assert.equal(vendorUrl, 'http://example.com');
-    var permissions = addon.descriptor.permissions();
-    assert.deepEqual(permissions, ['create_oauth_link']);
-    var docUrl = addon.descriptor.documentationUrl();
-    assert.equal(typeof docUrl, 'string');
-    assert.equal(docUrl, 'http://example.com');
-    var configUrl = addon.descriptor.configureUrl();
-    assert.equal(typeof configUrl, 'string');
-    assert.equal(configUrl, '/plugins/servlet/atlassian-connect/my-test-app-key/config-page');
+    // var permissions = addon.descriptor.permissions;
+    // assert.deepEqual(permissions, ['create_oauth_link']);
+    // var docUrl = addon.descriptor.documentationUrl();
+    // assert.equal(typeof docUrl, 'string');
+    // assert.equal(docUrl, 'http://example.com');
+    // var configUrl = addon.descriptor.configureUrl();
+    // assert.equal(typeof configUrl, 'string');
+    // assert.equal(configUrl, '/plugins/servlet/atlassian-connect/my-test-app-key/config-page');
     done();
   });
 
   it('should list webhooks', function(done){
-    var webhooks = addon.descriptor.webhooks();
+    var webhooks = addon.descriptor.capabilities.webhooks;
     assert.equal(webhooks.length, 2);
     var enabled = webhooks[0];
-    assert.equal(enabled.key, 'enabled');
-    assert.equal(enabled.event, 'remote_plugin_enabled');
+    assert.equal(enabled.event, 'plugin_enabled');
     assert.equal(enabled.url, '/enabled');
     var testHook = webhooks[1];
-    assert.equal(testHook.key, 'test_hook');
-    assert.equal(testHook.event, 'remote_plugin_test_hook');
+    assert.equal(testHook.event, 'plugin_test_hook');
     assert.equal(testHook.url, '/test-hook');
-    webhooks = addon.descriptor.webhooks('foo');
-    assert.equal(webhooks.length, 0);
-    webhooks = addon.descriptor.webhooks('remote_plugin_enabled');
+    webhooks = _.where(addon.descriptor.capabilities.webhooks,{event: 'plugin_enabled'});
+    console.log(webhooks)
     assert.equal(webhooks.length, 1);
     done();
   });

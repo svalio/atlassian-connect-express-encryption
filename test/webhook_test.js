@@ -59,7 +59,7 @@ describe('Webhook', function(){
   });
 
   function fireTestWebhook(route, body) {
-    // this should be improved by re-enabling oauth in tests and sending a real, signed webhook url here
+    // TODO this should be improved by re-enabling oauth in tests and sending a real, signed webhook url here
     var url = 'http://localhost:3001' + route + '?user_id=admin';
     request.post(url, {
       headers: {Authorization: oauth.signAsHeader({
@@ -76,8 +76,8 @@ describe('Webhook', function(){
   }
 
   it('should fire an add-on event', function(done){
-    addon.once('remote_plugin_test_hook', function (key, body, req) {
-      assert(key === 'test_hook');
+    addon.once('plugin_test_hook', function (key, body, req) {
+      assert(key === 'plugin_test_hook');
       assert(body != null && body.foo === 'bar');
       assert(req && req.param('user_id') === 'admin');
       done();
@@ -92,7 +92,7 @@ describe('Webhook', function(){
     var successful = sinon.spy();
     addon.once('enabled_webhook_oauth_verification_successful', successful);
 
-    addon.once('remote_plugin_enabled', function (key, body, req) {
+    addon.once('plugin_enabled', function (key, body, req) {
       assert(triggered.called);
       assert(successful.called);
       done();
@@ -107,7 +107,7 @@ describe('Webhook', function(){
     var successful = sinon.spy();
     addon.once('other_webhook_oauth_verification_successful', successful);
 
-    addon.once('remote_plugin_test_hook', function (key, body, req) {
+    addon.once('plugin_test_hook', function (key, body, req) {
       assert(triggered.called);
       assert(successful.called);
       done();

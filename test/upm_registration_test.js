@@ -110,8 +110,8 @@ describe('Auto registration (UPM)', function(){
     });
   });
 
-  it('should have webhook listener for remote_plugin_enabled', function(done){
-    assert.equal(EventEmitter.listenerCount(addon, 'remote_plugin_enabled'), 1);
+  it('should have webhook listener for plugin_enabled', function(done){
+    assert.equal(EventEmitter.listenerCount(addon, 'plugin_enabled'), 1);
     done();
   });
 
