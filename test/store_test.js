@@ -28,11 +28,19 @@ describe('Store', function(){
     app.set('env','development');
     app.use(express.bodyParser());
 
+    // Get host-info to prevent spoofing consumer key
     app.get(/consumer/, function(req,res){
       res.contentType('xml');
       res.send("<consumer><key>Confluence:5413647675</key></consumer>");
     });
-    app.post(/installer/, function(req,res){
+
+    // Head request to UPM installer
+    app.head(/rest/,function(req, res){
+      res.send(200);
+    })
+
+    // Post request to UPM installer
+    app.post(/rest/, function(req,res){
       request({
         url: 'http://localhost:3001/enabled',
         method: 'POST',

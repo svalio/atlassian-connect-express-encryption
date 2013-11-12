@@ -1,3 +1,4 @@
+process.env.AC_OPTS = 'no-oauth';
 process.env.AC_PRIVATE_KEY = "-----BEGIN RSA PRIVATE KEY-----\n\
 MIIEpAIBAAKCAQEArVjfm73LwTC/S8M/Mwx9RYhNdEYqodULD/+jrT+Ser4PhcYw\n\
 51DY3xbR3boZIn0GdNzVzWfoXoaiq24hvNsnxJc4pRyUn8RKr3DjTdqeuR64CWTq\n\
