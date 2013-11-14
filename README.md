@@ -208,7 +208,7 @@ To see all of the available settings in the `atlassian-plugin.xml`, visit the in
 
 ## The `atlassian-connect-express` scaffold
 
-When you generate a new `atlassian-connect-express` add-on, you're actually just downloading a copy of the [Atlassian Connect Expressjs template](https://bitbucket.org/atlassian/atlassian-connect-expressjs-template/).
+When you generate a new `atlassian-connect-express` add-on, you're actually just downloading a copy of the [Atlassian Connect Expressjs template](https://bitbucket.org/atlassian/atlassian-connect-express-template/).
 
 ### Handlebars layouts and templates
 
