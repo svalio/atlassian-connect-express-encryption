@@ -11,7 +11,7 @@ The `atlassian-connect-express` package helps you get started developing add-ons
 It's important to understand that [Express](http://expressjs.com/) by itself is a web app framework for Node. `atlassian-connect-express` just provides a library of middleware and convenience helpers that make it easier to build Atlassian add-ons. Specifically, `atlassian-connect-express` adds:
 
 * An optimized dev loop by handling registration and deregistration on the target Atlassian application for you at startup and shutdown
-* A filesystem watcher that detects changes to `atlassian-plugin.xml`. When changes are detected, the add-on is re-registered with the host(s)
+* A filesystem watcher that detects changes to `atlassian-connect.json`. When changes are detected, the add-on is re-registered with the host(s)
 * Automatic OAuth authentication of inbound requests as well as OAuth signing for outbound requests back to the host
 * Automatic persistence of host details (i.e., client key, host public key, host base url, etc.)
 * Localtunnel'd server for testing with OnDemand instances
@@ -33,7 +33,7 @@ This creates a new project home directory with the following contents:
     .
     ├── README.md
     ├── app.js
-    ├── atlassian-plugin.xml
+    ├── atlassian-connect.json
     ├── config.json
     ├── package.json
     ├── private-key.pem
@@ -70,8 +70,8 @@ If you've chosen the first option and have a running instance of the Vagrant box
 
 This will boot up your Express server on the default port of 3000 and do the following:
 
-* Register your add-on's `atlassian-plugin.xml` (at <http://localhost:3000/atlassian-plugin.xml>) with the host
-* Start watching for changes to your `atlassian-plugin.xml`. If the file is modified, `atlassian-connect-express` will re-register your add-on with the host.
+* Register your add-on's `atlassian-connect.json` (at <http://localhost:3000/atlassian-connect.json>) with the host
+* Start watching for changes to your `atlassian-connect.json`. If the file is modified, `atlassian-connect-express` will re-register your add-on with the host.
 
 ### The Dev Loop
 
@@ -84,7 +84,7 @@ As you've noticed, `atlassian-connect-express` automatically registers your add-
 The configuration for your add-on is done in two files:
 
 * `./config.json` -- This file contains the configuration for each runtime environment your plugin runs in. The file has comments to help you understand available settings.
-* `./atlassian-plugin.xml` -- This file is a manifest of all the extension points your add-on uses. To see all of the available extension point options, check out the interactive guides for [JIRA](http://atlassian-connect.herokuapp.com/help#jira/atlassian-plugin) or [Confluence](http://atlassian-connect.herokuapp.com/help#confluence/atlassian-plugin).
+* `./atlassian-connect.json` -- This file is a manifest of all the extension points your add-on uses. To see all of the available extension point options, check out the interactive guides for [JIRA](http://atlassian-connect.herokuapp.com/help#jira/atlassian-plugin) or [Confluence](http://atlassian-connect.herokuapp.com/help#confluence/atlassian-plugin).
 
 #### config.json
 
@@ -92,7 +92,7 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
 
     {
       // This is the add-on's basic information.  These values can be contributed to
-      // atlassian-plugin.xml via template replacement.
+      // atlassian-connect.json via template replacement.
       "key": "my-test-app-key",
       "name": "My Test App Name",
       "description": "My test app description.",
@@ -190,11 +190,11 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
       }
     }
 
-### atlassian-plugin.xml
+### atlassian-connect.json
 
-The `atlassian-plugin.xml` describes what your add-on will do. There are three main parts to the descriptor: meta information that describes your add-on (i.e., name, description, key, etc.), permissions and authentication information, and a list of the components your add-on will extend. This descriptor is sent to the host (i.e., JIRA or Confluence) when your add-on is installed.
+The `atlassian-connect.json` describes what your add-on will do. There are three main parts to the descriptor: meta information that describes your add-on (i.e., name, description, key, etc.), permissions and authentication information, and a list of the components your add-on will extend. This descriptor is sent to the host (i.e., JIRA or Confluence) when your add-on is installed.
 
-To see all of the available settings in the `atlassian-plugin.xml`, visit the interactive descriptor guides:
+To see all of the available settings in the `atlassian-connect.json`, visit the interactive descriptor guides:
 
 * [JIRA](http://atlassian-connect.herokuapp.com/help#jira/webhook)
 * [Confluence](http://atlassian-connect.herokuapp.com/help#confluence/webhook)
@@ -224,8 +224,8 @@ To learn more about how Handlebars works in Expressjs, take a look at the [expre
 
 `atlassian-connect-express` injects a handful of useful context variables into your render context. You can access any of these within your templates:
 
-* `title`: the add-on's name (derived from `atlassian-plugin.xml`)
-* `appKey`: the application key defined in `atlassian-plugin.xml`
+* `title`: the add-on's name (derived from `atlassian-connect.json`)
+* `appKey`: the application key defined in `atlassian-connect.json`
 * `localBaseUrl`: the base URI of the add-on
 * `hostBaseUrl`: the base URI of the target application (includes the context path if available)
 * `hostStylesheetUrl`: the URL to the base CSS file for Connect add-ons. This stylesheet is a bare minimum set of styles to help you get started. It's not a full AUI stylesheet.
@@ -311,9 +311,9 @@ If you're running an OnDemand instance of JIRA or Confluence locally, you can in
 
 ## Troubleshooting
 
-### "Unable to connect and retrieve descriptor from http://localhost:3000/atlassian-plugin.xml, message is: java.net.ConnectException: Connection refused"
+### "Unable to connect and retrieve descriptor from http://localhost:3000/atlassian-connect.json, message is: java.net.ConnectException: Connection refused"
 
-You'll get this error if JIRA or Confluence can't access `http://localhost:3000/atlassian-plugin.xml`. This could happen if you're using the Vagrant boxes and your machine's hostname is set to `localhost` instead of something else. One way to debug this is to see what `hostname` returns:
+You'll get this error if JIRA or Confluence can't access `http://localhost:3000/atlassian-connect.json`. This could happen if you're using the Vagrant boxes and your machine's hostname is set to `localhost` instead of something else. One way to debug this is to see what `hostname` returns:
 
     $ hostname
 
