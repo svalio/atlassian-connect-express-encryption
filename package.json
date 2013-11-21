@@ -15,7 +15,8 @@
     "localtunnel": "0.0.4",
     "rsvp": "~2.0.1",
     "JSONPath": "~0.9.1",
-    "xml2js": "~0.2.8"
+    "xml2js": "~0.2.8",
+    "oauth": "~0.9.10"
   },
   "main": "index.js",
   "devDependencies": {
