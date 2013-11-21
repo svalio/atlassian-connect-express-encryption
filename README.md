@@ -64,7 +64,7 @@ At this point, you're all set to run your add-on, but you still need the target 
 
 ### Running your Add-on Server
 
-If you've chosen the first option and have a running instance of the Vagrant box, you're all set. Now all you need to do to run your add-on inside your local JIRA or Confluence instance is:
+If you've chosen the first option and have a local running instance of JIRA or Confluence, you're all set. Now all you need to do to run your add-on inside your local JIRA or Confluence instance is:
 
     node app.js
 
