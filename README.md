@@ -59,7 +59,7 @@ Change to the new project directory and install dependencies:
 
 At this point, you're all set to run your add-on, but you still need the target application (i.e., JIRA or Confluence) for your add-on. You have a few options:
 
-1. You can do all your development work locally using an Atlassian Connect Vagrant box ([JIRA](https://bitbucket.org/rmanalan/atlassian-connect-jira-vagrant) or [Confluence](https://bitbucket.org/rmanalan/atlassian-connect-confluence-vagrant)). This Vagrant box will set up a local JIRA or Confluence VM (using [VirtualBox](https://www.virtualbox.org/)). This is by far the most flexible option.
+1. You can do all your development work locally using the [Atlassian SDK](https://marketplace.atlassian.com/search?q=%22atlassian+plugin+sdk%22). You can start a local instance of JIRA or Confluence using the [commands discussed here](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-StartingwiththeSDK).
 2. Install the add-on in an Atlassian OnDemand instance. See [instructions in the Atlassian Connect doc](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-Registertheadd-on) for more information. 
 
 ### Running your Add-on Server
