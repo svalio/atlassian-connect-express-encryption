@@ -8,7 +8,7 @@
         "url": "http://example.com"
     },
     "links": {
-        "self": "%%BASE_URI%%/capabilities",
+        "self": "%%BASE_URI%%/atlassian-connect.json",
         "homepage": "http://www.example.com"
     },
     "capabilities": {
