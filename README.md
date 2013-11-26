@@ -84,7 +84,7 @@ As you've noticed, `atlassian-connect-express` automatically registers your add-
 The configuration for your add-on is done in two files:
 
 * `./config.json` -- This file contains the configuration for each runtime environment your plugin runs in. The file has comments to help you understand available settings.
-* `./atlassian-plugin.xml` -- This file is a manifest of all the extension points your add-on uses. To see all of the available extension point options, check out the interactive guides for [JIRA](http://atlassian-connect.herokuapp.com/help#jira/atlassian-plugin) or [Confluence](http://atlassian-connect.herokuapp.com/help#confluence/atlassian-plugin).
+* `./atlassian-plugin.xml` -- This file is a manifest of all the extension points your add-on uses. To see all of the available extension point options, check out the interactive guides for [JIRA](https://developer.atlassian.com/static/connect/#jira/atlassian-plugin) or [Confluence](https://developer.atlassian.com/static/connect/#confluence/atlassian-plugin).
 
 #### config.json
 
@@ -203,8 +203,8 @@ The `atlassian-plugin.xml` describes what your add-on will do. There are three m
 
 To see all of the available settings in the `atlassian-plugin.xml`, visit the interactive descriptor guides:
 
-* [JIRA](http://atlassian-connect.herokuapp.com/help#jira/webhook)
-* [Confluence](http://atlassian-connect.herokuapp.com/help#confluence/webhook)
+* [JIRA](https://developer.atlassian.com/static/connect/#jira/atlassian-plugin)
+* [Confluence](https://developer.atlassian.com/static/connect/#confluence/atlassian-plugin)
 
 ## Sample Add-ons using `atlassian-connect-express`
 
