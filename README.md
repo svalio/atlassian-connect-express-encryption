@@ -246,7 +246,7 @@ You can access any of the variables above as normal Handlebars variables. For ex
 
 ### How to secure a route with OAuth
 
-Add-ons are secured through [two-legged OAuth](http://todo). To simplify OAuth verification on your routes, you can simply add a `atlassian-connect-express` middleware to your route:
+Add-ons are secured through two-legged OAuth. To simplify OAuth verification on your routes, you can simply add a `atlassian-connect-express` middleware to your route:
 
     module.exports = function (app, addon) {
         app.get('/protected-resource',
