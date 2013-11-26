@@ -31,23 +31,24 @@ Let's start by creating an add-on project:
 This creates a new project home directory with the following contents:
 
     .
+    ├── Procfile
     ├── README.md
     ├── app.js
     ├── atlassian-plugin.xml
     ├── config.json
     ├── package.json
-    ├── private-key.pem
+    ├── private-key.pem    
     ├── public
     │   ├── css
-    │   │   └── main.css
+    │   │   └── addon.css
     │   └── js
-    │       └── main.js
+    │       └── addin.js
     ├── public-key.pem
     ├── routes
     │   └── index.js
     └── views
-        ├── example.jade
-        └── layout.jade
+        ├── hello-world.hbs
+        └── layout.hbs
 
 ### Install dependencies
 
