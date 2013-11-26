@@ -190,6 +190,7 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         // Make sure that your add-on can only be registered by the hosts on
         // these domains.
         "whitelist": [
+          "*.jira-dev.com",
           "*.atlassian.net",
           "*.jira.com"
         ]
