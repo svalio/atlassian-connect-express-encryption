@@ -42,7 +42,7 @@ This creates a new project home directory with the following contents:
     │   ├── css
     │   │   └── addon.css
     │   └── js
-    │       └── addin.js
+    │       └── addon.js
     ├── public-key.pem
     ├── routes
     │   └── index.js
