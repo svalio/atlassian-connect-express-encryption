@@ -314,7 +314,17 @@ You also need to add the permission:
 
 Deploying Node.js apps on Heroku is covered [here](https://devcenter.heroku.com/articles/nodejs#declare-process-types-with-procfile).
 
-Before you start, install the [Heroku Toolbelt](https://toolbelt.heroku.com/).
+Before you start, install Git and the [Heroku Toolbelt](https://toolbelt.heroku.com/).
+
+If you aren't using git to track your add-on, now is a good time to do so as it is required for heroku.
+
+	git config --global user.name "John Doe"
+	git config --global user.email johndoe@example.com
+	ssh-keygen -t rsa
+	git init
+	git add .
+	git commit . -m "some message"
+	heroku keys:add
 
 Next, create the app on Heroku:
 
