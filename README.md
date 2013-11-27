@@ -283,6 +283,33 @@ If not in a request context, you can perform the equivalent operation as follows
       ...
     });
 
+### Using the product REST API
+
+Certain REST URLs may require additional permissions that should be added to your atlassian-plugin.xml file.
+
+[Jira Permissions](https://developer.atlassian.com/static/connect/index-plugin.html?lic=none&xdm_e=https%3A%2F%2Fdeveloper.atlassian.com&xdm_c=channel-interactive-guide-0&xdm_p=1#jira/permissions)
+
+[Confluence Permissions](https://developer.atlassian.com/static/connect/index-plugin.html?lic=none&xdm_e=https%3A%2F%2Fdeveloper.atlassian.com&xdm_c=channel-interactive-guide-0&xdm_p=1#confluence/permissions)
+
+For example, to view details of a specific jira issue.
+
+    var httpClient = addon.httpClient(req);
+    httpClient.get('/rest/api/2/issue/ISSUE-KEY', function(err, res, body){
+      ...
+    });
+
+You also need to add the permission:
+````
+<!--! This plugin needs several permissions: -->
+<permissions>
+    <!--! * Create a trusted link in JIRA that will allow authenticated REST calls -->
+    <permission>create_oauth_link</permission>
+    <!--! * Query JIRA issues, projects, and issue types -->
+    <permission>browse_projects</permission>
+</permissions>
+````
+
+
 ### How to deploy to Heroku
 
 Deploying Node.js apps on Heroku is covered [here](https://devcenter.heroku.com/articles/nodejs#declare-process-types-with-procfile).
