@@ -74,6 +74,8 @@ This will boot up your Express server on the default port of 3000 and do the fol
 * Register your add-on's `atlassian-plugin.xml` (at <http://localhost:3000/atlassian-plugin.xml>) with the host
 * Start watching for changes to your `atlassian-plugin.xml`. If the file is modified, `atlassian-connect-express` will re-register your add-on with the host.
 
+The created project already contains a sample atlassian-plugin.xml which adds a "Hello World" general page to your local running JIRA or Confluence instance. To ensure that everything is working as expected, navigate to your local running instance and check that a "Hello World" link is present in the application's header and displays a "Hello World" page when clicked.
+
 ### The Dev Loop
 
 At this point, you can start building your add-on. Changes to views load automatically, however, if you make changes to any JavaScript, you need to restart Express. If you want your server to automatically restart when your JavaScript changes, consider using [nodemon](https://npmjs.org/package/nodemon) or the like.
