@@ -4,8 +4,7 @@ var http = require('http');
 var express = require('express');
 var app = express();
 var ac = require('../index');
-var request = require('request')
-var sinon = require('sinon');
+var request = require('request');
 var os = require('os');
 var logger = require('./logger');
 var oauth = require('./oauth_helper');
@@ -14,20 +13,19 @@ var encode = encodeURIComponent;
 
 var addon = {};
 
-var host = 'http://www.example.com';
-var clientKey = 'XYZ0-6789-KHGL';
-var userId = 'admin';
+var HOST = 'http://www.example.com:5678';
+var CLIENT_KEY = 'jira:XYZ0-6789-KHGL';
+var USER_ID = 'admin';
 
-
-describe('Token verification', function(){
+describe('Token verification', function() {
   var server;
 
-  before(function(done){
+  before(function(done) {
     app.set('env', 'development');
     addon = ac(app, {
       config: {
         "development": {
-          "allowTokenRefresh": true
+          "maxTokenAge": 100
         }
       }
     }, logger);
@@ -38,26 +36,24 @@ describe('Token verification', function(){
       secret: addon.config.secret()
     }));
     app.use(addon.middleware());
-    server = http.createServer(app).listen(3001, function(){
+    server = http.createServer(app).listen(3001, function() {
       done();
     });
   });
 
-  after(function(done){
+  after(function(done) {
     server.close();
     done();
   });
 
-  it('should preserve the original values in the encoding/decoding process', function(done){
-
+  it('should preserve the original values in the encoding/decoding process', function(done) {
     var tokens = initTokens();
-    var encodedToken = tokens.create(host, clientKey, userId);
-
+    var encodedToken = tokens.create(HOST, CLIENT_KEY, USER_ID);
     tokens.verify(encodedToken, addon.config.maxTokenAge(),
       function(decodedToken) {
-        assert.equal(host, decodedToken.h);
-        assert.equal(clientKey, decodedToken.k);
-        assert.equal(userId, decodedToken.u);
+        assert.equal(decodedToken.h, HOST);
+        assert.equal(decodedToken.k, CLIENT_KEY);
+        assert.equal(decodedToken.u, USER_ID);
         done();
       },
       function(err) {
@@ -67,13 +63,10 @@ describe('Token verification', function(){
     );
   });
 
-  it('should fail on altered tokens', function(done){
-
+  it('should fail on altered tokens', function(done) {
     var tokens = initTokens();
-    var encodedToken = tokens.create(host, clientKey, userId);
-
+    var encodedToken = tokens.create(HOST, CLIENT_KEY, USER_ID);
     var alteredToken = encodedToken + "A9";
-
     tokens.verify(alteredToken, addon.config.maxTokenAge(),
       function(decodedToken) {
         assert.fail('Should have thrown an Invalid Signature error');
@@ -86,11 +79,9 @@ describe('Token verification', function(){
     );
   });
 
-  it('should fail on expired tokens', function(done){
-
+  it('should fail on expired tokens', function(done) {
     var tokens = initTokens();
-    var encodedToken = tokens.create(host, clientKey, userId);
-
+    var encodedToken = tokens.create(HOST, CLIENT_KEY, USER_ID);
     tokens.verify(encodedToken, -1000,
       function(decodedToken) {
         assert.fail('Should have thrown a Token Expired error');
@@ -103,47 +94,133 @@ describe('Token verification', function(){
     );
   });
 
-  it('should preserve the host, clientKey and user from the original signed oauth request', function(done){
-
+  it('should preserve the host, clientKey and user from the original signed oauth request', function(done) {
     app.get(
-      '/protected_resource',
+      '/protected_resource1',
       addon.authenticate(),
       function (req, res) {
         res.send(res.locals.token);
       }
     );
-
     var tokens = initTokens();
-    var host = 'http://example.com:5678';
-    var key = 'jira:4567-ABCD';
-    var userId = 'admin';
-
     var signedUrl = oauth.signAsUrl({
-      url: 'http://localhost:3001/protected_resource?xdm_e=' + encode(host) + '&user_id=' + encode(userId),
-      clientKey: key
+      url: 'http://localhost:3001/protected_resource1?xdm_e=' + encode(HOST) + '&user_id=' + encode(USER_ID),
+      clientKey: CLIENT_KEY
     });
-
     request(signedUrl, {jar: false}, function (err, res, body) {
       assert.equal(err, null);
       assert.equal(res.statusCode, 200);
       tokens.verify(body, addon.config.maxTokenAge(),
         function(verifiedToken) {
-          assert.equal(host, verifiedToken.h);
-          assert.equal(key, verifiedToken.k);
-          assert.equal(userId, verifiedToken.u);
+          assert.equal(verifiedToken.h, HOST);
+          assert.equal(verifiedToken.k, CLIENT_KEY);
+          assert.equal(verifiedToken.u, USER_ID);
           done();
         },
         function(err) {
-          assert.fail('Token validation failed');
+          assert.fail('Token validation failed: ' + err.message);
           done();
         }
       );
     });
+  });
 
+  it('should allow requests with valid tokens', function(done) {
+    app.get(
+      '/protected_resource2',
+      addon.checkValidToken(),
+      function (req, res) {
+        res.send("success");
+      }
+    );
+    var tokens = initTokens();
+    var encodedToken = tokens.create(HOST, CLIENT_KEY, USER_ID);
+    var tokenUrl = 'http://localhost:3001/protected_resource2?acpt=' + encode(encodedToken);
+    request(tokenUrl, {jar: false}, function (err, res, body) {
+      assert.equal(err, null);
+      assert.equal(res.statusCode, 200);
+      assert.equal(body, "success");
+      done();
+    });
+  });
+
+  it('should reject requests with no token', function(done) {
+    app.get(
+      '/protected_resource3',
+      addon.checkValidToken(),
+      function (req, res) {
+        res.send("success");
+      }
+    );
+    var tokenUrl = 'http://localhost:3001/protected_resource3';
+    request(tokenUrl, {jar: false}, function (err, res) {
+      assert.equal(err, null);
+      assert.equal(res.statusCode, 401);
+      done();
+    });
+  });
+
+  it('should reject requests with invalid tokens', function(done) {
+    app.get(
+      '/protected_resource4',
+      addon.checkValidToken(),
+      function (req, res) {
+        res.send("success");
+      }
+    );
+    var tokenUrl = 'http://localhost:3001/protected_resource4?acpt=' + encode("An invalid token");
+    request(tokenUrl, {jar: false}, function (err, res) {
+      assert.equal(err, null);
+      assert.equal(res.statusCode, 401);
+      done();
+    });
+  });
+
+  it('should rehydrate response local variables from the token', function(done) {
+    app.get(
+      '/protected_resource5',
+      addon.checkValidToken(),
+      function (req, res) {
+        res.send({
+          clientKey: res.locals.clientKey,
+          token: res.locals.token,
+          userId: res.locals.userId,
+          hostBaseUrl: res.locals.hostBaseUrl,
+          hostStylesheetUrl: res.locals.hostStylesheetUrl,
+          hostScriptUrl: res.locals.hostScriptUrl
+        });
+      }
+    );
+    var tokens = initTokens();
+    var encodedToken = tokens.create(HOST, CLIENT_KEY, USER_ID);
+    var tokenUrl = 'http://localhost:3001/protected_resource5?acpt=' + encode(encodedToken);
+    request(tokenUrl, {jar: false}, function (err, res, body) {
+      var payload = JSON.parse(body);
+      assert.equal(null, err);
+      assert.equal(200, res.statusCode);
+      assert.equal(payload.clientKey, CLIENT_KEY);
+      assert.equal(payload.userId, USER_ID);
+      assert.equal(payload.hostBaseUrl, HOST);
+      assert.equal(payload.hostStylesheetUrl, hostResourceUrl(app, HOST, 'css'));
+      assert.equal(payload.hostScriptUrl, hostResourceUrl(app, HOST, 'js'));
+      tokens.verify(payload.token, addon.config.maxTokenAge(),
+        function(decodedToken) {
+        },
+        function(err) {
+          assert.fail('Invalid token');
+        }
+      );
+      done();
+    });
   });
 
   function initTokens() {
     return token(addon.config.privateKey(), addon.config.publicKey());
+  }
+
+  function hostResourceUrl(app, baseUrl, type) {
+    var suffix = app.get('env') === 'development' ? '-debug' : '';
+    return baseUrl + '/atlassian-connect/all' + suffix + '.' + type;
   }
 
 });
