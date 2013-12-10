@@ -4,10 +4,9 @@ var http = require('http');
 var express = require('express');
 var app = express();
 var ac = require('../index');
-var request = require('request')
+var request = require('request');
 var sinon = require('sinon');
 var logger = require('./logger');
-var oauth = require('./oauth_helper');
 var addon = {};
 
 describe('Webhook', function(){
