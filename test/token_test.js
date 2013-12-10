@@ -21,14 +21,23 @@ describe('Token verification', function() {
   var server;
 
   before(function(done) {
-    app.set('env', 'development');
+    process.env.AC_OPTS = '';
+    ac.store.register('test', require('./test_store'));
     addon = ac(app, {
       config: {
-        "development": {
-          "maxTokenAge": 100
+        development: {
+          localBaseUrl: 'http://localhost:$port',
+          port: 3001,
+          "maxTokenAge": 100,
+          store: {
+            adapter: 'test'
+          }
         }
       }
     }, logger);
+    app.set('env', 'development');
+    var port = addon.config.port();
+    app.set('port', port);
     app.use(express.bodyParser());
     app.use(express.cookieParser());
     app.use(express.cookieSession({
@@ -36,13 +45,15 @@ describe('Token verification', function() {
       secret: addon.config.secret()
     }));
     app.use(addon.middleware());
-    server = http.createServer(app).listen(3001, function() {
+
+    server = http.createServer(app).listen(port, function(){
       done();
     });
   });
 
   after(function(done) {
     server.close();
+    process.env.AC_OPTS = 'no-oauth';
     done();
   });
 
@@ -105,7 +116,7 @@ describe('Token verification', function() {
     var tokens = initTokens();
     var signedUrl = oauth.signAsUrl({
       url: 'http://localhost:3001/protected_resource1?xdm_e=' + encode(HOST) + '&user_id=' + encode(USER_ID),
-      clientKey: CLIENT_KEY
+      clientKey: 'testHostClientKey'
     });
     request(signedUrl, {jar: false}, function (err, res, body) {
       assert.equal(err, null);
@@ -113,7 +124,7 @@ describe('Token verification', function() {
       tokens.verify(body, addon.config.maxTokenAge(),
         function(verifiedToken) {
           assert.equal(verifiedToken.h, HOST);
-          assert.equal(verifiedToken.k, CLIENT_KEY);
+          assert.equal(verifiedToken.k, 'testHostClientKey');
           assert.equal(verifiedToken.u, USER_ID);
           done();
         },
@@ -210,6 +221,24 @@ describe('Token verification', function() {
           assert.fail('Invalid token');
         }
       );
+      done();
+    });
+  });
+
+  it('should not create tokens for requests without verified OAuth signatures', function(done) {
+    app.get(
+      '/protected_resource6',
+      function (req, res) {
+        res.send(undefined === res.locals.token ? "no token" : res.locals.token);
+      }
+    );
+    var tokenUrl = 'http://localhost:3001/protected_resource6?xdm_e=' + encode(HOST)
+      + '&user_id=' + encode(USER_ID)
+      + '&oauth_consumer_key=' + encode(CLIENT_KEY);
+    request(tokenUrl, {jar: false}, function (err, res, body) {
+      assert.equal(err, null);
+      assert.equal(res.statusCode, 200);
+      assert.equal(body, "no token");
       done();
     });
   });
