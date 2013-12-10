@@ -62,9 +62,9 @@ describe('Token verification', function() {
     var encodedToken = tokens.create(HOST, CLIENT_KEY, USER_ID);
     tokens.verify(encodedToken, addon.config.maxTokenAge(),
       function(decodedToken) {
-        assert.equal(decodedToken.h, HOST);
-        assert.equal(decodedToken.k, CLIENT_KEY);
-        assert.equal(decodedToken.u, USER_ID);
+        assert.equal(decodedToken.host, HOST);
+        assert.equal(decodedToken.key, CLIENT_KEY);
+        assert.equal(decodedToken.user, USER_ID);
         done();
       },
       function(err) {
@@ -123,9 +123,9 @@ describe('Token verification', function() {
       assert.equal(res.statusCode, 200);
       tokens.verify(body, addon.config.maxTokenAge(),
         function(verifiedToken) {
-          assert.equal(verifiedToken.h, HOST);
-          assert.equal(verifiedToken.k, 'testHostClientKey');
-          assert.equal(verifiedToken.u, USER_ID);
+          assert.equal(verifiedToken.host, HOST);
+          assert.equal(verifiedToken.key, 'testHostClientKey');
+          assert.equal(verifiedToken.user, USER_ID);
           done();
         },
         function(err) {
