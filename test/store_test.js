@@ -31,7 +31,7 @@ describe('Store', function () {
         });
 
         // Post request to UPM installer
-        app.post("/confluence/rest/atlassian-connect/latest/installer", function (req, res) {
+        app.post("/confluence/rest/plugins/1.0/", function (req, res) {
             request({
                 url: helper.addonBaseUrl + '/installed',
                 method: 'POST',

@@ -51,7 +51,12 @@ describe('Webhook', function () {
             res.send(200, helper.consumerInfo);
         });
 
-        host.post("/rest/atlassian-connect/latest/installer", function (req, res) {
+        host.head("/rest/plugins/1.0/", function (req, res) {
+            res.setHeader("upm-token", "123");
+            res.send(200);
+        });
+
+        host.post("/rest/plugins/1.0/", function (req, res) {
             request({
                 url: helper.addonBaseUrl + '/installed',
                 qs: {

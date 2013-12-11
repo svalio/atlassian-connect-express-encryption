@@ -25,18 +25,13 @@ describe('Auto registration (UPM)', function () {
             res.send(200, helper.consumerInfo);
         });
 
-        // Head request to UPM installer
-        app.head(/rest/, function (req, res) {
-            res.send(200);
-        });
-
-        app.head(/plugins\/1.0/, function (req, res) {
+        app.head("/rest/plugins/1.0/", function (req, res) {
             res.setHeader("upm-token", "123");
             res.send(200);
         });
 
         // Post request to UPM installer
-        app.post("/confluence/rest/atlassian-connect/latest/installer", function (req, res) {
+        app.post("/confluence/rest/plugins/1.0/", function (req, res) {
             request({
                 url: helper.addonBaseUrl + '/installed',
                 qs: {
