@@ -70,7 +70,7 @@ describe('Descriptor', function(){
   });
 
   it('should list webhooks', function(done){
-    var webhooks = addon.descriptor.capabilities.webhooks;
+    var webhooks = addon.descriptor.modules.webhooks;
     assert.equal(webhooks.length, 2);
     var enabled = webhooks[0];
     assert.equal(enabled.event, 'plugin_enabled');
@@ -78,8 +78,8 @@ describe('Descriptor', function(){
     var testHook = webhooks[1];
     assert.equal(testHook.event, 'plugin_test_hook');
     assert.equal(testHook.url, '/test-hook');
-    webhooks = _.where(addon.descriptor.capabilities.webhooks,{event: 'plugin_enabled'});
-    console.log(webhooks)
+    webhooks = _.where(addon.descriptor.modules.webhooks,{event: 'plugin_enabled'});
+    console.log(webhooks);
     assert.equal(webhooks.length, 1);
     done();
   });
