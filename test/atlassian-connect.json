@@ -44,8 +44,8 @@
         }],
         "webhooks": [
             {
-                "event": "plugin_enabled",
-                "url": "/enabled"
+                "event": "issue_created",
+                "url": "/issueCreated"
             },
             {
                 "event": "plugin_test_hook",
