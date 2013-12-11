@@ -31,6 +31,7 @@ Let's start by creating an add-on project:
 This creates a new project home directory with the following contents:
 
     .
+    ├── Procfile
     ├── README.md
     ├── app.js
     ├── atlassian-connect.json
@@ -39,15 +40,15 @@ This creates a new project home directory with the following contents:
     ├── private-key.pem
     ├── public
     │   ├── css
-    │   │   └── main.css
+    │   │   └── addon.css
     │   └── js
-    │       └── main.js
+    │       └── addon.js
     ├── public-key.pem
     ├── routes
     │   └── index.js
     └── views
-        ├── example.jade
-        └── layout.jade
+        ├── hello-world.hbs
+        └── layout.hbs
 
 ### Install dependencies
 
@@ -59,12 +60,12 @@ Change to the new project directory and install dependencies:
 
 At this point, you're all set to run your add-on, but you still need the target application (i.e., JIRA or Confluence) for your add-on. You have a few options:
 
-1. You can do all your development work locally using an Atlassian Connect Vagrant box ([JIRA](https://bitbucket.org/rmanalan/atlassian-connect-jira-vagrant) or [Confluence](https://bitbucket.org/rmanalan/atlassian-connect-confluence-vagrant)). This Vagrant box will set up a local JIRA or Confluence VM (using [VirtualBox](https://www.virtualbox.org/)). This is by far the most flexible option.
+1. You can do all your development work locally using the [Atlassian SDK](https://marketplace.atlassian.com/search?q=%22atlassian+plugin+sdk%22). You can start a local instance of JIRA or Confluence using the [commands discussed here](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-StartingwiththeSDK).
 2. Install the add-on in an Atlassian OnDemand instance. See [instructions in the Atlassian Connect doc](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-Registertheadd-on) for more information. 
 
 ### Running your Add-on Server
 
-If you've chosen the first option and have a running instance of the Vagrant box, you're all set. Now all you need to do to run your add-on inside your local JIRA or Confluence instance is:
+If you've chosen the first option and have a local running instance of JIRA or Confluence, you're all set. Now all you need to do to run your add-on inside your local JIRA or Confluence instance is:
 
     node app.js
 
@@ -72,6 +73,8 @@ This will boot up your Express server on the default port of 3000 and do the fol
 
 * Register your add-on's `atlassian-connect.json` (at <http://localhost:3000/atlassian-connect.json>) with the host
 * Start watching for changes to your `atlassian-connect.json`. If the file is modified, `atlassian-connect-express` will re-register your add-on with the host.
+
+The created project already contains a sample atlassian-plugin.xml which adds a "Hello World" general page to your local running JIRA or Confluence instance. To ensure that everything is working as expected, navigate to your local running instance and check that a "Hello World" link is present in the application's header and displays a "Hello World" page when clicked.
 
 ### The Dev Loop
 
@@ -84,7 +87,7 @@ As you've noticed, `atlassian-connect-express` automatically registers your add-
 The configuration for your add-on is done in two files:
 
 * `./config.json` -- This file contains the configuration for each runtime environment your plugin runs in. The file has comments to help you understand available settings.
-* `./atlassian-connect.json` -- This file is a manifest of all the extension points your add-on uses. To see all of the available extension point options, check out the interactive guides for [JIRA](http://atlassian-connect.herokuapp.com/help#jira/atlassian-plugin) or [Confluence](http://atlassian-connect.herokuapp.com/help#confluence/atlassian-plugin).
+* `./atlassian-connect.json` -- This file is a manifest of all the extension points your add-on uses. To see all of the available extension point options, check out the interactive guides for [JIRA](https://developer.atlassian.com/static/connect/#jira/atlassian-plugin) or [Confluence](https://developer.atlassian.com/static/connect/#confluence/atlassian-plugin).
 
 #### config.json
 
@@ -149,6 +152,12 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         //
         //   $ npm install -S jugglingdb-postgres
 
+        // If you are running provided container like Heroku you should probably add
+        // appropriate dependency to your package.json  file:
+        //  "dependencies": {
+        //    "jugglingdb-postgres": " 0.0.1-9"
+        //  }
+        //
         // Your add-on will be registered with the following hosts upon startup.
         // In order to take advantage of the automatic registration/deregistration,
         // you need to make sure that your express app calls `addon.register()`
@@ -184,6 +193,7 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         // Make sure that your add-on can only be registered by the hosts on
         // these domains.
         "whitelist": [
+          "*.jira-dev.com",
           "*.atlassian.net",
           "*.jira.com"
         ]
@@ -196,19 +206,18 @@ The `atlassian-connect.json` describes what your add-on will do. There are three
 
 To see all of the available settings in the `atlassian-connect.json`, visit the interactive descriptor guides:
 
-* [JIRA](http://atlassian-connect.herokuapp.com/help#jira/webhook)
-* [Confluence](http://atlassian-connect.herokuapp.com/help#confluence/webhook)
+* [JIRA](https://developer.atlassian.com/static/connect/#jira/atlassian-plugin)
+* [Confluence](https://developer.atlassian.com/static/connect/#confluence/atlassian-plugin)
 
 ## Sample Add-ons using `atlassian-connect-express`
 
-* [Sequence Diagramr](https://bitbucket.org/rmanalan/sequence-diagramr) -- a simple Confluence remote macro for creating UML sequence diagrams
+* [Sequence Diagramr](https://bitbucket.org/atlassianlabs/atlassian-connect-confluence-sequence-diagramr) -- a simple Confluence remote macro for creating UML sequence diagrams
 * [Tim's Word Cloud](https://bitbucket.org/tpettersen/confluence-word-cloud) -- a macro that takes the contents of a page and constructs an SVG-based word cloud
-* [TaskMaster](https://bitbucket.org/mrdon/taskmaster-plugin) -- create JIRA subtasks like a ninja
-* [Atlassian Connect Webhook Inspector](https://bitbucket.org/rmanalan/webhook-inspector) -- a simple tool to log webhooks fired in Atlassian apps for development purposes.
+* [Atlassian Connect Webhook Inspector](https://bitbucket.org/atlassianlabs/webhook-inspector) -- a simple tool to log webhooks fired in Atlassian apps for development purposes.
 
 ## The `atlassian-connect-express` scaffold
 
-When you generate a new `atlassian-connect-express` add-on, you're actually just downloading a copy of the [Atlassian Connect Expressjs template](https://bitbucket.org/atlassian/atlassian-connect-expressjs-template/).
+When you generate a new `atlassian-connect-express` add-on, you're actually just downloading a copy of the [Atlassian Connect Expressjs template](https://bitbucket.org/atlassian/atlassian-connect-express-template/).
 
 ### Handlebars layouts and templates
 
@@ -239,7 +248,7 @@ You can access any of the variables above as normal Handlebars variables. For ex
 
 ### How to secure a route with OAuth
 
-Add-ons are secured through [two-legged OAuth](http://todo). To simplify OAuth verification on your routes, you can simply add a `atlassian-connect-express` middleware to your route:
+Add-ons are secured through two-legged OAuth. To simplify OAuth verification on your routes, you can simply add a `atlassian-connect-express` middleware to your route:
 
     module.exports = function (app, addon) {
         app.get('/protected-resource',
@@ -275,11 +284,48 @@ If not in a request context, you can perform the equivalent operation as follows
       ...
     });
 
+### Using the product REST API
+
+Certain REST URLs may require additional permissions that should be added to your atlassian-plugin.xml file.
+
+[Jira Permissions](https://developer.atlassian.com/static/connect/index-plugin.html?lic=none&xdm_e=https%3A%2F%2Fdeveloper.atlassian.com&xdm_c=channel-interactive-guide-0&xdm_p=1#jira/permissions)
+
+[Confluence Permissions](https://developer.atlassian.com/static/connect/index-plugin.html?lic=none&xdm_e=https%3A%2F%2Fdeveloper.atlassian.com&xdm_c=channel-interactive-guide-0&xdm_p=1#confluence/permissions)
+
+For example, to view details of a specific jira issue.
+
+    var httpClient = addon.httpClient(req);
+    httpClient.get('/rest/api/2/issue/ISSUE-KEY', function(err, res, body){
+      ...
+    });
+
+You also need to add the permission:
+````
+<!--! This plugin needs several permissions: -->
+<permissions>
+    <!--! * Create a trusted link in JIRA that will allow authenticated REST calls -->
+    <permission>create_oauth_link</permission>
+    <!--! * Query JIRA issues, projects, and issue types -->
+    <permission>browse_projects</permission>
+</permissions>
+````
+
+
 ### How to deploy to Heroku
 
 Deploying Node.js apps on Heroku is covered [here](https://devcenter.heroku.com/articles/nodejs#declare-process-types-with-procfile).
 
-Before you start, install the [Heroku Toolbelt](https://toolbelt.heroku.com/).
+Before you start, install Git and the [Heroku Toolbelt](https://toolbelt.heroku.com/).
+
+If you aren't using git to track your add-on, now is a good time to do so as it is required for heroku.
+
+	git config --global user.name "John Doe"
+	git config --global user.email johndoe@example.com
+	ssh-keygen -t rsa
+	git init
+	git add .
+	git commit . -m "some message"
+	heroku keys:add
 
 Next, create the app on Heroku:
 
