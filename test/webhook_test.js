@@ -32,11 +32,6 @@ describe('Webhook', function () {
         var port = addon.config.port();
         app.set('port', port);
         app.use(express.bodyParser());
-        app.use(express.cookieParser());
-        app.use(express.cookieSession({
-            key: 'session',
-            secret: addon.config.secret()
-        }));
         app.use(addon.middleware());
 
         var host = express();

@@ -1,3 +1,4 @@
+var helper = require('./test_helper');
 var assert = require('assert');
 var http = require('http');
 var express = require('express');
@@ -5,7 +6,6 @@ var app = express();
 var ac = require('../index');
 var request = require('request');
 var logger = require('./logger');
-var EventEmitter = require("events").EventEmitter;
 var addon = {};
 
 describe('Auto registration (UPM)', function () {
@@ -17,32 +17,31 @@ describe('Auto registration (UPM)', function () {
         app.use(express.bodyParser());
 
         // mock host
-        app.get(/consumer/, function (req, res) {
-            res.contentType('xml');
-            res.send("<consumer><key>Confluence:5413647675</key></consumer>");
+        app.get('/confluence/plugins/servlet/oauth/consumer-info', function (req, res) {
+            res.set('Content-Type', 'application/xml');
+            res.send(200, helper.consumerInfo);
         });
-        app.head(/plugins\/1.0/, function (res, res) {
+
+        // Head request to UPM installer
+        app.head(/rest/, function (req, res) {
+            res.send(200);
+        });
+
+        app.head(/plugins\/1.0/, function (req, res) {
             res.setHeader("upm-token", "123");
             res.send(200);
         });
-        app.post(/plugins\/1.0/, function (req, res) {
-            assert(req.param("token"), "123");
+
+        // Post request to UPM installer
+        app.post("/confluence/rest/atlassian-connect/latest/installer", function (req, res) {
             request({
-                url: 'http://localhost:3001/enabled',
+                url: 'http://localhost:3001/installed',
                 method: 'POST',
-                json: {
-                    baseUrl: 'http://localhost:3001/confluence',
-                    publicKey: 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqgmc8W+aK5kc30gl7fhrmT++GalK1T/CvCN9SqW8M7Zr8QnWx8+Ml5zIgExhc7nuFr9Jh15g1FlbQfU2cvhAVoSbNxyDiyEmA0hajJwp59D7+rjVree6B/0a1O91BAIWGgttRigGSuQFytHQ22Yd6lNaM1tw1Pu63cLyTkmDlvwIDAQAB',
-                    description: 'host.consumer.default.description',
-                    pluginsVersion: '0.6.1010',
-                    clientKey: 'Confluence:5413647675',
-                    serverVersion: '4307',
-                    key: 'webhook-inspector',
-                    productType: 'confluence'
-                }
+                json: helper.installedPayload
             });
-            res.send(202);
+            res.send(200);
         });
+
         app.delete(/plugins\/1.0\/(.*?)-key/, function (req, res) {
             res.send(200);
         });
@@ -51,7 +50,7 @@ describe('Auto registration (UPM)', function () {
             config: {
                 "development": {
                     "hosts": [
-                        "http://admin:admin@localhost:3001/confluence"
+                        helper.productBaseUrl
                     ]
                 }
             }
@@ -84,37 +83,11 @@ describe('Auto registration (UPM)', function () {
         }
     }
 
-    it('should happen if addon.register() is called', function (done) {
+    it('event fired when addon.register() is called', function (done) {
         var timer = testIfEventCalled();
-        regPromise.then(function () { eventFired(timer, done); });
-    });
-
-    it('should store the host details after installation', function (done) {
-        addon.on('host_settings_saved', function (key, settings) {
-            addon.settings.get('clientInfo', key).then(function (d) {
-                assert.deepEqual(d, settings);
-                done();
-            });
+        regPromise.then(function () {
+            eventFired(timer, done);
         });
-        request({
-            url: 'http://localhost:3001/enabled',
-            method: 'POST',
-            json: {
-                baseUrl: 'http://localhost:3001/confluence',
-                publicKey: 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqgmc8W+aK5kc30gl7fhrmT++GalK1T/CvCN9SqW8M7Zr8QnWx8+Ml5zIgExhc7nuFr9Jh15g1FlbQfU2cvhAVoSbNxyDiyEmA0hajJwp59D7+rjVree6B/0a1O91BAIWGgttRigGSuQFytHQ22Yd6lNaM1tw1Pu63cLyTkmDlvwIDAQAB',
-                description: 'host.consumer.default.description',
-                pluginsVersion: '0.6.1010',
-                clientKey: 'Confluence:5413647675',
-                serverVersion: '4307',
-                key: 'webhook-inspector',
-                productType: 'confluence'
-            }
-        });
-    });
-
-    it('should have webhook listener for plugin_enabled', function (done) {
-        assert.equal(EventEmitter.listenerCount(addon, 'plugin_enabled'), 1);
-        done();
     });
 
     it('should also deregister if a SIGINT is encountered', function (done) {
@@ -134,9 +107,9 @@ describe('Auto registration (UPM)', function () {
         var timer = testIfEventCalled();
         addon.on('addon_deregistered', function () {
             eventFired(timer, done, function () {});
-            addon.settings.get('Confluence:5413647675').then(
+            addon.settings.get(helper.installedPayload.clientKey).then(
                     function (settings) {
-                        assert(!settings, 'settings not deleted');
+                        assert(!settings, 'settings not deleted: ' + require('util').inspect(settings));
                         done();
                     }
             );

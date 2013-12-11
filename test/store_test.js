@@ -14,17 +14,6 @@ var addon = {};
 describe('Store', function () {
     var server = {};
 
-    var productBaseUrl = "http://admin:admin@localhost:3001/confluence";
-
-    var installedPayload = {
-        "baseUrl": productBaseUrl,
-        "key": "my add-on key",
-        "clientKey": "whatever",
-        "sharedSecret": "sharedSecret",
-        "publicKey": helper.publicKey,
-        "eventType": "installed"
-    };
-
     before(function (done) {
         app.set('env', 'development');
         app.use(express.bodyParser());
@@ -39,17 +28,12 @@ describe('Store', function () {
             res.send(200);
         });
 
-        // Head request to UPM installer
-        app.head(/rest/, function (req, res) {
-            res.send(200);
-        });
-
         // Post request to UPM installer
         app.post("/confluence/rest/atlassian-connect/latest/installer", function (req, res) {
             request({
                 url: 'http://localhost:3001/installed',
                 method: 'POST',
-                json: installedPayload
+                json: helper.installedPayload
             });
             res.send(200);
         });
@@ -69,7 +53,7 @@ describe('Store', function () {
                         adapter: "teststore",
                         type: "memory"
                     },
-                    hosts: [ productBaseUrl ]
+                    hosts: [ helper.productBaseUrl ]
                 }
             }
         }, logger);
@@ -86,23 +70,23 @@ describe('Store', function () {
 
     it('should store client info', function (done) {
         addon.on('host_settings_saved', function (clientKey, settings) {
-            addon.settings.get('clientInfo', installedPayload.clientKey).then(function (settings) {
-                assert.equal(settings.clientKey, installedPayload.clientKey);
-                assert.equal(settings.sharedSecret, installedPayload.sharedSecret);
+            addon.settings.get('clientInfo', helper.installedPayload.clientKey).then(function (settings) {
+                assert.equal(settings.clientKey, helper.installedPayload.clientKey);
+                assert.equal(settings.sharedSecret, helper.installedPayload.sharedSecret);
                 done();
             });
         });
     });
 
     it('should allow storing arbitrary key/values', function (done) {
-        addon.settings.set('arbitrarySetting', 'someValue', installedPayload.clientKey).then(function (setting) {
+        addon.settings.set('arbitrarySetting', 'someValue', helper.installedPayload.clientKey).then(function (setting) {
             assert.equal(setting, 'someValue');
             done();
         })
     });
 
     it('should allow storing arbitrary key/values as JSON', function (done) {
-        addon.settings.set('arbitrarySetting2', {data: 1}, installedPayload.clientKey).then(function (setting) {
+        addon.settings.set('arbitrarySetting2', {data: 1}, helper.installedPayload.clientKey).then(function (setting) {
             assert.deepEqual(setting, {data: 1});
             done();
         })
