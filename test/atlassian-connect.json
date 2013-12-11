@@ -15,6 +15,9 @@
         "self": "%%BASE_URI%%/atlassian-connect.json",
         "homepage": "http://www.example.com"
     },
+    "lifecycle": {
+        "installed": "/installed"
+    },
     "modules": {
         "webItems": [{
             "link": "/my-general-page",

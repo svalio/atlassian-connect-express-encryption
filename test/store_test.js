@@ -14,10 +14,14 @@ var addon = {};
 describe('Store', function () {
     var server = {};
 
+    var productBaseUrl = "http://admin:admin@localhost:3001/confluence";
+
     var installedPayload = {
+        "baseUrl": productBaseUrl,
         "key": "my add-on key",
         "clientKey": "whatever",
-        "sharedSecret": "shared secret",
+        "sharedSecret": "sharedSecret",
+        "publicKey": helper.publicKey,
         "eventType": "installed"
     };
 
@@ -25,11 +29,23 @@ describe('Store', function () {
         app.set('env', 'development');
         app.use(express.bodyParser());
 
-        app.get(/consumer/, function (req, res) {
-            res.contentType('xml');
-            res.send("<consumer><key>Confluence:5413647675</key></consumer>");
+        app.get('/confluence/plugins/servlet/oauth/consumer-info', function (req, res) {
+            res.set('Content-Type', 'application/xml');
+            res.send(200, helper.consumerInfo);
         });
-        app.post(/installed/, function (req, res) {
+
+        // Head request to UPM installer
+        app.head(/rest/, function (req, res) {
+            res.send(200);
+        });
+
+        // Head request to UPM installer
+        app.head(/rest/, function (req, res) {
+            res.send(200);
+        });
+
+        // Post request to UPM installer
+        app.post(/rest/, function (req, res) {
             request({
                 url: 'http://localhost:3001/installed',
                 method: 'POST',
@@ -53,9 +69,7 @@ describe('Store', function () {
                         adapter: "teststore",
                         type: "memory"
                     },
-                    hosts: [
-                        "http://admin:admin@localhost:3001/confluence"
-                    ]
+                    hosts: [ productBaseUrl ]
                 }
             }
         }, logger);

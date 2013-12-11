@@ -93,9 +93,9 @@ describe('Webhook', function () {
 
     it('should perform special oauth verification for the enabled webhook', function (done) {
         var triggered = sinon.spy();
-        addon.once('webhook_oauth_verification_triggered', triggered);
+        addon.once('webhook_auth_verification_triggered', triggered);
         var successful = sinon.spy();
-        addon.once('enabled_webhook_oauth_verification_successful', successful);
+        addon.once('installed_auth_verification_successful', successful);
 
         addon.once('plugin_enabled', function (key, body, req) {
             assert(triggered.called);
