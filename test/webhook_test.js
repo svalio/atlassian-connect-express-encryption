@@ -13,6 +13,7 @@ var addon = {};
 describe('Webhook', function () {
     var server;
     var hostServer;
+    var addonRegistered = false;
 
     before(function (done) {
         ac.store.register("teststore", function (logger, opts) {
@@ -26,13 +27,17 @@ describe('Webhook', function () {
         app.set('env', 'development');
         app.use(express.bodyParser());
 
+        var installedPayload = helper.installedPayload;
+        installedPayload.baseUrl = "http://admin:admin@localhost:3003";
+
         addon = ac(app, {
             config: {
                 development: {
                     store: {
                         adapter: 'teststore',
                         type: "memory"
-                    }
+                    },
+                    hosts: [ installedPayload.baseUrl ]
                 }
             }
         }, logger);
@@ -40,26 +45,29 @@ describe('Webhook', function () {
 
         var host = express();
         // mock host
-        host.get('/confluence/plugins/servlet/oauth/consumer-info', function (req, res) {
+        host.get('/plugins/servlet/oauth/consumer-info', function (req, res) {
             res.set('Content-Type', 'application/xml');
             res.send(200, helper.consumerInfo);
         });
 
-        host.post("/confluence/rest/atlassian-connect/latest/installer", function (req, res) {
+        host.post("/rest/atlassian-connect/latest/installer", function (req, res) {
             request({
                 url: helper.addonBaseUrl + '/installed',
                 qs: {
                     jwt: createJwtToken()
                 },
                 method: 'POST',
-                json: helper.installedPayload
+                json: installedPayload
             });
             res.send(200);
         });
 
         hostServer = http.createServer(host).listen(3003, function () {
             server = http.createServer(app).listen(helper.addonPort, function () {
-                done();
+                addon.register().then(done);
+                addon.once('host_settings_saved', function () {
+                    addonRegistered = true;
+                });
             });
         });
     });
@@ -83,27 +91,34 @@ describe('Webhook', function () {
     function fireTestWebhook(route, body) {
         var url = helper.addonBaseUrl + route;
 
-        var token = createJwtToken();
-        console.log("url = " + url);
-
-        var queryString = {
-            "user_id": "admin",
-            "jwt": token
+        var waitForRegistrationThenFireWebhook = function () {
+            if (addonRegistered) {
+                fireWebhook();
+            } else {
+                setTimeout(waitForRegistrationThenFireWebhook, 50);
+            }
         };
 
-        request.post({
-            url: url,
-            qs: queryString,
-            json: body
-        }, function (err, res) {
-            assert.equal(err, null);
-            assert.equal(res.statusCode, 204, res.body);
-        });
+        var fireWebhook = function () {
+            request.post({
+                url: url,
+                qs: {
+                    "user_id": "admin",
+                    "jwt": createJwtToken()
+                },
+                json: body
+            }, function (err, res, body) {
+                assert.equal(err, null);
+                assert.equal(res.statusCode, 204, res.body);
+            });
+        };
+
+        waitForRegistrationThenFireWebhook();
     }
 
     it('should fire an add-on event', function (done) {
-        addon.once('plugin_test_hook', function (key, body, req) {
-            assert(key === 'plugin_test_hook');
+        addon.once('plugin_test_hook', function (event, body, req) {
+            assert(event === 'plugin_test_hook');
             assert(body != null && body.foo === 'bar');
             assert(req && req.param('user_id') === 'admin');
             done();
