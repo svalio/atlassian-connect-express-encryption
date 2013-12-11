@@ -1,2 +1,2 @@
-// disable oauth verification during tests
-process.env.AC_OPTS = 'no-oauth';
+// disable auth verification during tests
+process.env.AC_OPTS = 'no-auth';

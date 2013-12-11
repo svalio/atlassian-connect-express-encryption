@@ -16,7 +16,7 @@ describe('Auto registration (Connect, deprecated)', function(){
 
   before(function(done){
     app.set('env','development');
-    process.env.AC_OPTS = 'no-oauth';
+    process.env.AC_OPTS = 'no-auth';
     app.use(express.bodyParser());
 
     // mock host
