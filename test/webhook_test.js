@@ -7,7 +7,7 @@ var ac = require('../index');
 var request = require('request');
 var logger = require('./logger');
 var jwt = require('jwt-simple');
-var spy = require("sinon").spy;
+var sinon = require("sinon");
 var addon = {};
 
 describe('Webhook', function () {
@@ -18,9 +18,9 @@ describe('Webhook', function () {
     before(function (done) {
         ac.store.register("teststore", function (logger, opts) {
             var store = require("../lib/store/jugglingdb")(logger, opts);
-            spy(store, "get");
-            spy(store, "set");
-            spy(store, "del");
+            sinon.spy(store, "get");
+            sinon.spy(store, "set");
+            sinon.spy(store, "del");
             return store;
         });
 
@@ -127,34 +127,19 @@ describe('Webhook', function () {
         fireTestWebhook('/test-hook', {foo: 'bar'});
     });
 
-//    it('should perform special oauth verification for the enabled webhook', function (done) {
-//        var triggered = sinon.spy();
-//        addon.once('webhook_auth_verification_triggered', triggered);
-//        var successful = sinon.spy();
-//        addon.once('installed_auth_verification_successful', successful);
-//
-//        addon.once('plugin_enabled', function (key, body, req) {
-//            assert(triggered.called);
-//            assert(successful.called);
-//            done();
-//        });
-//
-//        fireTestWebhook('/enabled', helper.installedPayload);
-//    });
-//
-//    it('should perform normal oauth verification for other webhooks', function (done) {
-//        var triggered = sinon.spy();
-//        addon.once('webhook_oauth_verification_triggered', triggered);
-//        var successful = sinon.spy();
-//        addon.once('other_webhook_oauth_verification_successful', successful);
-//
-//        addon.once('plugin_test_hook', function (key, body, req) {
-//            assert(triggered.called);
-//            assert(successful.called);
-//            done();
-//        });
-//
-//        fireTestWebhook('/test-hook', {foo: 'bar'});
-//    });
+    it('should perform auth verification for other webhooks', function (done) {
+        var triggered = sinon.spy();
+        addon.once('webhook_auth_verification_triggered', triggered);
+        var successful = sinon.spy();
+        addon.once('other_webhook_auth_verification_successful', successful);
+
+        addon.once('plugin_test_hook', function (key, body, req) {
+            assert(triggered.called);
+            assert(successful.called);
+            done();
+        });
+
+        fireTestWebhook('/test-hook', {foo: 'bar'});
+    });
 
 });
