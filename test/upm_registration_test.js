@@ -35,7 +35,7 @@ describe('Auto registration (UPM)', function () {
         // Post request to UPM installer
         app.post("/confluence/rest/atlassian-connect/latest/installer", function (req, res) {
             request({
-                url: 'http://localhost:3001/installed',
+                url: helper.addonBaseUrl + '/installed',
                 method: 'POST',
                 json: helper.installedPayload
             });
@@ -55,7 +55,7 @@ describe('Auto registration (UPM)', function () {
                 }
             }
         }, logger);
-        server = http.createServer(app).listen(3001, function () {
+        server = http.createServer(app).listen(helper.addonPort, function () {
             regPromise = addon.register().then(done);
         });
     });

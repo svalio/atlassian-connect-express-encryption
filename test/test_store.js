@@ -5,7 +5,7 @@ module.exports = function (logger, opts) {
   var global = {};
   var scoped = {
     testHostClientKey: {
-      clientInfo: helper.clientInfo
+      clientInfo: helper.installedPayload
     }
   };
 

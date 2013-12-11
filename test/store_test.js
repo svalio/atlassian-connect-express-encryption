@@ -13,8 +13,10 @@ var addon = {};
 
 describe('Store', function () {
     var server = {};
+    var oldACOpts = process.env.AC_OPTS;
 
     before(function (done) {
+        process.env.AC_OPTS = 'no-auth';
         app.set('env', 'development');
         app.use(express.bodyParser());
 
@@ -31,7 +33,7 @@ describe('Store', function () {
         // Post request to UPM installer
         app.post("/confluence/rest/atlassian-connect/latest/installer", function (req, res) {
             request({
-                url: 'http://localhost:3001/installed',
+                url: helper.addonBaseUrl + '/installed',
                 method: 'POST',
                 json: helper.installedPayload
             });
@@ -58,12 +60,13 @@ describe('Store', function () {
             }
         }, logger);
 
-        server = http.createServer(app).listen(3001, function () {
+        server = http.createServer(app).listen(helper.addonPort, function () {
             addon.register().then(done);
         });
     });
 
     after(function (done) {
+        process.env.AC_OPTS = oldACOpts;
         server.close();
         done();
     });
