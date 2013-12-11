@@ -45,7 +45,7 @@ describe('Store', function () {
         });
 
         // Post request to UPM installer
-        app.post(/rest/, function (req, res) {
+        app.post("/confluence/rest/atlassian-connect/latest/installer", function (req, res) {
             request({
                 url: 'http://localhost:3001/installed',
                 method: 'POST',
@@ -80,11 +80,12 @@ describe('Store', function () {
     });
 
     after(function (done) {
-        server.close(done);
+        server.close();
+        done();
     });
 
     it('should store client info', function (done) {
-        addon.on('host_settings_saved', function (err, settings) {
+        addon.on('host_settings_saved', function (clientKey, settings) {
             addon.settings.get('clientInfo', installedPayload.clientKey).then(function (settings) {
                 assert.equal(settings.clientKey, installedPayload.clientKey);
                 assert.equal(settings.sharedSecret, installedPayload.sharedSecret);
