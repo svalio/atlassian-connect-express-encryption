@@ -5,7 +5,9 @@ var express = require('express');
 var app = express();
 var ac = require('../index');
 var request = require('request');
+var jwt = require('jwt-simple');
 var logger = require('./logger');
+var spy = require("sinon").spy;
 var addon = {};
 
 describe('Auto registration (UPM)', function () {
@@ -36,6 +38,9 @@ describe('Auto registration (UPM)', function () {
         app.post("/confluence/rest/atlassian-connect/latest/installer", function (req, res) {
             request({
                 url: helper.addonBaseUrl + '/installed',
+                qs: {
+                    jwt: createJwtToken()
+                },
                 method: 'POST',
                 json: helper.installedPayload
             });
@@ -46,9 +51,21 @@ describe('Auto registration (UPM)', function () {
             res.send(200);
         });
 
+        ac.store.register("teststore", function (logger, opts) {
+            var store = require("../lib/store/jugglingdb")(logger, opts);
+            spy(store, "get");
+            spy(store, "set");
+            spy(store, "del");
+            return store;
+        });
+
         addon = ac(app, {
             config: {
                 "development": {
+                    store: {
+                        adapter: 'teststore',
+                        type: "memory"
+                    },
                     "hosts": [
                         helper.productBaseUrl
                     ]
@@ -64,6 +81,16 @@ describe('Auto registration (UPM)', function () {
         server.close();
         done();
     });
+
+    function createJwtToken() {
+        var jwtPayload = {
+            "iss": helper.installedPayload.clientKey,
+            "iat": 0,
+            "exp": 1
+        };
+
+        return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
+    }
 
     function testIfEventCalled(spy, done) {
         return setTimeout(function () {
