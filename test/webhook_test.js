@@ -7,6 +7,7 @@ var ac = require('../index');
 var request = require('request');
 var sinon = require('sinon');
 var logger = require('./logger');
+var jwt = require('jwt-simple');
 var addon = {};
 
 describe('Webhook', function () {
@@ -60,12 +61,17 @@ describe('Webhook', function () {
     function fireTestWebhook(route, body) {
         var url = 'http://localhost:3001' + route + '?user_id=admin';
 
+        var secret = "s3cr3t";
+        var jwtPayload = {
+            "iss": "testHostClientKey",
+            "iat": 0,
+            "exp": 1
+        };
+
+        var token = jwt.encode(jwtPayload, secret);
+
         request.post(url, {
-            headers: {Authorization: oauth.signAsHeader({
-                method: 'POST',
-                url: url,
-                clientKey: 'testHostClientKey'
-            })},
+            jwt: token,
             jar: false,
             json: body
         }, function (err, res) {

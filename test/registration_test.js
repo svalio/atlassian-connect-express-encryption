@@ -90,6 +90,7 @@ describe('Auto registration (Connect, deprecated)', function(){
         done();
       });
     });
+
     request({
       url: 'http://localhost:3001/enabled',
       method: 'POST',
