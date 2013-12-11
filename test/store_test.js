@@ -13,15 +13,12 @@ var addon = {};
 
 describe('Store', function () {
     var server = {};
-    var addOnSettings = {
-        baseUrl: 'http://localhost:3001/confluence',
-        publicKey: 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqgmc8W+aK5kc30gl7fhrmT++GalK1T/CvCN9SqW8M7Zr8QnWx8+Ml5zIgExhc7nuFr9Jh15g1FlbQfU2cvhAVoSbNxyDiyEmA0hajJwp59D7+rjVree6B/0a1O91BAIWGgttRigGSuQFytHQ22Yd6lNaM1tw1Pu63cLyTkmDlvwIDAQAB',
-        description: 'host.consumer.default.description',
-        pluginsVersion: '0.6.1010',
-        clientKey: 'Confluence:5413647675',
-        serverVersion: '4307',
-        key: 'webhook-inspector',
-        productType: 'confluence'
+
+    var installedPayload = {
+        "key": "my add-on key",
+        "clientKey": "whatever",
+        "sharedSecret": "shared secret",
+        "eventType": "installed"
     };
 
     before(function (done) {
@@ -36,7 +33,7 @@ describe('Store', function () {
             request({
                 url: 'http://localhost:3001/installed',
                 method: 'POST',
-                json: addOnSettings
+                json: installedPayload
             });
             res.send(200);
         });
@@ -74,22 +71,23 @@ describe('Store', function () {
 
     it('should store client info', function (done) {
         addon.on('host_settings_saved', function (err, settings) {
-            addon.settings.get('clientInfo', addOnSettings.clientKey).then(function (settings) {
-                assert.equal(settings.clientKey, addOnSettings.clientKey);
+            addon.settings.get('clientInfo', installedPayload.clientKey).then(function (settings) {
+                assert.equal(settings.clientKey, installedPayload.clientKey);
+                assert.equal(settings.sharedSecret, installedPayload.sharedSecret);
                 done();
             });
         });
     });
 
     it('should allow storing arbitrary key/values', function (done) {
-        addon.settings.set('arbitrarySetting', 'someValue', addOnSettings.clientKey).then(function (setting) {
+        addon.settings.set('arbitrarySetting', 'someValue', installedPayload.clientKey).then(function (setting) {
             assert.equal(setting, 'someValue');
             done();
         })
     });
 
     it('should allow storing arbitrary key/values as JSON', function (done) {
-        addon.settings.set('arbitrarySetting2', {data: 1}, addOnSettings.clientKey).then(function (setting) {
+        addon.settings.set('arbitrarySetting2', {data: 1}, installedPayload.clientKey).then(function (setting) {
             assert.deepEqual(setting, {data: 1});
             done();
         })
