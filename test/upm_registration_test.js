@@ -8,6 +8,7 @@ var request = require('request');
 var jwt = require('jwt-simple');
 var logger = require('./logger');
 var spy = require("sinon").spy;
+var moment = require("moment");
 var addon = {};
 
 describe('Auto registration (UPM)', function () {
@@ -85,8 +86,8 @@ describe('Auto registration (UPM)', function () {
     function createJwtToken() {
         var jwtPayload = {
             "iss": helper.installedPayload.clientKey,
-            "iat": 0,
-            "exp": 1
+            "iat": moment().utc().unix(),
+            "exp": moment().utc().add('minutes', 10).unix()
         };
 
         return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);

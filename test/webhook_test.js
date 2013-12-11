@@ -8,6 +8,7 @@ var request = require('request');
 var logger = require('./logger');
 var jwt = require('jwt-simple');
 var sinon = require("sinon");
+var moment = require("moment");
 var addon = {};
 
 describe('Webhook', function () {
@@ -54,7 +55,7 @@ describe('Webhook', function () {
             request({
                 url: helper.addonBaseUrl + '/installed',
                 qs: {
-                    jwt: createJwtToken()
+                    jwt: createValidJwtToken()
                 },
                 method: 'POST',
                 json: installedPayload
@@ -78,17 +79,27 @@ describe('Webhook', function () {
         done();
     });
 
-    function createJwtToken() {
+    function createValidJwtToken() {
         var jwtPayload = {
             "iss": helper.installedPayload.clientKey,
-            "iat": 0,
-            "exp": 1
+            "iat": moment().utc().unix(),
+            "exp": moment().utc().add('minutes', 10).unix()
         };
 
         return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
     }
 
-    function fireTestWebhook(route, body) {
+    function createExpiredJwtToken() {
+        var jwtPayload = {
+            "iss": helper.installedPayload.clientKey,
+            "iat": moment().utc().subtract('minutes', 20).unix(),
+            "exp": moment().utc().subtract('minutes', 10).unix()
+        };
+
+        return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
+    }
+
+    function fireTestWebhook(route, body, assertWebhookResult, createJwtToken) {
         var url = helper.addonBaseUrl + route;
 
         var waitForRegistrationThenFireWebhook = function () {
@@ -104,16 +115,18 @@ describe('Webhook', function () {
                 url: url,
                 qs: {
                     "user_id": "admin",
-                    "jwt": createJwtToken()
+                    "jwt": createJwtToken ? createJwtToken() : createValidJwtToken()
                 },
                 json: body
-            }, function (err, res, body) {
-                assert.equal(err, null);
-                assert.equal(res.statusCode, 204, res.body);
-            });
+            }, assertWebhookResult);
         };
 
         waitForRegistrationThenFireWebhook();
+    }
+
+    function assertCorrectWebhookResult(err, res, body) {
+        assert.equal(err, null);
+        assert.equal(res.statusCode, 204, res.body);
     }
 
     it('should fire an add-on event', function (done) {
@@ -124,14 +137,14 @@ describe('Webhook', function () {
             done();
         });
 
-        fireTestWebhook('/test-hook', {foo: 'bar'});
+        fireTestWebhook('/test-hook', {foo: 'bar'}, assertCorrectWebhookResult);
     });
 
-    it('should perform auth verification for other webhooks', function (done) {
+    it('should perform auth verification for webhooks', function (done) {
         var triggered = sinon.spy();
         addon.once('webhook_auth_verification_triggered', triggered);
         var successful = sinon.spy();
-        addon.once('other_webhook_auth_verification_successful', successful);
+        addon.once('webhook_auth_verification_successful', successful);
 
         addon.once('plugin_test_hook', function (key, body, req) {
             assert(triggered.called);
@@ -139,7 +152,29 @@ describe('Webhook', function () {
             done();
         });
 
-        fireTestWebhook('/test-hook', {foo: 'bar'});
+        fireTestWebhook('/test-hook', {foo: 'bar'}, assertCorrectWebhookResult);
+    });
+
+    it('webhook with expired JWT claim should not be processed', function (done) {
+        var triggered = sinon.spy();
+        var successful = sinon.spy();
+        var failed = sinon.spy();
+        addon.once('webhook_auth_verification_triggered', triggered);
+        addon.once('webhook_auth_verification_successful', successful);
+        addon.once('webhook_auth_verification_failed', failed);
+
+        addon.once('plugin_test_hook', function (key, body, req) {
+            assert(triggered.called);
+            assert(!successful.called);
+            assert(failed.called);
+        });
+
+        fireTestWebhook('/test-hook', {foo: 'bar'}, function assertCorrectWebhookResult(err, res, body) {
+            assert.equal(err, null);
+            assert.equal(res.statusCode, 401, 'Status code for invalid token should be 401');
+            assert.equal(body, 'Authentication request has expired.', 'Authentication expired error should be returned');
+            done();
+        }, createExpiredJwtToken);
     });
 
 });
