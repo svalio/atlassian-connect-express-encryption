@@ -239,6 +239,7 @@ To learn more about how Handlebars works in Expressjs, take a look at the [expre
 * `hostBaseUrl`: the base URI of the target application (includes the context path if available)
 * `hostStylesheetUrl`: the URL to the base CSS file for Connect add-ons. This stylesheet is a bare minimum set of styles to help you get started. It's not a full AUI stylesheet.
 * `hostScriptUrl`: the URL to the Connect JS client. This JS file contains the code that will establish the seamless iframe bridge between the add-on and its parent. It also contains a handful of methods and objects for accessing data through the parent (look for the `AP` JS object).
+* `token`: the token that can be used to authenticate calls from the iframe back to the add-on service.
 
 You can access any of the variables above as normal Handlebars variables. For example, to generate a link in your page that links elsewhere in the host:
 
@@ -263,6 +264,41 @@ Add-ons are authenticated through JWT. To simplify JWT verification on your rout
     };
 
 Simply adding the `addon.authenticate()` middleware will protect your resource. To understand how Express middleware works, read up on the [Connect framework](http://www.senchalabs.org/connect/) which is what Express uses as its middleware framework.
+
+### How to send a signed HTTP request from the iframe back to the add-on service
+
+The initial call to load the iframe content is secured by OAuth, as described above. However, the loaded content cannot sign subsequent requests. A typical example is content that makes AJAX calls back to the add-on. Cookie sessions cannot be used, as many browsers block third-party cookies by default. `atlassian-connect-express` provides middleware that works without cookies and helps making secure requests from the iframe.
+
+A route can be secured by adding the `checkValidToken` middleware:
+
+    module.exports = function (app, addon) {
+        app.get('/protected-resource',
+
+            // Require a valid token to access this resource
+            addon.checkValidToken(),
+
+            function(req, res) {
+              res.render('protected');
+            }
+        );
+    };
+
+In order to secure your route, the token must be part of the HTTP request back to the add-on service. This can be done by using a query parameter:
+
+    <a href="/protected-resource?acpt={{token}}">See more</a>
+
+The second option is to use an HTTP header, e.g. for AJAX requests:
+
+    beforeSend: function (request) {
+        request.setRequestHeader("X-acpt", {{token}});
+    }
+
+You can embed the token anywhere in your iframe content using the `token` content variable. For example, you can embed it in a meta tag, from where it can later be read by a script:
+
+    <meta name="acpt" content="{{token}}">
+
+Both the query parameter `acpt` and the HTTP request header `X-acpt` are automatically recognized and handled by `atlassian-connect-express` when a route is secured with the token middleware. The token remains valid for 15 minutes by default, and is automatically refreshed on each call. The expiration of the token can be configured using `maxTokenAge` (in seconds).
+
 
 ### How to send a signed outbound HTTP request back to the host
 
