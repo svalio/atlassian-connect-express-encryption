@@ -12,7 +12,7 @@ It's important to understand that [Express](http://expressjs.com/) by itself is 
 
 * An optimized dev loop by handling registration and deregistration on the target Atlassian application for you at startup and shutdown
 * A filesystem watcher that detects changes to `atlassian-connect.json`. When changes are detected, the add-on is re-registered with the host(s)
-* Automatic OAuth authentication of inbound requests as well as OAuth signing for outbound requests back to the host
+* Automatic JWT authentication of inbound requests as well as JWT signing for outbound requests back to the host
 * Automatic persistence of host details (i.e., client key, host public key, host base url, etc.)
 * Localtunnel'd server for testing with OnDemand instances
 
@@ -246,14 +246,14 @@ You can access any of the variables above as normal Handlebars variables. For ex
 
 ## Recipes
 
-### How to secure a route with OAuth
+### How to secure a route with JWT
 
-Add-ons are secured through two-legged OAuth. To simplify OAuth verification on your routes, you can simply add a `atlassian-connect-express` middleware to your route:
+Add-ons are authenticated through JWT. To simplify JWT verification on your routes, you can simply add a `atlassian-connect-express` middleware to your route:
 
     module.exports = function (app, addon) {
         app.get('/protected-resource',
 
-            // Protect this resource with OAuth
+            // Protect this resource with JWT
             addon.authenticate(),
 
             function(req, res) {
@@ -266,7 +266,7 @@ Simply adding the `addon.authenticate()` middleware will protect your resource. 
 
 ### How to send a signed outbound HTTP request back to the host
 
-`atlassian-connect-express` bundles and extends the awesome [request](https://github.com/mikeal/request) HTTP client. To make an OAuth-signed request back to the host, all you have to do is use `request` the way it was designed, but use a relative path as your URL back to the host's REST APIs. If `request` finds that you're using a relative URL, it will get signed. If you use an absolute URL, it bypasses signing.
+`atlassian-connect-express` bundles and extends the [request](https://github.com/mikeal/request) HTTP client. To make an JWT signed request back to the host, all you have to do is use `request` the way it was designed, but use a relative path as your URL back to the host's REST APIs. If `request` finds that you're using a relative URL, it will get signed. If you use an absolute URL, it bypasses signing.
 
     var httpClient = addon.httpClient(req);
     httpClient.get('/', function(err, res, body){
@@ -276,7 +276,7 @@ Simply adding the `addon.authenticate()` middleware will protect your resource. 
 If not in a request context, you can perform the equivalent operation as follows:
 
     var httpClient = addon.httpClient({
-      hostBaseUrl: baseUrl,
+      clientKey: clientKey, // the unique client key of the tenant to make a request to
       userId: userId,
       appKey: appKey
     });
@@ -288,9 +288,9 @@ If not in a request context, you can perform the equivalent operation as follows
 
 Certain REST URLs may require additional permissions that should be added to your atlassian-plugin.xml file.
 
-[Jira Permissions](https://developer.atlassian.com/static/connect/index-plugin.html?lic=none&xdm_e=https%3A%2F%2Fdeveloper.atlassian.com&xdm_c=channel-interactive-guide-0&xdm_p=1#jira/permissions)
+[Jira Permissions](https://developer.atlassian.com/static/connect/index-plugin.html?#jira/permissions)
 
-[Confluence Permissions](https://developer.atlassian.com/static/connect/index-plugin.html?lic=none&xdm_e=https%3A%2F%2Fdeveloper.atlassian.com&xdm_c=channel-interactive-guide-0&xdm_p=1#confluence/permissions)
+[Confluence Permissions](https://developer.atlassian.com/static/connect/index-plugin.html?#confluence/permissions)
 
 For example, to view details of a specific jira issue.
 
