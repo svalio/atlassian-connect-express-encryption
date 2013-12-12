@@ -121,7 +121,10 @@ describe('Auto registration (UPM)', function () {
             process.once('SIGINT', function () {
                 // a third sigint can occur on test failures (why?), so this ensures that we see
                 // the full error emitted before the tests terminate
-                process.once('SIGINT', function () {});
+                process.once('SIGINT', function () {
+                    process.once('SIGINT', function () {
+                    });
+                });
             });
         }
 
@@ -129,13 +132,12 @@ describe('Auto registration (UPM)', function () {
         process.kill(process.pid, 'SIGINT');
         var timer = testIfEventCalled();
         addon.on('addon_deregistered', function () {
-            eventFired(timer, done, function () {});
-            addon.settings.get(helper.installedPayload.clientKey).then(
-                    function (settings) {
-                        assert(!settings, 'settings not deleted: ' + require('util').inspect(settings));
-                        done();
-                    }
-            );
+            eventFired(timer, done, function () {
+                addon.settings.get(helper.installedPayload.clientKey).then(function (settings) {
+                    assert(!settings, 'settings not deleted: ' + require('util').inspect(settings));
+                    done();
+                });
+            });
         });
     });
 
