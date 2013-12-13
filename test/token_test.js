@@ -6,7 +6,7 @@ var app = express();
 var ac = require('../index');
 var request = require('request');
 var moment = require('moment');
-var jwt = require('jwt-simple');
+var jwt = require('../lib/internal/jwt');
 var logger = require('./logger');
 var spy = require("sinon").spy;
 var token = require('../lib/internal/token');
@@ -78,13 +78,17 @@ describe('Token verification', function () {
         done();
     });
 
-    function createJwtToken() {
+    function createJwtToken(req) {
         var jwtPayload = {
             "sub": USER_ID,
             "iss": helper.installedPayload.clientKey,
             "iat": moment().utc().unix(),
             "exp": moment().utc().add('minutes', 10).unix()
         };
+
+        if (req) {
+            jwtPayload.qsh = jwt.createQueryStringHash(req);
+        }
 
         return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
     }
@@ -148,11 +152,16 @@ describe('Token verification', function () {
         );
         var tokens = initTokens();
 
-        var requestUrl = helper.addonBaseUrl + "/protected_resource1";
+        var path = "/protected_resource1";
+        var requestUrl = helper.addonBaseUrl + path;
         var requestOpts = {
             qs: {
                 "xdm_e": helper.productBaseUrl,
-                "jwt": createJwtToken()
+                "jwt": createJwtToken({
+                    // mock the request
+                    method: 'get',
+                    path: path
+                })
             },
             jar: false
         };

@@ -6,7 +6,7 @@ var app = express();
 var ac = require('../index');
 var request = require('request');
 var logger = require('./logger');
-var jwt = require('jwt-simple');
+var jwt = require('../lib/internal/jwt');
 var sinon = require("sinon");
 var moment = require("moment");
 var addon = {};
@@ -84,22 +84,30 @@ describe('Webhook', function () {
         done();
     });
 
-    function createValidJwtToken() {
+    function createValidJwtToken(req) {
         var jwtPayload = {
             "iss": helper.installedPayload.clientKey,
             "iat": moment().utc().unix(),
             "exp": moment().utc().add('minutes', 10).unix()
         };
 
+        if (req) {
+            jwtPayload.qsh = jwt.createQueryStringHash(req);
+        }
+
         return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
     }
 
-    function createExpiredJwtToken() {
+    function createExpiredJwtToken(req) {
         var jwtPayload = {
             "iss": helper.installedPayload.clientKey,
             "iat": moment().utc().subtract('minutes', 20).unix(),
             "exp": moment().utc().subtract('minutes', 10).unix()
         };
+
+        if (req) {
+            jwtPayload.qsh = jwt.createQueryStringHash(req);
+        }
 
         return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
     }
@@ -115,12 +123,17 @@ describe('Webhook', function () {
             }
         };
 
+        var requestMock = {
+            method: 'post',
+            url: route
+        };
+
         var fireWebhook = function () {
             request.post({
                 url: url,
                 qs: {
                     "user_id": "admin",
-                    "jwt": createJwtToken ? createJwtToken() : createValidJwtToken()
+                    "jwt": createJwtToken ? createJwtToken(requestMock) : createValidJwtToken(requestMock)
                 },
                 json: body
             }, assertWebhookResult);
