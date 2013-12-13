@@ -74,7 +74,7 @@ This will boot up your Express server on the default port of 3000 and do the fol
 * Register your add-on's `atlassian-connect.json` (at <http://localhost:3000/atlassian-connect.json>) with the host
 * Start watching for changes to your `atlassian-connect.json`. If the file is modified, `atlassian-connect-express` will re-register your add-on with the host.
 
-The created project already contains a sample atlassian-plugin.xml which adds a "Hello World" general page to your local running JIRA or Confluence instance. To ensure that everything is working as expected, navigate to your local running instance and check that a "Hello World" link is present in the application's header and displays a "Hello World" page when clicked.
+The created project already contains a sample atlassian-connect.json file which adds a "Hello World" general page to your local running JIRA or Confluence instance. To ensure that everything is working as expected, navigate to your local running instance and check that a "Hello World" link is present in the application's header and displays a "Hello World" page when clicked.
 
 ### The Dev Loop
 
@@ -322,7 +322,7 @@ If not in a request context, you can perform the equivalent operation as follows
 
 ### Using the product REST API
 
-Certain REST URLs may require additional permissions that should be added to your atlassian-plugin.xml file.
+Certain REST URLs may require additional permissions that should be added to your `atlassian-connect.json` file.
 
 [Jira Permissions](https://developer.atlassian.com/static/connect/index-plugin.html?#jira/permissions)
 
