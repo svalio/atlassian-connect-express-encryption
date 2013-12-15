@@ -160,7 +160,10 @@ describe('Token verification', function () {
                 "jwt": createJwtToken({
                     // mock the request
                     method: 'get',
-                    path: path
+                    path: path,
+                    query: {
+                        "xdm_e": helper.productBaseUrl
+                    }
                 })
             },
             jar: false

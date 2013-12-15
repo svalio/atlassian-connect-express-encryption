@@ -125,7 +125,10 @@ describe('Webhook', function () {
 
         var requestMock = {
             method: 'post',
-            url: route
+            path: route,
+            query: {
+                "user_id": "admin"
+            }
         };
 
         var fireWebhook = function () {
