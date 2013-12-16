@@ -263,7 +263,7 @@ Add-ons are authenticated through JWT. To simplify JWT verification on your rout
         );
     };
 
-Simply adding the `addon.authenticate()` middleware will protect your resource. To understand how Express middleware works, read up on the [Connect framework](http://www.senchalabs.org/connect/) which is what Express uses as its middleware framework.
+Simply adding the `addon.authenticate()` middleware will protect your resource.
 
 ### How to send a signed HTTP request from the iframe back to the add-on service
 
