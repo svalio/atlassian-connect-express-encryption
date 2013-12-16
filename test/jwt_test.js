@@ -1,0 +1,169 @@
+var helper = require('./test_helper');
+var assert = require('assert');
+var http = require('http');
+var express = require('express');
+var app = express();
+var ac = require('../index');
+var request = require('request');
+var moment = require('moment');
+var qs = require('qs');
+var jwt = require('../lib/internal/jwt');
+var logger = require('./logger');
+var spy = require("sinon").spy;
+
+var addon = {};
+
+describe('JWT', function () {
+    var server;
+
+    before(function (done) {
+        app.set('env', 'development');
+        app.use(express.bodyParser());
+
+        // mock host
+        app.get('/confluence/plugins/servlet/oauth/consumer-info', function (req, res) {
+            res.set('Content-Type', 'application/xml');
+            res.send(200, helper.consumerInfo);
+        });
+
+        app.head("/confluence/rest/plugins/1.0/", function (req, res) {
+            res.setHeader("upm-token", "123");
+            res.send(200);
+        });
+
+        // Post request to UPM installer
+
+        app.post("/confluence/rest/plugins/1.0/", function (req, res) {
+            request({
+                url: helper.addonBaseUrl + '/installed',
+                query: {
+                    jwt: createJwtToken()
+                },
+                method: 'POST',
+                json: helper.installedPayload
+            });
+            res.send(200);
+        });
+
+        ac.store.register("teststore", function (logger, opts) {
+            var store = require("../lib/store/jugglingdb")(logger, opts);
+            spy(store, "get");
+            spy(store, "set");
+            spy(store, "del");
+            return store;
+        });
+
+        addon = ac(app, {
+            config: {
+                "development": {
+                    store: {
+                        adapter: 'teststore',
+                        type: "memory"
+                    },
+                    "hosts": [
+                        helper.productBaseUrl
+                    ]
+                }
+            }
+        }, logger);
+        server = http.createServer(app).listen(helper.addonPort, function () {
+            addon.register().then(done);
+        });
+    });
+
+    after(function (done) {
+        server.close();
+        done();
+    });
+
+    function createJwtToken() {
+        var jwtPayload = {
+            "sub": 'admin',
+            "iss": helper.installedPayload.clientKey,
+            "iat": moment().utc().unix(),
+            "exp": moment().utc().add('minutes', 10).unix()
+        };
+
+        return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
+    }
+
+    it('should correctly create canonical request', function (done) {
+
+        var req = {
+            method: 'get',
+            path: '/path/to/service',
+            query: qs.parse('zee_last=param&repeated=parameter 1&first=param&repeated=parameter 2&repeated=Parameter 2')
+        };
+        var expectedCanonical = "GET&/path/to/service&first=param&repeated=Parameter%202,parameter%201,parameter%202&zee_last=param";
+
+        var canonical = jwt._createCanonicalRequest(req);
+        assert.equal(canonical, expectedCanonical);
+        done();
+    });
+
+    it('should correctly create canonical request ignoring jwt param', function (done) {
+
+        var req = {
+            method: 'get',
+            path: '/hello-world',
+            query: qs.parse('lic=none&tz=Australia%2FSydney&cp=%2Fjira&user_key=&loc=en-US&user_id=&jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzODY4OTkxMzEsImlzcyI6ImppcmE6MTU0ODk1OTUiLCJxc2giOiI4MDYzZmY0Y2ExZTQxZGY3YmM5MGM4YWI2ZDBmNjIwN2Q0OTFjZjZkYWQ3YzY2ZWE3OTdiNDYxNGI3MTkyMmU5IiwiaWF0IjoxMzg2ODk4OTUxfQ.uKqU9dTB6gKwG6jQCuXYAiMNdfNRw98Hw_IWuA5MaMo&xdm_e=http%3A%2F%2Fstorm%3A2990&xdm_c=channel-servlet-hello-world&xdm_p=1')
+        };
+        var expectedCanonical = "GET&/hello-world&cp=%2Fjira&lic=none&loc=en-US&tz=Australia%2FSydney&user_id=&user_key=&xdm_c=channel-servlet-hello-world&xdm_e=http%3A%2F%2Fstorm%3A2990&xdm_p=1";
+
+        var canonical = jwt._createCanonicalRequest(req);
+        assert.equal(canonical, expectedCanonical);
+        done();
+    });
+
+    it('should correctly create qsh without query string', function (done) {
+
+        var req = {
+            method: 'get',
+            path: '/path'
+        };
+        var expectedHash = "799be84a7fa35570087163c0cd9af3abff7ac05c2c12ba0bb1d7eebc984b3ac2";
+
+        var qsh = jwt.createQueryStringHash(req);
+        assert.equal(qsh, expectedHash);
+        done();
+    });
+
+    it('should correctly create qsh without path or query string', function (done) {
+
+        var req = {
+            method: 'get'
+        };
+        var expectedHash = "c88caad15a1c1a900b8ac08aa9686f4e8184539bea1deda36e2f649430df3239";
+
+        var qsh = jwt.createQueryStringHash(req);
+        assert.equal(qsh, expectedHash);
+        done();
+    });
+
+    it('should correctly create qsh with empty path and no query string', function (done) {
+
+        var req = {
+            method: 'get',
+            path: '/'
+        };
+        var expectedHash = "c88caad15a1c1a900b8ac08aa9686f4e8184539bea1deda36e2f649430df3239";
+
+        var qsh = jwt.createQueryStringHash(req);
+        assert.equal(qsh, expectedHash);
+        done();
+    });
+
+    it('should correctly create qsh with query string', function (done) {
+
+        var req = {
+            method: 'get',
+            path: '/hello-world',
+            query: qs.parse('lic=none&tz=Australia%2FSydney&cp=%2Fjira&user_key=&loc=en-US&user_id=&jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzODY5MTEzNTYsImlzcyI6ImppcmE6MTU0ODk1OTUiLCJxc2giOiI4MDYzZmY0Y2ExZTQxZGY3YmM5MGM4YWI2ZDBmNjIwN2Q0OTFjZjZkYWQ3YzY2ZWE3OTdiNDYxNGI3MTkyMmU5IiwiaWF0IjoxMzg2OTExMTc2fQ.rAsxpHv0EvpXkhjnZnSV14EXJgDx3KSQjgYRjfKnFt8&xdm_e=http%3A%2F%2Fstorm%3A2990&xdm_c=channel-servlet-hello-world&xdm_p=1')
+        };
+        var expectedHash = "8063ff4ca1e41df7bc90c8ab6d0f6207d491cf6dad7c66ea797b4614b71922e9";
+
+        var qsh = jwt.createQueryStringHash(req);
+        assert.equal(qsh, expectedHash);
+        done();
+    });
+});

@@ -5,7 +5,7 @@ var express = require('express');
 var app = express();
 var ac = require('../index');
 var request = require('request');
-var jwt = require('jwt-simple');
+var jwt = require('../lib/internal/jwt');
 var logger = require('./logger');
 var spy = require("sinon").spy;
 var moment = require("moment");
@@ -113,32 +113,32 @@ describe('Auto registration (UPM)', function () {
         });
     });
 
-    it('should also deregister if a SIGINT is encountered', function (done) {
-        // first sigint will be us testing deregistration
-        function trap() {
-            // second sigint will be deregistration sending another to kill the process after
-            // it completes it's work; we don't want the tests to exit, so we'll no-op that
-            process.once('SIGINT', function () {
-                // a third sigint can occur on test failures (why?), so this ensures that we see
-                // the full error emitted before the tests terminate
-                process.once('SIGINT', function () {
-                    process.once('SIGINT', function () {
-                    });
-                });
-            });
-        }
-
-        process.once('SIGINT', trap);
-        process.kill(process.pid, 'SIGINT');
-        var timer = testIfEventCalled();
-        addon.on('addon_deregistered', function () {
-            eventFired(timer, done, function () {
-                addon.settings.get(helper.installedPayload.clientKey).then(function (settings) {
-                    assert(!settings, 'settings not deleted: ' + require('util').inspect(settings));
-                    done();
-                });
-            });
-        });
-    });
+//    it('should also deregister if a SIGINT is encountered', function (done) {
+//        // first sigint will be us testing deregistration
+//        function trap() {
+//            // second sigint will be deregistration sending another to kill the process after
+//            // it completes it's work; we don't want the tests to exit, so we'll no-op that
+//            process.once('SIGINT', function () {
+//                // a third sigint can occur on test failures (why?), so this ensures that we see
+//                // the full error emitted before the tests terminate
+//                process.once('SIGINT', function () {
+//                    process.once('SIGINT', function () {
+//                    });
+//                });
+//            });
+//        }
+//
+//        process.once('SIGINT', trap);
+//        process.kill(process.pid, 'SIGINT');
+//        var timer = testIfEventCalled();
+//        addon.on('addon_deregistered', function () {
+//            eventFired(timer, done, function () {
+//                addon.settings.get(helper.installedPayload.clientKey).then(function (settings) {
+//                    assert(!settings, 'settings not deleted: ' + require('util').inspect(settings));
+//                    done();
+//                });
+//            });
+//        });
+//    });
 
 });
