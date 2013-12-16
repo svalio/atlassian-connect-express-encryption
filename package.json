@@ -1,66 +1,66 @@
 {
-    "name": "atlassian-connect-express",
-    "version": "0.9.0",
-    "description": "Library for building Atlassian Add-ons on top of Express",
-    "dependencies": {
-        "express": "~3.3.4",
-        "request": "~2.16.6",
-        "jade": "~0.28.2",
-        "underscore": "~1.4.4",
-        "crypto": "0.0.3",
-        "q": "~0.9.2",
-        "qs": "~0.6.6",
-        "jugglingdb": "~0.2.0",
-        "colors": "~0.6.0",
-        "uglify-js": "~2.4.1",
-        "localtunnel": "0.0.4",
-        "rsvp": "~2.0.1",
-        "JSONPath": "~0.9.1",
-        "xml2js": "~0.2.8",
-        "moment": "~2.4.0"
+  "name": "atlassian-connect-express",
+  "version": "0.9.0-beta1",
+  "description": "Library for building Atlassian Add-ons on top of Express",
+  "dependencies": {
+    "express": "~3.3.4",
+    "request": "~2.16.6",
+    "jade": "~0.28.2",
+    "underscore": "~1.4.4",
+    "crypto": "0.0.3",
+    "q": "~0.9.2",
+    "qs": "~0.6.6",
+    "jugglingdb": "~0.2.0",
+    "colors": "~0.6.0",
+    "uglify-js": "~2.4.1",
+    "localtunnel": "0.0.4",
+    "rsvp": "~2.0.1",
+    "JSONPath": "~0.9.1",
+    "xml2js": "~0.2.8",
+    "moment": "~2.4.0"
+  },
+  "main": "index.js",
+  "devDependencies": {
+    "mocha": "*",
+    "sinon": "*",
+    "xunit-file": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://bitbucket.org/atlassian/atlassian-connect-express"
+  },
+  "homepage": "https://bitbucket.org/atlassian/atlassian-connect-express",
+  "keywords": [
+    "atlassian",
+    "plugins",
+    "add-ons",
+    "atlassian connect",
+    "jira",
+    "confluence",
+    "express",
+    "web"
+  ],
+  "scripts": {
+    "test": "mocha test"
+  },
+  "author": "Atlassian",
+  "contributors": [
+    {
+      "name": "Robert Bergman",
+      "email": "rbergman@atlassian.com"
     },
-    "main": "index.js",
-    "devDependencies": {
-        "mocha": "*",
-        "sinon": "*",
-        "xunit-file": "*"
+    {
+      "name": "Rich Manalang",
+      "email": "rmanalang@atlassian.com"
     },
-    "repository": {
-        "type": "git",
-        "url": "http://bitbucket.org/atlassian/atlassian-connect-express"
+    {
+      "name": "Tim Pettersen",
+      "email": "tim@atlassian.com"
     },
-    "homepage": "https://bitbucket.org/atlassian/atlassian-connect-express",
-    "keywords": [
-        "atlassian",
-        "plugins",
-        "add-ons",
-        "atlassian connect",
-        "jira",
-        "confluence",
-        "express",
-        "web"
-    ],
-    "scripts": {
-        "test": "mocha test"
-    },
-    "author": "Atlassian",
-    "contributors": [
-        {
-            "name": "Robert Bergman",
-            "email": "rbergman@atlassian.com"
-        },
-        {
-            "name": "Rich Manalang",
-            "email": "rmanalang@atlassian.com"
-        },
-        {
-            "name": "Tim Pettersen",
-            "email": "tim@atlassian.com"
-        },
-        {
-            "name": "Seb Ruiz",
-            "email": "sruiz@atlassian.com"
-        }
-    ],
-    "license": "Apache-2.0"
+    {
+      "name": "Seb Ruiz",
+      "email": "sruiz@atlassian.com"
+    }
+  ],
+  "license": "Apache-2.0"
 }
