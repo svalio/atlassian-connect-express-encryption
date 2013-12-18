@@ -96,7 +96,7 @@ describe('JWT', function () {
         };
         var expectedCanonical = "GET&/path/to/service&first=param&repeated=Parameter%202,parameter%201,parameter%202&zee_last=param";
 
-        var canonical = jwt._createCanonicalRequest(req);
+        var canonical = jwt.createCanonicalRequest(req);
         assert.equal(canonical, expectedCanonical);
         done();
     });
@@ -110,7 +110,7 @@ describe('JWT', function () {
         };
         var expectedCanonical = "GET&/hello-world&cp=%2Fjira&lic=none&loc=en-US&tz=Australia%2FSydney&user_id=&user_key=&xdm_c=channel-servlet-hello-world&xdm_e=http%3A%2F%2Fstorm%3A2990&xdm_p=1";
 
-        var canonical = jwt._createCanonicalRequest(req);
+        var canonical = jwt.createCanonicalRequest(req);
         assert.equal(canonical, expectedCanonical);
         done();
     });
