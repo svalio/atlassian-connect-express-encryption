@@ -348,12 +348,9 @@ You also need to add the permission:
 
 
 ### How to deploy to Heroku
-
-Deploying Node.js apps on Heroku is covered [here](https://devcenter.heroku.com/articles/nodejs#declare-process-types-with-procfile).
-
 Before you start, install Git and the [Heroku Toolbelt](https://toolbelt.heroku.com/).
 
-If you aren't using git to track your add-on, now is a good time to do so as it is required for heroku.
+If you aren't using git to track your add-on, now is a good time to do so as it is required for Heroku. Ensure you are in your project home directory and run the following commands:
 
 	git config --global user.name "John Doe"
 	git config --global user.email johndoe@example.com
@@ -367,14 +364,12 @@ Next, create the app on Heroku:
 
     heroku apps:create <add-on-name>
 
-Then set the public and private key as environment variables in Heroku (you don't ever want to commit these `*.pem` files into your scm).
+Then set the public and private key as environment variables in Heroku (you don't ever want to commit these `*.pem` files into your scm). The two `.*pem` files were created in your project home directory when you ran the `atlas-connect new` command. 
 
     heroku config:set AC_PUBLIC_KEY="`cat public-key.pem`" --app <add-on-name>
     heroku config:set AC_PRIVATE_KEY="`cat private-key.pem`" --app <add-on-name>
 
-You'll also need to make sure that your `NODE_ENV` is set to `production`:
-
-    heroku config:set NODE_ENV="production" --app <add-on-name>
+We recommend that you don't use the automatically generated key pair in production. You can use any RSA key pair generation tool such as [JSEncrypt](http://travistidwell.com/jsencrypt/demo/) to generate a production key pair. 
 
 Next, let's store our registration information in a Postgres database. In development, you were likely using the memory store. In production, you'll want to use a real database.
 
@@ -382,14 +377,16 @@ Next, let's store our registration information in a Postgres database. In develo
 
 Lastly, let's add the project files to Heroku and deploy! 
 
-If you aren't already there, switch to your project home directory. This should be the location of your `package.json` file. From there, run these commands:
+If you aren't already there, switch to your project home directory. From there, run these commands:
 
     git remote add heroku git@heroku.com:<add-on-name>.git
     git push heroku master
 
-It will take a minute or two for Heroku to spin up your add-on. It will need to install node and all of its dependencies. When it's done, you'll be given the URL where your add-on is deployed, however, you'll still need to register it on your Atlassian instance.
+It will take a minute or two for Heroku to spin up your add-on. When it's done, you'll be given the URL where your add-on is deployed, however, you'll still need to register it on your Atlassian instance.
 
-If you're running an OnDemand instance of JIRA or Confluence locally, you can install from UPM. See complete [instructions in the Atlassian Connect doc](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-Registertheadd-on) for more information.
+If you're running an OnDemand instance of JIRA or Confluence locally, you can install it from the add-on administration console. See complete [instructions in the Atlassian Connect doc](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-Registertheadd-on) for more information.
+
+For further detail, we recommend reading [Getting Started with Node.js on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs).
 
 ## Troubleshooting
 
