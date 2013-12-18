@@ -87,7 +87,7 @@ As you've noticed, `atlassian-connect-express` automatically registers your add-
 The configuration for your add-on is done in two files:
 
 * `./config.json` -- This file contains the configuration for each runtime environment your plugin runs in. The file has comments to help you understand available settings.
-* `./atlassian-connect.json` -- This file is a manifest of all the extension points your add-on uses. To see all of the available extension point options, check out the interactive guides for [JIRA](https://developer.atlassian.com/static/connect/#jira/atlassian-plugin) or [Confluence](https://developer.atlassian.com/static/connect/#confluence/atlassian-plugin).
+* `./atlassian-connect.json` -- This file is a manifest of all the extension points your add-on uses. To see all of the available extension point options, check out the modules sections of the [atlassian-connect documentation](https://developer.atlassian.com/static/connect/docs/).
 
 #### config.json
 
@@ -204,10 +204,7 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
 
 The `atlassian-connect.json` describes what your add-on will do. There are three main parts to the descriptor: meta information that describes your add-on (i.e., name, description, key, etc.), permissions and authentication information, and a list of the components your add-on will extend. This descriptor is sent to the host (i.e., JIRA or Confluence) when your add-on is installed.
 
-To see all of the available settings in the `atlassian-connect.json`, visit the interactive descriptor guides:
-
-* [JIRA](https://developer.atlassian.com/static/connect/#jira/atlassian-plugin)
-* [Confluence](https://developer.atlassian.com/static/connect/#confluence/atlassian-plugin)
+To see all of the available settings in the `atlassian-connect.json`, visit the module sections of the [atlassian-connect documentation](https://developer.atlassian.com/static/connect/docs/)
 
 ## Sample Add-ons using `atlassian-connect-express`
 
