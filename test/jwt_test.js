@@ -177,8 +177,23 @@ describe('JWT', function () {
         };
         var expectedHash = "d7e7f00660965fc15745b2c423a89b85d0853c4463faca362e0371d008eb0927";
 
-        var qsh = jwt.createQueryStringHash(req);
+        var qsh = jwt.createQueryStringHash(req, true);
         assert.equal(qsh, expectedHash);
+        done();
+    });
+
+    // apache http client likes to do this
+    it('should not correctly create qsh with POST body query string if not instructed to', function (done) {
+        var req = {
+            method: 'post',
+            path: '/hello-world',
+            query: {},
+            body: qs.parse('lic=none&tz=Australia%2FSydney&cp=%2Fjira&user_key=&loc=en-US&user_id=&jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzODY5MTEzNTYsImlzcyI6ImppcmE6MTU0ODk1OTUiLCJxc2giOiI4MDYzZmY0Y2ExZTQxZGY3YmM5MGM4YWI2ZDBmNjIwN2Q0OTFjZjZkYWQ3YzY2ZWE3OTdiNDYxNGI3MTkyMmU5IiwiaWF0IjoxMzg2OTExMTc2fQ.rAsxpHv0EvpXkhjnZnSV14EXJgDx3KSQjgYRjfKnFt8&xdm_e=http%3A%2F%2Fstorm%3A2990&xdm_c=channel-servlet-hello-world&xdm_p=1')
+        };
+        var expectedHash = "d7e7f00660965fc15745b2c423a89b85d0853c4463faca362e0371d008eb0927";
+
+        var qsh = jwt.createQueryStringHash(req, false);
+        assert.ok(qsh !== expectedHash);
         done();
     });
 });
