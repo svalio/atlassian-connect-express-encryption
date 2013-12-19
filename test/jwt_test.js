@@ -190,10 +190,10 @@ describe('JWT', function () {
             query: {},
             body: qs.parse('lic=none&tz=Australia%2FSydney&cp=%2Fjira&user_key=&loc=en-US&user_id=&jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzODY5MTEzNTYsImlzcyI6ImppcmE6MTU0ODk1OTUiLCJxc2giOiI4MDYzZmY0Y2ExZTQxZGY3YmM5MGM4YWI2ZDBmNjIwN2Q0OTFjZjZkYWQ3YzY2ZWE3OTdiNDYxNGI3MTkyMmU5IiwiaWF0IjoxMzg2OTExMTc2fQ.rAsxpHv0EvpXkhjnZnSV14EXJgDx3KSQjgYRjfKnFt8&xdm_e=http%3A%2F%2Fstorm%3A2990&xdm_c=channel-servlet-hello-world&xdm_p=1')
         };
-        var expectedHash = "d7e7f00660965fc15745b2c423a89b85d0853c4463faca362e0371d008eb0927";
+        var expectedHash = "6f95f3738e1b037a3bebbe0ad237d80fdbc1d5ae452e98ce03a9c004c178ebb4";
 
         var qsh = jwt.createQueryStringHash(req, false);
-        assert.ok(qsh !== expectedHash);
+        assert.equal(qsh, expectedHash);
         done();
     });
 });
