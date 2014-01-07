@@ -299,7 +299,7 @@ Both the query parameter `acpt` and the HTTP request header `X-acpt` are automat
 
 ### How to send a signed outbound HTTP request back to the host
 
-`atlassian-connect-express` bundles and extends the [request](https://github.com/mikeal/request) HTTP client. To make an JWT signed request back to the host, all you have to do is use `request` the way it was designed, but use a relative path as your URL back to the host's REST APIs. If `request` finds that you're using a relative URL, it will get signed. If you use an absolute URL, it bypasses signing.
+`atlassian-connect-express` bundles and extends the [request](https://github.com/mikeal/request) HTTP client. To make a JWT signed request back to the host, all you have to do is use `request` the way it was designed, but use a relative path as your URL back to the host's REST APIs. If `request` finds that you're using a relative URL, it will get signed. If you use an absolute URL, it bypasses signing.
 
     var httpClient = addon.httpClient(req);
     httpClient.get('/', function(err, res, body){
