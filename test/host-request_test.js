@@ -6,7 +6,6 @@ var app = express();
 var ac = require('../index');
 var request = require('request');
 var moment = require('moment');
-var qs = require('qs');
 var jwt = require('../lib/internal/jwt');
 var hostRequest = require('../lib/internal/host-request');
 var logger = require('./logger');
@@ -77,7 +76,7 @@ describe('Host Request', function () {
             'baseUrl': helper.productBaseUrl
         };
         addon.settings.set('clientInfo', settings, helper.installedPayload.clientKey);
-        httpClient = hostRequest(addon, { 'user': 'admin' }, helper.installedPayload.clientKey);
+        httpClient = hostRequest(addon, { 'userId': 'admin' }, helper.installedPayload.clientKey);
     });
 
     after(function (done) {
@@ -124,6 +123,15 @@ describe('Host Request', function () {
         });
     });
 
+    it('get request has correct JWT subject claim', function (done) {
+        httpClient.get('/some/path/on/host').then(function(request) {
+            var jwtToken = request.headers['Authorization'].slice(4);
+            var decoded = jwt.decode(jwtToken, helper.installedPayload.clientKey, true);
+            assert.equal(decoded.sub, 'admin');
+            done();
+        });
+    });
+
     it('post request has correct url', function (done) {
         var relativeUrl = '/some/path/on/host';
         httpClient.post(relativeUrl).then(function(request) {
@@ -154,7 +162,7 @@ describe('Host Request', function () {
                 }
             ]
         }).then(function(request) {
-                assert.deepEqual(request.file, ["file content",{"filename":"filename","ContentType":"text/plain"}]);
+            assert.deepEqual(request.file, ["file content",{"filename":"filename","ContentType":"text/plain"}]);
             done();
         });
     });
