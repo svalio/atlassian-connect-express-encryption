@@ -10,7 +10,6 @@ var jwt = require('../lib/internal/jwt');
 var hostRequest = require('../lib/internal/host-request');
 var logger = require('./logger');
 var spy = require("sinon").spy;
-
 var addon = {};
 
 describe('Host Request', function () {
@@ -76,7 +75,7 @@ describe('Host Request', function () {
             'baseUrl': helper.productBaseUrl
         };
         addon.settings.set('clientInfo', settings, helper.installedPayload.clientKey);
-        httpClient = hostRequest(addon, { 'userId': 'admin' }, helper.installedPayload.clientKey);
+        httpClient = hostRequest(addon, { 'userKey': 'admin' }, helper.installedPayload.clientKey);
     });
 
     after(function (done) {
