@@ -134,7 +134,7 @@ describe('Host Request', function () {
     it('post request has correct url', function (done) {
         var relativeUrl = '/some/path/on/host';
         httpClient.post(relativeUrl).then(function(request) {
-            assert.equal(request.href, helper.productBaseUrl + relativeUrl);
+            assert.equal(request.uri.href, helper.productBaseUrl + relativeUrl);
             done();
         });
     });
