@@ -7,7 +7,6 @@ var ac = require('../index');
 var request = require('request');
 var jwt = require('../lib/internal/jwt');
 var logger = require('./logger');
-var spy = require("sinon").spy;
 var moment = require("moment");
 var addon = {};
 
@@ -48,11 +47,7 @@ describe('Auto registration (UPM)', function () {
         });
 
         ac.store.register("teststore", function (logger, opts) {
-            var store = require("../lib/store/jugglingdb")(logger, opts);
-            spy(store, "get");
-            spy(store, "set");
-            spy(store, "del");
-            return store;
+            return require("../lib/store/jugglingdb")(logger, opts);
         });
 
         addon = ac(app, {

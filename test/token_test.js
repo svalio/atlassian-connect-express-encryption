@@ -8,7 +8,6 @@ var request = require('request');
 var moment = require('moment');
 var jwt = require('../lib/internal/jwt');
 var logger = require('./logger');
-var spy = require("sinon").spy;
 var token = require('../lib/internal/token');
 
 var addon = {};
@@ -48,11 +47,7 @@ describe('Token verification', function () {
         });
 
         ac.store.register("teststore", function (logger, opts) {
-            var store = require("../lib/store/jugglingdb")(logger, opts);
-            spy(store, "get");
-            spy(store, "set");
-            spy(store, "del");
-            return store;
+            return require("../lib/store/jugglingdb")(logger, opts);
         });
 
         addon = ac(app, {
