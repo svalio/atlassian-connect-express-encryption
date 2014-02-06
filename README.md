@@ -383,7 +383,13 @@ It will take a minute or two for Heroku to spin up your add-on. When it's done, 
 
 If you're running an OnDemand instance of JIRA or Confluence locally, you can install it from the add-on administration console. See complete [instructions in the Atlassian Connect doc](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-Registertheadd-on) for more information.
 
+In order to run your add-on on remote JIRA and Confluence instances, you must enter production mode. To achieve this, set the `NODE_ENV` variable to production like so: 
+
+    heroku config:set NODE_ENV=production
+    
 For further detail, we recommend reading [Getting Started with Node.js on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs).
+
+Before installing remotely on your product instance, create a marketplace listing for your add-on, generate an access token, and install it - [as described here](https://developer.atlassian.com/static/connect/docs/developing/installing-in-ondemand.html).
 
 ## Troubleshooting
 
