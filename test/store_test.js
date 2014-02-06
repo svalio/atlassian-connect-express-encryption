@@ -45,11 +45,11 @@ describe('Store', function () {
         });
 
         ac.store.register("teststore", function (logger, opts) {
-            var createStore = require("../lib/store/jugglingdb");
-            storeGetSpy = spy(createStore._proto_for_tests, "get");
-            storeSetSpy = spy(createStore._proto_for_tests, "set");
-            storeDelSpy = spy(createStore._proto_for_tests, "del");
-            return createStore(logger, opts);
+            var JugglingDB = require("../lib/store/jugglingdb")();
+            storeGetSpy = spy(JugglingDB.prototype, "get");
+            storeSetSpy = spy(JugglingDB.prototype, "set");
+            storeDelSpy = spy(JugglingDB.prototype, "del");
+            return new JugglingDB(logger, opts);
         });
 
         addon = ac(app, {
