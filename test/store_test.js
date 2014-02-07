@@ -15,6 +15,10 @@ describe('Store', function () {
     var server = {};
     var oldACOpts = process.env.AC_OPTS;
 
+    var storeGetSpy;
+    var storeSetSpy;
+    var storeDelSpy;
+
     before(function (done) {
         process.env.AC_OPTS = 'no-auth';
         app.set('env', 'development');
@@ -41,11 +45,11 @@ describe('Store', function () {
         });
 
         ac.store.register("teststore", function (logger, opts) {
-            var store = require("../lib/store/jugglingdb")(logger, opts);
-            spy(store, "get");
-            spy(store, "set");
-            spy(store, "del");
-            return store;
+            var JugglingDB = require("../lib/store/jugglingdb")();
+            storeGetSpy = spy(JugglingDB.prototype, "get");
+            storeSetSpy = spy(JugglingDB.prototype, "set");
+            storeDelSpy = spy(JugglingDB.prototype, "del");
+            return new JugglingDB(logger, opts);
         });
 
         addon = ac(app, {
@@ -133,9 +137,9 @@ describe('Store', function () {
             addon.settings.del('custom key')
         ];
         RSVP.all(promises).then(function () {
-            assert.ok(addon.settings.set.callCount > 0);
-            assert.ok(addon.settings.get.callCount > 0);
-            assert.ok(addon.settings.del.callCount > 0);
+            assert.ok(storeSetSpy.callCount > 0);
+            assert.ok(storeGetSpy.callCount > 0);
+            assert.ok(storeDelSpy.callCount > 0);
             done();
         }, function (err) {
             assert.fail(err);

@@ -9,7 +9,6 @@ var moment = require('moment');
 var jwt = require('../lib/internal/jwt');
 var hostRequest = require('../lib/internal/host-request');
 var logger = require('./logger');
-var spy = require("sinon").spy;
 var addon = {};
 
 describe('Host Request', function () {
@@ -46,11 +45,7 @@ describe('Host Request', function () {
         });
 
         ac.store.register("teststore", function (logger, opts) {
-            var store = require("../lib/store/jugglingdb")(logger, opts);
-            spy(store, "get");
-            spy(store, "set");
-            spy(store, "del");
-            return store;
+            return require("../lib/store/jugglingdb")(logger, opts);
         });
 
         addon = ac(app, {
@@ -134,7 +129,7 @@ describe('Host Request', function () {
     it('post request has correct url', function (done) {
         var relativeUrl = '/some/path/on/host';
         httpClient.post(relativeUrl).then(function(request) {
-            assert.equal(request.href, helper.productBaseUrl + relativeUrl);
+            assert.equal(request.uri.href, helper.productBaseUrl + relativeUrl);
             done();
         });
     });

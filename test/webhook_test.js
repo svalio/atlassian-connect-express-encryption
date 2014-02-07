@@ -18,11 +18,7 @@ describe('Webhook', function () {
 
     before(function (done) {
         ac.store.register("teststore", function (logger, opts) {
-            var store = require("../lib/store/jugglingdb")(logger, opts);
-            sinon.spy(store, "get");
-            sinon.spy(store, "set");
-            sinon.spy(store, "del");
-            return store;
+            return require("../lib/store/jugglingdb")(logger, opts);
         });
 
         app.set('env', 'development');
