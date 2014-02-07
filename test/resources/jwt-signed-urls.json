@@ -1,0 +1,90 @@
+{"secret": "s0m3-sh@r3d-s3cr37", "tests": [
+    {
+        "name": "Spaces",
+        "url": "https://example.com/test?param\u003dsome+spaces+in+this+parameter\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiJlZjQwOTdkMDUzOTVlYWYxYTEzMzk1NmYxNDAxMTZhOWM0MTFhZmFkNzY4ZDRmMDZkYWFjOWUzMDU3NjQyNjVkIiwiaWF0IjoxMzkxNzU2MTkyfQ.cIg_etk4Y9T22bR1-EPhQqy2pqBIs8bxctXBXmL-_AE"
+    },
+    {
+        "name": "Asterisk",
+        "url": "https://example.com/test?query\u003dconnect*\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiIwZDI4YmMxMGQxOTcyZDljYWI1OWUxMjNjZTE3OTc2ZWIzMmFhZDY5NTdhMTNjZmI4Yjk3Y2VkNmQzZmM4YTI5IiwiaWF0IjoxMzkxNzU2MTkyfQ.8F3C2SFg5t_dJbKXCC9os0Omlh2KwzVJPyU2nzP1rTE"
+    },
+    {
+        "name": "Unicode",
+        "url": "https://example.com/test?director\u003d%E5%AE%AE%E5%B4%8E+%E9%A7%BF\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiI0NGQ2MzU0ZmZlOGY5NjM5NzJhN2ZjNTllOThiMmMzZGZlNGI0OTMyOTVjNWI4OWVkZDk3NGEzMzllNjFhYzg5IiwiaWF0IjoxMzkxNzU2MTkyfQ.1cjCJePZ2CgLamQ3Ndf28bTjCG6WSfhBzo5Ccuvfwho"
+    },
+    {
+        "name": "Comma-delimited",
+        "url": "https://example.com/test?ids\u003d10%2C2%2C20%2C1\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiIyZTYxN2I2NWY5NjY2NTA3ODk5OTBlNWNhYzhmZjI5NWVlNWI0NTM4MzRkMDQ3OThmNDY2ZmY2MDM1YmQ4ODI5IiwiaWF0IjoxMzkxNzU2MTkyfQ._4iQ-4s604sn9xcrqgjbPg9XbPpEmmoyBeGzTsH-Kes"
+    },
+    {
+        "name": "Plus",
+        "url": "https://example.com/test?title\u003d1+%2B+1+equals+3\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiJjZTBhODY2Y2UwYzM0Y2JkZTcwZGViNjNmNjkxNTE5MmY1ODUwMGQyYjQ5YjEyZTFmZmM4Y2RmOTFlZGFiYzkxIiwiaWF0IjoxMzkxNzU2MTkyfQ.s6Sw8cb4ewVB-ydUjCdVIaR3x0Aq_eTl66NfcSnkrW4"
+    },
+    {
+        "name": "JSON Object",
+        "url": "https://example.com/test?json\u003d%7B%22key%22%3A%22value%22%7D\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiIxZDc0YzVhMWYwYTZjNzJhM2NlMjg1NTcwY2JmZDhmZTczNjkxMDEyM2U2YWRhMjAzZDRjN2JhOWE2MTI4YTZmIiwiaWF0IjoxMzkxNzU2MTkyfQ.LlvZZzXAcFGlm9SK_4jDWiy7RpRsXEGHuFeavvnII98"
+    },
+    {
+        "name": "JSON Array",
+        "url": "https://example.com/test?json\u003d%5B%22val1%22%2C%22val2%22%5D\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiI1YTY5ZDM1ZjE2NTM0MjkwYTRlZDJmOWU1M2E0NWU2ODcyY2YwYzNhMTE2MzI5NWM0Mjk0N2Q0MjkzMWExZjczIiwiaWF0IjoxMzkxNzU2MTkyfQ.UjX8o-A2mdH-hT13uNDSUiUw9Hz3Met1tkoOMdVD7cg"
+    },
+    {
+        "name": "Single Quotes",
+        "url": "https://example.com/test?quote\u003d%27quoted%27\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiIyMDdhMzAzNzZjNTk0ZDVjZGU3YjZlODczYjk0M2Y4NDc5ODM3MWQzMjkzYjdlYWMyN2UyYzJhMmE1ZDExMWQ1IiwiaWF0IjoxMzkxNzU2MTkyfQ.8UJDWDFf_y9gwGlNOxPC-LXlCId61Csk2bFPDJc7qIw"
+    },
+    {
+        "name": "Brackets",
+        "url": "https://example.com/test?param\u003d%28%29\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiI0NmI5Nzg3YTg5ODM1NjBmNDQ2ZjgyZDYxNDMxMjJkOTllMTUzYWZmZDU2ODhmYTQ1MzQzMDc0YTA5MTU3M2ViIiwiaWF0IjoxMzkxNzU2MTkyfQ.WiPeXP4n-Y7pXw4GA7_zlIW4Sd4SIabzmQskeh8henA"
+    },
+    {
+        "name": "Tilde",
+        "url": "https://example.com/test?eta\u003din+%7E3+days\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiI1YzVmOTdjZGZlM2FiZDhmZWI0OGY2ZjAyNDBhNzFlZjVjMTExMjg5YTViZjc3ZGRmNjQ1MjUwYjM5NTFlYzYzIiwiaWF0IjoxMzkxNzU2MTkyfQ.675RklOBZeeutzNYYSOcMeUJQvxhg4i90rLgy_7jBj8"
+    },
+    {
+        "name": "RFC-1738 Unsafe",
+        "url": "https://example.com/test?rfc\u003d+%3C%3E%22%23%25%7B%7D%7C%5C%5E%7E%5B%5D%60\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiIzNmJhMzljNTM3OWQ3NTJiYmVmMTM0OWJhNThkZjk4ZWNhYTQ1NmI3OGM3YzJlMzI0NWUyZjMzZWFjNzEyYTQ5IiwiaWF0IjoxMzkxNzU2MTkyfQ.TFLelmIOtt0RAtnlioV8ZGunxeLpJpLCpvT9-ZDwZjk"
+    },
+    {
+        "name": "RFC-1738 Reserved",
+        "url": "https://example.com/test?rfc\u003d%3B%2F%3F%3A%40%3D%26\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiI2MzkzMzBiYzkyZDc5MzczYjE5OGRhNjk3ODczYjJmMDNmMWEzYTBjNWFmNzhjZjhlZWE1MTdmMTQ5NjBiMTUwIiwiaWF0IjoxMzkxNzU2MTkyfQ.eJ_8xKn4F-_FNFoTX9pDFK9CkN_Syq58MTxcvqfI7VE"
+    },
+    {
+        "name": "RFC-1738 Special",
+        "url": "https://example.com/test?rfc\u003d%24-_.%2B%21*%27%28%29%2C\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiIwZTM2MjI5Y2M0NTlmZjhjY2I0ODQ1YzExNDMzY2ZiYmUyNWJmYTQ1ZThjMWVhMTRkMmExMjQyMzFjYjBhMmU5IiwiaWF0IjoxMzkxNzU2MTkyfQ.D1lFPKY9nl6-hDHrFfNakvb66siHPzypO7FmlJ21wu8"
+    },
+    {
+        "name": "Empty",
+        "url": "https://example.com/test?notmuch\u003d\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiIyMGZlY2RlZDk5NTE1MTZhMzQ0N2IxYjU1NmQwZWIzNTBkZTI5NzcwNTA1MjUzYTMwZGM3Mzk1MDJlMDVkZGM3IiwiaWF0IjoxMzkxNzU2MTkyfQ.q_6UUvN3dkM6zXOCPHTA6h2PGt172bnVSRDlggwmUNE"
+    },
+    {
+        "name": "Encoded",
+        "url": "https://example.com/test?referrer\u003dhttp%3A%2F%2Ffrom.net%2Fp%3Fx%3DA%2B%252B%2BB%26y%3D%2524-_.%252B%2521*%2527%2528%2529%252C\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiI3Y2E4MWI4ZTRlODNjMjM3NWVlYTdiOGI1MGJkMzc4NmJhOGI0MzI2MTE5M2EzYmQzY2NkZmNhMDYxMjBlZTMzIiwiaWF0IjoxMzkxNzU2MTkyfQ.FXM8QVrUxXah_WQyulJjIJmB-Aunl9DH360D3tt_bNk"
+    },
+    {
+        "name": "Multiple",
+        "url": "https://example.com/test?ids\u003d-1\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiJhNjQ2YzQ4NzQxZmFhZWI2NDlmOWNhNzg4OGFlMDI5ZWFkNDMyZTM4MDZmNTZjNGE1N2I4MGIzZTJhYzYyOGE5IiwiaWF0IjoxMzkxNzU2MTkyfQ.JDOysGHIDn8YeBJfryquFrBDq6NiHxb2N9q7_RmO8Cg"
+    },
+    {
+        "name": "Multiple II",
+        "url": "https://example.com/test?ids\u003d.1\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiJmMDUyNGQ0MmUwZjg2NjE4NjJlMWYxZTlhZGQ4NzU3OTcyYTAwNDNiYjcxMzZkNjQxNzM1ZDIxODc0YzVhMDU2IiwiaWF0IjoxMzkxNzU2MTkyfQ.sVtAx6xiLJsP6ja47D3bRQdqfL3BgaYvxEcTfVWrmN8"
+    },
+    {
+        "name": "Multiple Unicode",
+        "url": "https://example.com/test?chars\u003d%E5%AE%AE\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiI3MmE3ZjdjZTlmOTMxNTdmMjk2Yjg2MzM4MzE1NDIzZDZmM2I2YWJhNTA4MWYwNGJiZGI2YmIxODIxOGI2NWVlIiwiaWF0IjoxMzkxNzU2MTkyfQ.R33tw_AcxPIQ_ZNj07ROyM9hVrpP15kb3AmUxzbtFmE"
+    },
+    {
+        "name": "Multiple Empty",
+        "url": "https://example.com/test?c\u003d\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiJjYmJjYWM5YTZhMDJmM2FkOTZjNWFiNWJmODc2ZGQ5Zjc5YjJjNjFjZWVjNTY2MGExYzlkNzNhM2IxMDJlYzJjIiwiaWF0IjoxMzkxNzU2MTkyfQ.WlhqV39AVH0iqJt97jGEEDm5xoSj0iyNpBdt3l2JcJE"
+    },
+    {
+        "name": "Key RFC-1738 Unsafe",
+        "url": "https://example.com/test?%231\u003dvalue\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiJlY2NiNGEyMzJkNTBjYTQxYWM0MDM5ODY3NWI2NDg3YTcxMWQ5ZTk3MjkxN2Q4YTYxY2JjMTIwZjlmYmRhNTk3IiwiaWF0IjoxMzkxNzU2MTkyfQ.3I_2KttqEZ29kmapPnr6XBY81XWj5C1pi1vF2-o8T-M"
+    },
+    {
+        "name": "Key RFC-1738 Reserved",
+        "url": "https://example.com/test?%3A1\u003dvalue\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiI2ZDgyMzE4MWE2OGE0OTUyYzc1ZTRiNTFhZDBiOGQ1OWU4Nzk4NTljZGY5NzdlNzI1NDU0NTIwMWJjYTg0NjVkIiwiaWF0IjoxMzkxNzU2MTkyfQ.m9uclq_OnxFSAa6CnkrWPgE_r4FFfF70gSPz1hUKzEs"
+    },
+    {
+        "name": "Key RFC-1738 Special",
+        "url": "https://example.com/test?%241\u003dvalue\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTE3NTYzNzIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiJhOWY2MWYxYzgyNTBlYmZiOTIzNDY1NGU3MWRlYzIzM2M5M2MxNmE1NGZlMzBhNjQ5ZGZkNjViYWRmM2MwMTcxIiwiaWF0IjoxMzkxNzU2MTkyfQ.OYNbRjH8gX11oszTyeCTIL_EYcipZsDXRZOPRkEFD74"
+    }
+], "comment": "Generated by com.atlassian.plugin.connect.test.plugin.JwtSigningInteroperabilityTest.SigningTests on Fri Feb 07 17:56:32 EST 2014"}
