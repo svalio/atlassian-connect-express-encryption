@@ -27,7 +27,7 @@ _.each(testData.tests, function (test) {
             done();
         });
 
-        it('should still lead to matching qsh', function (done) {
+        it('should match qsh from "qs" parsed uri', function (done) {
             var req = {
                 method: "GET",
                 path: uri.path(),
@@ -38,13 +38,17 @@ _.each(testData.tests, function (test) {
             var decodedToken = jwt.decode(token, testData.secret, true);
 
             if (actualQsh != decodedToken.qsh) {
-                // print something useful for debugging
-                console.log("\nQuery w/o JWT token:");
-                console.log(uri.uriParts.query.replace(/&jwt=[^&]*/, ""))
+                logDebugInfo();
             }
             assert.equal(actualQsh, decodedToken.qsh);
             done();
         });
+
+        function logDebugInfo() {
+            // print something useful for debugging
+            console.log("\nQuery w/o JWT token:");
+            console.log(uri.uriParts.query.replace(/&jwt=[^&]*/, ""))
+        }
     });
 
 });
