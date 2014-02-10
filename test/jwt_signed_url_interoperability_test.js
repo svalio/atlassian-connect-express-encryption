@@ -17,7 +17,7 @@ _.each(testData.tests, function (test) {
 
     describe(test.name, function () {
 
-        var uri = new Uri(test.url)
+        var uri = new Uri(test.signedUrl);
         var queryString = qs.parse(uri.uriParts.query);
         var token = queryString.jwt;
 
@@ -27,27 +27,27 @@ _.each(testData.tests, function (test) {
             done();
         });
 
-        it('should match qsh from "qs" parsed uri', function (done) {
-            var req = {
-                method: "GET",
-                path: uri.path(),
-                query: queryString
-            };
+        it('should match canonical url', function(done) {
+            var req = createRequest();
+            var actualCanonicalUrl = jwt.createCanonicalRequest(req, false);
+            assert.equal(actualCanonicalUrl, test.canonicalUrl);
+            done();
+        });
 
+        it('should match qsh', function (done) {
+            var req = createRequest();
             var actualQsh = jwt.createQueryStringHash(req, false);
             var decodedToken = jwt.decode(token, testData.secret, true);
-
-            if (actualQsh != decodedToken.qsh) {
-                logDebugInfo();
-            }
             assert.equal(actualQsh, decodedToken.qsh);
             done();
         });
 
-        function logDebugInfo() {
-            // print something useful for debugging
-            console.log("\nQuery w/o JWT token:");
-            console.log(uri.uriParts.query.replace(/&jwt=[^&]*/, ""))
+        function createRequest() {
+            return {
+                method: "GET",
+                path: uri.path(),
+                query: queryString
+            };
         }
     });
 
