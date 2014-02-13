@@ -22,7 +22,8 @@ describe('Webhook', function () {
         });
 
         app.set('env', 'development');
-        app.use(express.bodyParser());
+        app.use(express.urlencoded());
+        app.use(express.json());
 
         var installedPayload = helper.installedPayload;
         installedPayload.baseUrl = "http://admin:admin@localhost:3003";
