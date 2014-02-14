@@ -16,7 +16,8 @@ describe('Auto registration (UPM)', function () {
 
     before(function (done) {
         app.set('env', 'development');
-        app.use(express.bodyParser());
+        app.use(express.urlencoded());
+        app.use(express.json());
 
         // mock host
         app.get('/confluence/plugins/servlet/oauth/consumer-info', function (req, res) {
