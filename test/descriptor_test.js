@@ -4,7 +4,7 @@ var express = require('express');
 var app = express();
 var ac = require('../index');
 var logger = require('./logger');
-var _ = require('underscore');
+var _ = require('lodash');
 var addon = {};
 
 describe('Descriptor', function () {

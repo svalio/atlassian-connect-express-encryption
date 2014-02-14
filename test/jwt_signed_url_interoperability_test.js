@@ -3,7 +3,7 @@
  * com.atlassian.plugin.connect.test.plugin.JwtSigningInteroperabilityTest (see the file for the most up-to-date reference)
  *
  */
-var _ = require('underscore');
+var _ = require('lodash');
 var fs = require('fs');
 var Uri = require('jsuri');
 var qs = require('qs');
