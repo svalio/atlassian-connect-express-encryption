@@ -317,6 +317,24 @@ If not in a request context, you can perform the equivalent operation as follows
       ...
     });
 
+You can also set custom headers or send a form data. Take, for example this request which attaches a file to a JIRA issue
+
+    httpClient.post( {
+        url: '/rest/api/2/issue/' + issueKey + '/attachments',
+        headers: {
+            'X-Atlassian-Token': 'nocheck'
+        },
+        form: {
+            file: [
+                attachmentContent,
+                {
+                    filename: filename,
+                    contentType: 'text/plain'
+                }
+            ]
+        }
+    }
+
 ### Using the product REST API
 
 Certain REST URLs may require additional permissions that should be added to your `atlassian-connect.json` file.

@@ -22,7 +22,8 @@ describe('Store', function () {
     before(function (done) {
         process.env.AC_OPTS = 'no-auth';
         app.set('env', 'development');
-        app.use(express.bodyParser());
+        app.use(express.urlencoded());
+        app.use(express.json());
 
         app.get('/confluence/plugins/servlet/oauth/consumer-info', function (req, res) {
             res.set('Content-Type', 'application/xml');
