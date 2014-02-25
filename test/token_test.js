@@ -33,6 +33,10 @@ describe('Token verification', function () {
             res.send(200);
         });
 
+        app.get("/confluence/rest/plugins/1.0/", function(req, res) {
+            res.json({plugins: []});
+        });
+
         // Post request to UPM installer
 
         app.post("/confluence/rest/plugins/1.0/", function (req, res) {

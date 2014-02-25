@@ -53,6 +53,10 @@ describe('Webhook', function () {
             res.send(200);
         });
 
+        host.get("/rest/plugins/1.0/", function(req, res) {
+            res.json({plugins: []});
+        });
+
         host.post("/rest/plugins/1.0/", function (req, res) {
             request({
                 url: helper.addonBaseUrl + '/installed',
