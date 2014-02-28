@@ -6,7 +6,7 @@
 
 ## More about `atlassian-connect-express`
 
-The `atlassian-connect-express` package helps you get started developing add-ons quickly, using Node.js and Express as the add-on server.  
+The `atlassian-connect-express` package helps you get started developing add-ons quickly, using Node.js and Express as the add-on server.
 
 It's important to understand that [Express](http://expressjs.com/) by itself is a web app framework for Node. `atlassian-connect-express` just provides a library of middleware and convenience helpers that make it easier to build Atlassian add-ons. Specifically, `atlassian-connect-express` adds:
 
@@ -61,7 +61,7 @@ Change to the new project directory and install dependencies:
 At this point, you're all set to run your add-on, but you still need the target application (i.e., JIRA or Confluence) for your add-on. You have a few options:
 
 1. You can do all your development work locally using the [Atlassian SDK](https://marketplace.atlassian.com/search?q=%22atlassian+plugin+sdk%22). You can start a local instance of JIRA or Confluence using the [commands discussed here](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-StartingwiththeSDK).
-2. Install the add-on in an Atlassian OnDemand instance. See [instructions in the Atlassian Connect doc](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-Registertheadd-on) for more information. 
+2. Install the add-on in an Atlassian OnDemand instance. See [instructions in the Atlassian Connect doc](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-Registertheadd-on) for more information.
 
 ### Running your Add-on Server
 
@@ -155,7 +155,7 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         // If you are running provided container like Heroku you should probably add
         // appropriate dependency to your package.json  file:
         //  "dependencies": {
-        //    "jugglingdb-postgres": " 0.0.1-9"
+        //    "jugglingdb-postgres": "latest"
         //  }
         //
         // Your add-on will be registered with the following hosts upon startup.
@@ -379,18 +379,18 @@ Next, create the app on Heroku:
 
     heroku apps:create <add-on-name>
 
-Then set the public and private key as environment variables in Heroku (you don't ever want to commit these `*.pem` files into your scm). The two `.*pem` files were created in your project home directory when you ran the `atlas-connect new` command. 
+Then set the public and private key as environment variables in Heroku (you don't ever want to commit these `*.pem` files into your scm). The two `.*pem` files were created in your project home directory when you ran the `atlas-connect new` command.
 
     heroku config:set AC_PUBLIC_KEY="`cat public-key.pem`" --app <add-on-name>
     heroku config:set AC_PRIVATE_KEY="`cat private-key.pem`" --app <add-on-name>
 
-We recommend that you don't use the automatically generated key pair in production. You can use any RSA key pair generation tool such as [JSEncrypt](http://travistidwell.com/jsencrypt/demo/) to generate a production key pair. 
+We recommend that you don't use the automatically generated key pair in production. You can use any RSA key pair generation tool such as [JSEncrypt](http://travistidwell.com/jsencrypt/demo/) to generate a production key pair.
 
 Next, let's store our registration information in a Postgres database. In development, you were likely using the memory store. In production, you'll want to use a real database.
 
     heroku addons:add heroku-postgresql:dev --app <add-on-name>
 
-Lastly, let's add the project files to Heroku and deploy! 
+Lastly, let's add the project files to Heroku and deploy!
 
 If you aren't already there, switch to your project home directory. From there, run these commands:
 
@@ -401,10 +401,10 @@ It will take a minute or two for Heroku to spin up your add-on. When it's done, 
 
 If you're running an OnDemand instance of JIRA or Confluence locally, you can install it from the add-on administration console. See complete [instructions in the Atlassian Connect doc](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-Registertheadd-on) for more information.
 
-In order to run your add-on on remote JIRA and Confluence instances, you must enter production mode. To achieve this, set the `NODE_ENV` variable to production like so: 
+In order to run your add-on on remote JIRA and Confluence instances, you must enter production mode. To achieve this, set the `NODE_ENV` variable to production like so:
 
     heroku config:set NODE_ENV=production
-    
+
 For further detail, we recommend reading [Getting Started with Node.js on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs).
 
 Before installing remotely on your product instance, create a marketplace listing for your add-on, generate an access token, and install it - [as described here](https://developer.atlassian.com/static/connect/docs/developing/installing-in-ondemand.html).
