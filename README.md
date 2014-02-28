@@ -152,10 +152,10 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         //
         //   $ npm install -S jugglingdb-postgres
 
-        // If you are running provided container like Heroku you should probably add
+        // If you are running provided container like Heroku you should add the
         // appropriate dependency to your package.json  file:
         //  "dependencies": {
-        //    "jugglingdb-postgres": "latest"
+        //    "jugglingdb-postgres": "0.0.4"
         //  }
         //
         // Your add-on will be registered with the following hosts upon startup.
