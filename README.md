@@ -58,36 +58,49 @@ Change to the new project directory and install dependencies:
 
 ### Setting up a development environment
 
-At this point, you're all set to run your add-on, but you still need the target application (i.e., JIRA or Confluence) for your add-on. You have a few options:
+At this point, you're all set to run your add-on, but you still need the target application (i.e., JIRA or Confluence)
+for your add-on. You have a few options:
 
-1. You can do all your development work locally using the [Atlassian SDK](https://marketplace.atlassian.com/search?q=%22atlassian+plugin+sdk%22). You can start a local instance of JIRA or Confluence using the [commands discussed here](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-StartingwiththeSDK).
-2. Install the add-on in an Atlassian OnDemand instance. See [instructions in the Atlassian Connect doc](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-Registertheadd-on) for more information.
+1. You can do all your development work locally using the [Atlassian SDK](https://marketplace.atlassian.com/search?q=%22atlassian+plugin+sdk%22).
+You can start a local instance of JIRA or Confluence by reading the [guide to developing locally](https://developer.atlassian.com/static/connect/docs/developing/developing-locally.html).
+2. Install the add-on in [an Atlassian OnDemand instance](https://developer.atlassian.com/static/connect/docs/developing/installing-in-ondemand.html).
+for more information.
 
 ### Running your Add-on Server
 
-If you've chosen the first option and have a local running instance of JIRA or Confluence, you're all set. Now all you need to do to run your add-on inside your local JIRA or Confluence instance is:
+If you've chosen the first option and have a local running instance of JIRA or Confluence, you're all set. Now all you
+need to do to run your add-on inside your local JIRA or Confluence instance is:
 
     node app.js
 
 This will boot up your Express server on the default port of 3000 and do the following:
 
 * Register your add-on's `atlassian-connect.json` (at <http://localhost:3000/atlassian-connect.json>) with the host
-* Start watching for changes to your `atlassian-connect.json`. If the file is modified, `atlassian-connect-express` will re-register your add-on with the host.
+* Start watching for changes to your `atlassian-connect.json`. If the file is modified, `atlassian-connect-express` will
+re-register your add-on with the host.
 
-The created project already contains a sample atlassian-connect.json file which adds a "Hello World" general page to your local running JIRA or Confluence instance. To ensure that everything is working as expected, navigate to your local running instance and check that a "Hello World" link is present in the application's header and displays a "Hello World" page when clicked.
+The created project already contains a sample atlassian-connect.json file which adds a "Hello World" general page to
+your local running JIRA or Confluence instance. To ensure that everything is working as expected, navigate to your local
+running instance and check that a "Hello World" link is present in the application's header and displays a "Hello World"
+page when clicked.
 
 ### The Dev Loop
 
-At this point, you can start building your add-on. Changes to views load automatically, however, if you make changes to any JavaScript, you need to restart Express. If you want your server to automatically restart when your JavaScript changes, consider using [nodemon](https://npmjs.org/package/nodemon) or the like.
+At this point, you can start building your add-on. Changes to views load automatically, however, if you make changes to
+any JavaScript, you need to restart Express. If you want your server to automatically restart when your JavaScript
+changes, consider using [nodemon](https://npmjs.org/package/nodemon) or the like.
 
-As you've noticed, `atlassian-connect-express` automatically registers your add-on with the target application when it's started. Another nice feature is that it automatically de-registers it at shutdown `<ctrl-c>`.
+As you've noticed, `atlassian-connect-express` automatically registers your add-on with the target application when it's
+started. Another nice feature is that it automatically de-registers it at shutdown `<ctrl-c>`.
 
 ### Configuration
 
 The configuration for your add-on is done in two files:
 
-* `./config.json` -- This file contains the configuration for each runtime environment your plugin runs in. The file has comments to help you understand available settings.
-* `./atlassian-connect.json` -- This file is a manifest of all the extension points your add-on uses. To see all of the available extension point options, check out the modules sections of the [atlassian-connect documentation](https://developer.atlassian.com/static/connect/docs/).
+* `./config.json` -- This file contains the configuration for each runtime environment your plugin runs in. The file has
+comments to help you understand available settings.
+* `./atlassian-connect.json` -- This file is a manifest of all the extension points your add-on uses. To see all of the
+available extension point options, check out the modules sections of the [atlassian-connect documentation](https://developer.atlassian.com/static/connect/docs/).
 
 #### config.json
 
@@ -202,43 +215,58 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
 
 ### atlassian-connect.json
 
-The `atlassian-connect.json` describes what your add-on will do. There are three main parts to the descriptor: meta information that describes your add-on (i.e., name, description, key, etc.), permissions and authentication information, and a list of the components your add-on will extend. This descriptor is sent to the host (i.e., JIRA or Confluence) when your add-on is installed.
+The `atlassian-connect.json` describes what your add-on will do. There are three main parts to the descriptor: meta
+information that describes your add-on (i.e., name, description, key, etc.), permissions and authentication information,
+and a list of the components your add-on will extend. This descriptor is sent to the host (i.e., JIRA or Confluence)
+when your add-on is installed.
 
-To see all of the available settings in the `atlassian-connect.json`, visit the module sections of the [atlassian-connect documentation](https://developer.atlassian.com/static/connect/docs/)
+To see all of the available settings in the `atlassian-connect.json`, visit the module sections of the
+[atlassian-connect documentation](https://developer.atlassian.com/static/connect/docs/)
 
 ## Sample Add-ons using `atlassian-connect-express`
 
-* [Sequence Diagramr](https://bitbucket.org/atlassianlabs/atlassian-connect-confluence-sequence-diagramr) -- a simple Confluence remote macro for creating UML sequence diagrams
-* [Tim's Word Cloud](https://bitbucket.org/tpettersen/confluence-word-cloud) -- a macro that takes the contents of a page and constructs an SVG-based word cloud
-* [Atlassian Connect Webhook Inspector](https://bitbucket.org/atlassianlabs/webhook-inspector) -- a simple tool to log webhooks fired in Atlassian apps for development purposes.
+* [Sequence Diagramr](https://bitbucket.org/atlassianlabs/atlassian-connect-confluence-sequence-diagramr) -- a simple
+Confluence remote macro for creating UML sequence diagrams
+* [Confluence Word Cloud](https://bitbucket.org/atlassianlabs/atlassian-connect-confluence-word-cloud) -- a macro that
+takes the contents of a page and constructs an SVG-based word cloud
+* [Atlassian Connect Webhook Inspector](https://bitbucket.org/atlassianlabs/webhook-inspector) -- a simple tool to log
+webhooks fired in Atlassian apps for development purposes.
 
 ## The `atlassian-connect-express` scaffold
 
-When you generate a new `atlassian-connect-express` add-on, you're actually just downloading a copy of the [Atlassian Connect Expressjs template](https://bitbucket.org/atlassian/atlassian-connect-express-template/).
+When you generate a new `atlassian-connect-express` add-on, you're actually just downloading a copy of the
+[Atlassian Connect Expressjs template](https://bitbucket.org/atlassian/atlassian-connect-express-template/).
 
 ### Handlebars layouts and templates
 
 The base scaffold uses the [Handlebars](http://handlebarsjs.com) template library via the [express-hbs](https://github.com/barc/express-hbs) package.
 
-Handlebars views are stored in the `./views` directory. The base template contains a `layout.hbs` and a sample page (`hello-world.hbs`). Handlebars alone doesn't provide layouts, but the `express-hbs` package does. To apply the `layout.hbs` layout to your template page, just add the following to the top of your template:
+Handlebars views are stored in the `./views` directory. The base template contains a `layout.hbs` and a sample page
+(`hello-world.hbs`). Handlebars alone doesn't provide layouts, but the `express-hbs` package does. To apply the
+`layout.hbs` layout to your template page, just add the following to the top of your template:
 
     {{!< layout}}
 
-To learn more about how Handlebars works in Expressjs, take a look at the [express-hbs documentation](https://github.com/barc/express-hbs#readme).
+To learn more about how Handlebars works in express.js, take a look at the [express-hbs documentation](https://github.com/barc/express-hbs#readme).
 
 ### Special context variables
 
-`atlassian-connect-express` injects a handful of useful context variables into your render context. You can access any of these within your templates:
+`atlassian-connect-express` injects a handful of useful context variables into your render context. You can access any
+of these within your templates:
 
 * `title`: the add-on's name (derived from `atlassian-connect.json`)
 * `appKey`: the application key defined in `atlassian-connect.json`
 * `localBaseUrl`: the base URI of the add-on
 * `hostBaseUrl`: the base URI of the target application (includes the context path if available)
-* `hostStylesheetUrl`: the URL to the base CSS file for Connect add-ons. This stylesheet is a bare minimum set of styles to help you get started. It's not a full AUI stylesheet.
-* `hostScriptUrl`: the URL to the Connect JS client. This JS file contains the code that will establish the seamless iframe bridge between the add-on and its parent. It also contains a handful of methods and objects for accessing data through the parent (look for the `AP` JS object).
+* `hostStylesheetUrl`: the URL to the base CSS file for Connect add-ons. This stylesheet is a bare minimum set of styles
+to help you get started. It's not a full AUI stylesheet.
+* `hostScriptUrl`: the URL to the Connect JS client. This JS file contains the code that will establish the seamless
+iframe bridge between the add-on and its parent. It also contains a handful of methods and objects for accessing data
+through the parent (look for the `AP` JS object).
 * `token`: the token that can be used to authenticate calls from the iframe back to the add-on service.
 
-You can access any of the variables above as normal Handlebars variables. For example, to generate a link in your page that links elsewhere in the host:
+You can access any of the variables above as normal Handlebars variables. For example, to generate a link in your page
+that links elsewhere in the host:
 
     <a href="{{hostBaseUrl}}/browse/JRA">JIRA</a>
 
@@ -246,7 +274,8 @@ You can access any of the variables above as normal Handlebars variables. For ex
 
 ### How to secure a route with JWT
 
-Add-ons are authenticated through JWT. To simplify JWT verification on your routes, you can simply add a `atlassian-connect-express` middleware to your route:
+Add-ons are authenticated through JWT. To simplify JWT verification on your routes, you can simply add a
+`atlassian-connect-express` middleware to your route:
 
     module.exports = function (app, addon) {
         app.get('/protected-resource',
@@ -264,7 +293,10 @@ Simply adding the `addon.authenticate()` middleware will protect your resource.
 
 ### How to send a signed HTTP request from the iframe back to the add-on service
 
-The initial call to load the iframe content is secured by OAuth, as described above. However, the loaded content cannot sign subsequent requests. A typical example is content that makes AJAX calls back to the add-on. Cookie sessions cannot be used, as many browsers block third-party cookies by default. `atlassian-connect-express` provides middleware that works without cookies and helps making secure requests from the iframe.
+The initial call to load the iframe content is secured by JWT, as described above. However, the loaded content cannot
+sign subsequent requests. A typical example is content that makes AJAX calls back to the add-on. Cookie sessions cannot
+be used, as many browsers block third-party cookies by default. `atlassian-connect-express` provides middleware that
+works without cookies and helps making secure requests from the iframe.
 
 A route can be secured by adding the `checkValidToken` middleware:
 
@@ -280,7 +312,8 @@ A route can be secured by adding the `checkValidToken` middleware:
         );
     };
 
-In order to secure your route, the token must be part of the HTTP request back to the add-on service. This can be done by using a query parameter:
+In order to secure your route, the token must be part of the HTTP request back to the add-on service. This can be done
+by using a query parameter:
 
     <a href="/protected-resource?acpt={{token}}">See more</a>
 
@@ -290,16 +323,23 @@ The second option is to use an HTTP header, e.g. for AJAX requests:
         request.setRequestHeader("X-acpt", {{token}});
     }
 
-You can embed the token anywhere in your iframe content using the `token` content variable. For example, you can embed it in a meta tag, from where it can later be read by a script:
+You can embed the token anywhere in your iframe content using the `token` content variable. For example, you can embed
+it in a meta tag, from where it can later be read by a script:
 
     <meta name="acpt" content="{{token}}">
 
-Both the query parameter `acpt` and the HTTP request header `X-acpt` are automatically recognized and handled by `atlassian-connect-express` when a route is secured with the token middleware. The token remains valid for 15 minutes by default, and is automatically refreshed on each call. The expiration of the token can be configured using `maxTokenAge` (in seconds).
+Both the query parameter `acpt` and the HTTP request header `X-acpt` are automatically recognized and handled by
+`atlassian-connect-express` when a route is secured with the token middleware. The token remains valid for 15 minutes
+by default, and is automatically refreshed on each call. The expiration of the token can be configured using
+`maxTokenAge` (in seconds).
 
 
 ### How to send a signed outbound HTTP request back to the host
 
-`atlassian-connect-express` bundles and extends the [request](https://github.com/mikeal/request) HTTP client. To make a JWT signed request back to the host, all you have to do is use `request` the way it was designed, but use a relative path as your URL back to the host's REST APIs. If `request` finds that you're using a relative URL, it will get signed. If you use an absolute URL, it bypasses signing.
+`atlassian-connect-express` bundles and extends the [request](https://github.com/mikeal/request) HTTP client. To make a
+JWT signed request back to the host, all you have to do is use `request` the way it was designed, but use a relative
+path as your URL back to the host's REST APIs. If `request` finds that you're using a relative URL, it will get signed.
+If you use an absolute URL, it bypasses signing.
 
     var httpClient = addon.httpClient(req);
     httpClient.get('/', function(err, res, body){
@@ -337,35 +377,15 @@ You can also set custom headers or send a form data. Take, for example this requ
 
 ### Using the product REST API
 
-Certain REST URLs may require additional permissions that should be added to your `atlassian-connect.json` file.
-
-[Jira Permissions](https://developer.atlassian.com/static/connect/index-plugin.html?#jira/permissions)
-
-[Confluence Permissions](https://developer.atlassian.com/static/connect/index-plugin.html?#confluence/permissions)
-
-For example, to view details of a specific jira issue.
-
-    var httpClient = addon.httpClient(req);
-    httpClient.get('/rest/api/2/issue/ISSUE-KEY', function(err, res, body){
-      ...
-    });
-
-You also need to add the permission:
-````
-<!--! This plugin needs several permissions: -->
-<permissions>
-    <!--! * Create a trusted link in JIRA that will allow authenticated REST calls -->
-    <permission>create_oauth_link</permission>
-    <!--! * Query JIRA issues, projects, and issue types -->
-    <permission>browse_projects</permission>
-</permissions>
-````
+Certain REST URLs may require [additional scopes](https://developer.atlassian.com/static/connect/docs/scopes/scopes.html)
+ that should be added to your `atlassian-connect.json` file.
 
 
 ### How to deploy to Heroku
 Before you start, install Git and the [Heroku Toolbelt](https://toolbelt.heroku.com/).
 
-If you aren't using git to track your add-on, now is a good time to do so as it is required for Heroku. Ensure you are in your project home directory and run the following commands:
+If you aren't using git to track your add-on, now is a good time to do so as it is required for Heroku. Ensure you are
+in your project home directory and run the following commands:
 
 	git config --global user.name "John Doe"
 	git config --global user.email johndoe@example.com
@@ -379,14 +399,17 @@ Next, create the app on Heroku:
 
     heroku apps:create <add-on-name>
 
-Then set the public and private key as environment variables in Heroku (you don't ever want to commit these `*.pem` files into your scm). The two `.*pem` files were created in your project home directory when you ran the `atlas-connect new` command.
+Then set the public and private key as environment variables in Heroku (you don't ever want to commit these `*.pem`
+files into your scm). The two `.*pem` files were created in your project home directory when you ran the `atlas-connect new` command.
 
     heroku config:set AC_PUBLIC_KEY="`cat public-key.pem`" --app <add-on-name>
     heroku config:set AC_PRIVATE_KEY="`cat private-key.pem`" --app <add-on-name>
 
-We recommend that you don't use the automatically generated key pair in production. You can use any RSA key pair generation tool such as [JSEncrypt](http://travistidwell.com/jsencrypt/demo/) to generate a production key pair.
+We recommend that you don't use the automatically generated key pair in production. You can use any RSA key pair
+generation tool such as [JSEncrypt](http://travistidwell.com/jsencrypt/demo/) to generate a production key pair.
 
-Next, let's store our registration information in a Postgres database. In development, you were likely using the memory store. In production, you'll want to use a real database.
+Next, let's store our registration information in a Postgres database. In development, you were likely using the memory
+store. In production, you'll want to use a real database.
 
     heroku addons:add heroku-postgresql:dev --app <add-on-name>
 
@@ -397,23 +420,29 @@ If you aren't already there, switch to your project home directory. From there, 
     git remote add heroku git@heroku.com:<add-on-name>.git
     git push heroku master
 
-It will take a minute or two for Heroku to spin up your add-on. When it's done, you'll be given the URL where your add-on is deployed, however, you'll still need to register it on your Atlassian instance.
+It will take a minute or two for Heroku to spin up your add-on. When it's done, you'll be given the URL where your
+ add-on is deployed, however, you'll still need to register it on your Atlassian instance.
 
-If you're running an OnDemand instance of JIRA or Confluence locally, you can install it from the add-on administration console. See complete [instructions in the Atlassian Connect doc](https://developer.atlassian.com/display/AC/Hello+World#HelloWorld-Registertheadd-on) for more information.
+If you're running an OnDemand instance of JIRA or Confluence locally, you can install it from the add-on administration
+console. See complete [getting started guide](https://developer.atlassian.com/static/connect/docs/guides/getting-started.html)
+for more information.
 
-In order to run your add-on on remote JIRA and Confluence instances, you must enter production mode. To achieve this, set the `NODE_ENV` variable to production like so:
+In order to run your add-on on remote JIRA and Confluence instances, you must enter production mode. To achieve this,
+set the `NODE_ENV` variable to production like so:
 
     heroku config:set NODE_ENV=production
 
 For further detail, we recommend reading [Getting Started with Node.js on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs).
 
-Before installing remotely on your product instance, create a marketplace listing for your add-on, generate an access token, and install it - [as described here](https://developer.atlassian.com/static/connect/docs/developing/installing-in-ondemand.html).
+Before installing remotely on your product instance, create a marketplace listing for your add-on, generate an access
+token, and install it - [as described here](https://developer.atlassian.com/static/connect/docs/developing/installing-in-ondemand.html).
 
 ## Troubleshooting
 
 ### "Unable to connect and retrieve descriptor from http://localhost:3000/atlassian-connect.json, message is: java.net.ConnectException: Connection refused"
 
-You'll get this error if JIRA or Confluence can't access `http://localhost:3000/atlassian-connect.json`. This could happen if you're using the Vagrant boxes and your machine's hostname is set to `localhost` instead of something else. One way to debug this is to see what `hostname` returns:
+You'll get this error if JIRA or Confluence can't access `http://localhost:3000/atlassian-connect.json`.
+One way to debug this is to see what `hostname` returns:
 
     $ hostname
 
@@ -425,12 +454,17 @@ Several tools exist to help snoop the HTTP traffic between your add-on and the h
 
 * Enable node-request's HTTP logging by starting your app with `NODE_DEBUG=request node app`
 * Check out the HTTP-debugging proxies [Charles](http://www.charlesproxy.com/) and [Fiddler](http://fiddler2.com/)
-* Try local TCP sniffing with [justniffer](http://justniffer.sourceforge.net/) by running something like `justniffer -i eth0 -r`, substituting the correct interface value
+* Try local TCP sniffing with [justniffer](http://justniffer.sourceforge.net/) by running something like
+`justniffer -i eth0 -r`, substituting the correct interface value
 
 ## Getting Help or Support
 
-You can get help by emailing <atlassian-connect-dev@googlegroups.com> or report bugs on our [JIRA](https://ecosystem.atlassian.net/browse/AC). If you want to learn more about Atlassian Connect, you can visit <https://developer.atlassian.com/display/AC>.
+You can get help by emailing <atlassian-connect-dev@googlegroups.com> or report bugs on our
+[JIRA](https://ecosystem.atlassian.net/browse/AC). If you want to learn more about Atlassian Connect, you can visit
+<https://developer.atlassian.com/static/connect/docs>.
 
 ## Contributing
 
-Even though this is just an exploratory project at this point, it's also open source [Apache 2.0](https://bitbucket.org/atlassian/atlassian-connect-express/src/master/LICENSE.txt). So, please feel free to fork and send us pull requests.
+Even though this is just an exploratory project at this point, it's also open source
+[Apache 2.0](https://bitbucket.org/atlassian/atlassian-connect-express/src/master/LICENSE.txt). So, please feel free
+to fork and send us pull requests.
