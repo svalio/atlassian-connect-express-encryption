@@ -56,6 +56,8 @@ Change to the new project directory and install dependencies:
 
     npm install
 
+`atlassian-connect-express` requires Node.js v0.10.12 or greater to run.
+
 ### Setting up a development environment
 
 At this point, you're all set to run your add-on, but you still need the target application (i.e., JIRA or Confluence)
