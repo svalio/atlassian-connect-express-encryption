@@ -109,6 +109,9 @@ available extension point options, check out the modules sections of the [atlass
 The `./config.json` file contains all of the settings for the add-on server. This file is broken into environments.
 
     {
+      // set to true if your app contains a errorHandler middleware
+      // see http://expressjs.com/guide.html#error-handling
+      "expressErrorHandling" : false
       // This is the default environment. To change your app to use
       // a different env, set NODE_ENV (http://expressjs.com/api.html#app.configure)
       "development": {
