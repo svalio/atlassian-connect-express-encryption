@@ -470,3 +470,7 @@ You can get help by emailing <atlassian-connect-dev@googlegroups.com> or report 
 Even though this is just an exploratory project at this point, it's also open source
 [Apache 2.0](https://bitbucket.org/atlassian/atlassian-connect-express/src/master/LICENSE.txt). So, please feel free
 to fork and send us pull requests.
+
+## Unit tests in `atlassian-connect-express`
+
+Run `mocha test`.
