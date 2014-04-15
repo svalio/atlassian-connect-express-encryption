@@ -101,6 +101,20 @@ describe('JWT', function () {
         done();
     });
 
+    it('should correctly create canonical request ignoring add-on baseUrl', function (done) {
+
+        var req = {
+            method: 'get',
+            path: '/base/path/to/service',
+            query: qs.parse('zee_last=param&repeated=parameter 1&first=param&repeated=parameter 2&repeated=Parameter 2')
+        };
+        var expectedCanonical = "GET&/path/to/service&first=param&repeated=Parameter%202,parameter%201,parameter%202&zee_last=param";
+
+        var canonical = jwt.createCanonicalRequest(req, false, 'https://bitbucket.org/base');
+        assert.equal(canonical, expectedCanonical);
+        done();
+    });
+
     it('should correctly create canonical request ignoring jwt param', function (done) {
 
         var req = {
@@ -110,7 +124,7 @@ describe('JWT', function () {
         };
         var expectedCanonical = "GET&/hello-world&cp=%2Fjira&lic=none&loc=en-US&tz=Australia%2FSydney&user_id=&user_key=&xdm_c=channel-servlet-hello-world&xdm_e=http%3A%2F%2Fstorm%3A2990&xdm_p=1";
 
-        var canonical = jwt.createCanonicalRequest(req);
+        var canonical = jwt.createCanonicalRequest(req, false, '');
         assert.equal(canonical, expectedCanonical);
         done();
     });

@@ -29,14 +29,14 @@ _.each(testData.tests, function (test) {
 
         it('should match canonical url', function(done) {
             var req = createRequest();
-            var actualCanonicalUrl = jwt.createCanonicalRequest(req, false);
+            var actualCanonicalUrl = jwt.createCanonicalRequest(req, false, test.addonBaseUrl || '');
             assert.equal(actualCanonicalUrl, test.canonicalUrl);
             done();
         });
 
         it('should match qsh', function (done) {
             var req = createRequest();
-            var actualQsh = jwt.createQueryStringHash(req, false);
+            var actualQsh = jwt.createQueryStringHash(req, false, test.addonBaseUrl || '');
             var decodedToken = jwt.decode(token, testData.secret, true);
             assert.equal(actualQsh, decodedToken.qsh);
             done();
