@@ -131,6 +131,20 @@ describe('Host Request', function () {
         });
     });
 
+    it('get request has correct JWT qsh for encoded parameter', function (done) {
+        httpClient.get('/some/path/on/host?q=~%20text').then(function(request) {
+            var jwtToken = request.headers['Authorization'].slice(4);
+            var decoded = jwt.decode(jwtToken, helper.installedPayload.clientKey, true);
+            var expectedQsh = jwt.createQueryStringHash({
+              'method': 'GET',
+              'path'  : '/some/path/on/host',
+              'query' : { 'q' : '~ text'}
+            }, false, helper.productBaseUrl);
+            assert.equal(decoded.qsh, expectedQsh);
+            done();
+        });
+    });
+
     it('post request has correct url', function (done) {
         var relativeUrl = '/some/path/on/host';
         httpClient.post(relativeUrl).then(function(request) {
