@@ -155,7 +155,7 @@ describe('Webhook', function () {
         addon.once('plugin_test_hook', function (event, body, req) {
             assert(event === 'plugin_test_hook');
             assert(body != null && body.foo === 'bar');
-            assert(req && req.param('user_id') === 'admin');
+            assert(req && req.query['user_id'] === 'admin');
             done();
         });
 
