@@ -381,13 +381,13 @@
     },
     {
         "name": "BasePath RFC3986 Subdelimiters",
-        "canonicalUrl": "GET\u0026/path!$\u0026\u0027()*+,;\u003d\u0026a\u003db",
-        "signedUrl": "https://example.com/path!$\u0026\u0027()*+,;\u003d?a\u003db\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTIyMDQ2NDIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiIyMGRjM2M4OGNhYzAyYmQwOTBiZjk4NjQ4NWU0NTgzNzFkODc1ZjUwZWY3NjA2M2Q2YTQwYmVlYWQ3M2FjYTliIiwiaWF0IjoxMzkyMjA0NDYyfQ.pxql5f3TFSAhgRIUS0zYr1MIlyJwB814KquBu2XXdUY"
+        "canonicalUrl": "GET\u0026/path!$%26\u0027()*+,;\u003d\u0026a\u003db",
+        "signedUrl": "https://example.com/path!$\u0026\u0027()*+,;\u003d?a\u003db\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTg3NDk3MDgsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiI5ZWY4MDNmOWNiOGRlYTRmN2Y4NzVjYWZmOGQzMWU5NTk2MmM2ZThiZDQ0ZDY0YTg0OGQ2ZWJiMDU1YjIxNDRiIiwiaWF0IjoxMzk4NzQ5NTI4fQ.stOFE3Oe6cZqsP5BGaNEjIF-LVK_zRRLyNU1y2_lKe0"
     },
     {
         "name": "BasePath RFC3986 Subdelimiters (uri)",
-        "canonicalUrl": "GET\u0026/path!$\u0026\u0027()*+,;\u003d\u0026a\u003db",
-        "signedUrl": "https://example.com/path!$\u0026\u0027()*+,;\u003d?a\u003db\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTIyMDQ2NDIsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiIyMGRjM2M4OGNhYzAyYmQwOTBiZjk4NjQ4NWU0NTgzNzFkODc1ZjUwZWY3NjA2M2Q2YTQwYmVlYWQ3M2FjYTliIiwiaWF0IjoxMzkyMjA0NDYyfQ.pxql5f3TFSAhgRIUS0zYr1MIlyJwB814KquBu2XXdUY"
+        "canonicalUrl": "GET\u0026/path!$%26\u0027()*+,;\u003d\u0026a\u003db",
+        "signedUrl": "https://example.com/path!$\u0026\u0027()*+,;\u003d?a\u003db\u0026jwt\u003deyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzOTg3NDk3MDgsInN1YiI6IjEyMzQ1Njc4OSIsImlzcyI6ImppcmE6MTIzNC01Njc4LTkwMDAiLCJxc2giOiI5ZWY4MDNmOWNiOGRlYTRmN2Y4NzVjYWZmOGQzMWU5NTk2MmM2ZThiZDQ0ZDY0YTg0OGQ2ZWJiMDU1YjIxNDRiIiwiaWF0IjoxMzk4NzQ5NTI4fQ.stOFE3Oe6cZqsP5BGaNEjIF-LVK_zRRLyNU1y2_lKe0"
     },
     {
         "name": "Add-on baseUrl contains path",
