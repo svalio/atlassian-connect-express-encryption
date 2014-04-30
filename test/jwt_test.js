@@ -132,52 +132,49 @@ describe('JWT', function () {
     // If the separator is not URL encoded then the following URLs have the same query-string-hash:
     //   https://djtest9.jira-dev.com/rest/api/2/project&a=b?x=y
     //   https://djtest9.jira-dev.com/rest/api/2/project?a=b&x=y
-    it('paths containing "&" characters should not have spoof-able qsh claims', function (done) {
-        var req1 = {
-            method: 'post',
-            path: '/rest/api/2/project&a=b',
-            query: qs.parse('x=y'),
-            body: ''
-        };
-        var req2 = {
-            method: 'post',
-            path: '/rest/api/2/project',
-            query: qs.parse('a=b&x=y'),
-            body: ''
-        };
+    describe('paths containing "&" characters should not have spoof-able qsh claims', function () {
 
-        assert.notEqual(jwt.createCanonicalRequest(req1, false, ''), jwt.createCanonicalRequest(req2, false, ''));
-        done();
-    });
+        it('requests that differ by ampersands in the path versus query-string do not have the same canonical request string', function (done) {
+            var req1 = {
+                method: 'post',
+                path: '/rest/api/2/project&a=b',
+                query: qs.parse('x=y'),
+                body: ''
+            };
+            var req2 = {
+                method: 'post',
+                path: '/rest/api/2/project',
+                query: qs.parse('a=b&x=y'),
+                body: ''
+            };
 
-    // If the separator is not URL encoded then the following URLs have the same query-string-hash:
-    //   https://djtest9.jira-dev.com/rest/api/2/project&a=b?x=y
-    //   https://djtest9.jira-dev.com/rest/api/2/project?a=b&x=y
-    it('paths containing "&" characters should have them encoded in canonical requests', function (done) {
-        var req = {
-            method: 'post',
-            path: '/rest/api/2/project&a=b',
-            query: qs.parse('x=y'),
-            body: ''
-        };
+            assert.notEqual(jwt.createCanonicalRequest(req1, false, ''), jwt.createCanonicalRequest(req2, false, ''));
+            done();
+        });
 
-        assert.equal(jwt.createCanonicalRequest(req, false, ''), 'POST&/rest/api/2/project%26a=b&x=y');
-        done();
-    });
+        it('an ampersand in the path is url-encoded', function (done) {
+            var req = {
+                method: 'post',
+                path: '/rest/api/2/project&a=b',
+                query: qs.parse('x=y'),
+                body: ''
+            };
 
-    // If the separator is not URL encoded then the following URLs have the same query-string-hash:
-    //   https://djtest9.jira-dev.com/rest/api/2/project&a=b?x=y
-    //   https://djtest9.jira-dev.com/rest/api/2/project?a=b&x=y
-    it('paths containing multiple "&" characters should have them encoded in canonical requests', function (done) {
-        var req = {
-            method: 'post',
-            path: '/rest/api/2/project&a=b&c=d',
-            query: qs.parse('x=y'),
-            body: ''
-        };
+            assert.equal(jwt.createCanonicalRequest(req, false, ''), 'POST&/rest/api/2/project%26a=b&x=y');
+            done();
+        });
 
-        assert.equal(jwt.createCanonicalRequest(req, false, ''), 'POST&/rest/api/2/project%26a=b%26c=d&x=y');
-        done();
+        it('multiple ampersands in the path are encoded', function (done) {
+            var req = {
+                method: 'post',
+                path: '/rest/api/2/project&a=b&c=d',
+                query: qs.parse('x=y'),
+                body: ''
+            };
+
+            assert.equal(jwt.createCanonicalRequest(req, false, ''), 'POST&/rest/api/2/project%26a=b%26c=d&x=y');
+            done();
+        });
     });
 
     it('should correctly create qsh without query string', function (done) {
