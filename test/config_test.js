@@ -66,7 +66,7 @@ describe('Configuration', function () {
         });
 
         it('should accept multi-segment hostnames in dev mode', function (done) {
-            assert(matches(addon.config, 'machine.local'));
+            assert(matches(addon.config, 'machine.dyn.syd.atlassian.com'));
             done();
         });
 
@@ -82,12 +82,26 @@ describe('Configuration', function () {
             done();
         });
 
+        it('should not accept subdomains', function (done) {
+            var cfg = createWhiteListConfig("*.jira.com");
+            assert(!matches(cfg, 'foo.test.jira.com'));
+            done();
+        });
+
+        it('should accept multiple comma separated patterns', function (done) {
+            var cfg = createWhiteListConfig("*.jira.com, *.atlassian.net");
+            assert(matches(cfg, 'connect.jira.com'));
+            assert(matches(cfg, 'connect.atlassian.net'));
+            assert(!matches(cfg, 'connect.jira-dev.com'));
+            done();
+        });
+
         function matches(cfg, host) {
             return cfg.whitelistRegexp().some(function (re) { return re.test(host); });
         }
 
         function createWhiteListConfig(domain) {
-            return config("development", { "development": { "whitelist": [domain] }});
+            return config("development", { "development": { "whitelist": domain }});
         }
     });
 
