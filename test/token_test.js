@@ -42,7 +42,16 @@ describe('Token verification', function () {
                     "validatePublicKey": false
                 }
             }
-        }, logger);
+        }, logger, function() {
+            request({
+                url: helper.addonBaseUrl + '/installed',
+                method: 'POST',
+                json: helper.installedPayload
+            }, function (err, res, body) {
+                assert.equal(res.statusCode, 204, "Install hook failed");
+                done();
+            });
+        });
 
         // default test routes
         app.get(
@@ -64,16 +73,7 @@ describe('Token verification', function () {
         );
 
         // start server
-        server = http.createServer(app).listen(helper.addonPort, function () {
-            // trigger /install hook
-            request({
-                url: helper.addonBaseUrl + '/installed',
-                method: 'POST',
-                json: helper.installedPayload
-            }, function () {
-                done();
-            });
-        });
+        server = http.createServer(app).listen(helper.addonPort);
     });
 
     after(function (done) {
