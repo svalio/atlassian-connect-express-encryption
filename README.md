@@ -293,6 +293,41 @@ sign subsequent requests. A typical example is content that makes AJAX calls bac
 be used, as many browsers block third-party cookies by default. `atlassian-connect-express` provides middleware that
 works without cookies and helps making secure requests from the iframe.
 
+#### In ACE 1.0
+
+Starting with ACE 1.0, standard JWT tokens are used to authenticate requests from the iframe back to the add-on
+service. A route can be secured using the `addon.checkValidToken()` middleware:
+
+    module.exports = function (app, addon) {
+        app.get('/protected-resource',
+
+            // Require a valid token to access this resource
+            addon.checkValidToken(),
+
+            function(req, res) {
+              res.render('protected');
+            }
+        );
+    };
+
+In order to secure your route, the token must be part of the HTTP request back to the add-on service. This can be done
+by using the standard `jwt` query parameter:
+
+    <a href="/protected-resource?jwt={{token}}">See more</a>
+
+The second option is to use the Authorization HTTP header, e.g. for AJAX requests:
+
+    beforeSend: function (request) {
+        request.setRequestHeader("Authorization", "JWT {{token}}");
+    }
+
+You can embed the token anywhere in your iframe content using the `token` content variable. For example, you can embed
+it in a meta tag, from where it can later be read by a script:
+
+    <meta name="token" content="{{token}}">
+    
+#### In ACE 0.9.x
+
 A route can be secured by adding the `checkValidToken` middleware:
 
     module.exports = function (app, addon) {

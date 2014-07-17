@@ -59,6 +59,10 @@
     {
       "name": "Seb Ruiz",
       "email": "sruiz@atlassian.com"
+    },
+    {
+      "name": "Patrick Streule",
+      "email": "pstreule@atlassian.com"
     }
   ],
   "license": "Apache-2.0"
