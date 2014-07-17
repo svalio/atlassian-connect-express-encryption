@@ -296,13 +296,13 @@ works without cookies and helps making secure requests from the iframe.
 #### In ACE 1.0
 
 Starting with ACE 1.0, standard JWT tokens are used to authenticate requests from the iframe back to the add-on
-service. A route can be secured using the standard `addon.authenticate()` middleware:
+service. A route can be secured using the `addon.checkValidToken()` middleware:
 
     module.exports = function (app, addon) {
         app.get('/protected-resource',
 
             // Require a valid token to access this resource
-            addon.authenticate(),
+            addon.checkValidToken(),
 
             function(req, res) {
               res.render('protected');
@@ -311,7 +311,7 @@ service. A route can be secured using the standard `addon.authenticate()` middle
     };
 
 In order to secure your route, the token must be part of the HTTP request back to the add-on service. This can be done
-by using the `jwt` query parameter:
+by using the standard `jwt` query parameter:
 
     <a href="/protected-resource?jwt={{token}}">See more</a>
 

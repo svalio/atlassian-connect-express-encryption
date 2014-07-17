@@ -197,7 +197,7 @@ describe('Token verification', function () {
         });
     });
 
-    it('should allow requests with valid tokens using the authenticate middleware', function (done) {
+    it('should not allow requests with valid tokens using the authenticate middleware', function (done) {
         var requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
         var requestOpts = createRequestOptions(JWT_AUTH_RESPONDER_PATH);
 
@@ -210,7 +210,7 @@ describe('Token verification', function () {
 
             request(tokenUrl, tokenRequestOpts, function (err, res, body) {
                 assert.equal(err, null);
-                assert.equal(res.statusCode, 200);
+                assert.equal(res.statusCode, 401);
                 done();
             });
         });
