@@ -179,4 +179,45 @@ describe('Host Request', function () {
             done();
         });
     });
+
+
+    it('post requests using multipartFormData have the right format', function (done) {
+        var someData = 'some data';
+        httpClient.post({
+            url: '/some/path',
+            multipartFormData: {
+                file: [someData, { filename:'myattachmentagain.png' }]
+            }
+        }).then(function(request) {
+            assert.ok(request._form);
+            assert.equal(request._form._valueLength, someData.length);
+            done();
+        });
+    });
+
+    it('post requests using the deprecated form parameter still have the right format', function (done) {
+        var someData = 'some data';
+        httpClient.post({
+            url: '/some/path',
+            form: {
+                file: [someData, { filename:'myattachmentagain.png' }]
+            }
+        }).then(function(request) {
+            assert.ok(request._form);
+            assert.equal(request._form._valueLength, someData.length);
+            done();
+        });
+    });
+
+    it('post requests using urlEncodedFormData have the right format', function (done) {
+        httpClient.post({
+            url: '/some/path',
+            urlEncodedFormData: {
+                param1: 'value1'
+            }
+        }).then(function(request) {
+            assert.equal(request.body.toString(), 'param1=value1');
+            done();
+        });
+    });
 });

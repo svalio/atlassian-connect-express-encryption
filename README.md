@@ -388,22 +388,25 @@ If not in a request context, you can perform the equivalent operation as follows
     });
 
 You can also set custom headers or send a form data. Take, for example this request which attaches a file to a JIRA issue
-
-    httpClient.post( {
-        url: '/rest/api/2/issue/' + issueKey + '/attachments',
-        headers: {
-            'X-Atlassian-Token': 'nocheck'
+    
+    var filePath = path.join(__dirname, 'some.png');
+    fs.readFile(filePath, function (err, data) {
+        httpClient.post({
+            url: '/rest/api/2/issue/' + issueKey + '/attachments',
+            headers: {
+                'X-Atlassian-Token': 'nocheck'
+            },
+            multipartFormData: {
+                file: [data, { filename: 'some.png' }]
+            }
         },
-        form: {
-            file: [
-                attachmentContent,
-                {
-                    filename: filename,
-                    contentType: 'text/plain'
-                }
-            ]
-        }
-    }
+        function (err, httpResponse, body) {
+            if (err) {
+                return console.error('Upload failed:', err);
+            }
+            console.log('Upload successful:', body);
+        });
+    });
 
 ### Using the product REST API
 
