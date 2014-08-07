@@ -396,7 +396,7 @@ You can also set custom headers or send a form data. Take, for example this requ
             headers: {
                 'X-Atlassian-Token': 'nocheck'
             },
-            form: {
+            multipartFormData: {
                 file: [data, { filename: 'some.png' }]
             }
         },
