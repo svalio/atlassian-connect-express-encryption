@@ -3,7 +3,7 @@
 ### 1.0.1
 
 * Explicit support for multipart form data and url-encoded form data: A bug caused some multipart form uploads (e.g. 
-for JIRA attachments to fail). The ambiguous `options.form` parameter for requests back to the product host is now deprecated.
+for JIRA attachments) to fail. The ambiguous `options.form` parameter for HTTP requests back to the product host is now deprecated.
 Please use these parameters instead:
     * `multipart/form-data`: Use `options.multipartFormData`
     * `application/x-www-form-urlencoded`: Use `options.urlEncodedFormData`
