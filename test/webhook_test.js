@@ -194,7 +194,7 @@ describe('Webhook', function () {
         fireTestWebhook('/test-hook', {foo: 'bar'}, function assertCorrectWebhookResult(err, res, body) {
             assert.equal(err, null);
             assert.equal(res.statusCode, 401, 'Status code for invalid token should be 401');
-            assert.equal(body, 'Authentication request has expired.', 'Authentication expired error should be returned');
+            assert.equal(body.message, 'Authentication request has expired. Try reloading the page.', 'Authentication expired error should be returned');
             done();
         }, createExpiredJwtToken);
     });
