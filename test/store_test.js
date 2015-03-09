@@ -90,6 +90,20 @@ describe('Store', function () {
         });
     });
 
+    it('should return a list of clientInfo objects', function (done) {
+        addon.settings.getAllClientInfos().then(function (initialClientInfos) {
+            addon.settings.set('clientInfo', '{"correctPayload":true}', 'fake').then(function() {
+                addon.settings.getAllClientInfos().then(function (clientInfos) {
+                    assert.equal(clientInfos.length, initialClientInfos.length + 1);
+                    var latestClientInfo = clientInfos[clientInfos.length - 1];
+                    var correctPayload = latestClientInfo['correctPayload'];
+                    assert.equal(correctPayload, true);
+                    done();
+                });
+            });
+        });
+    });
+
     it('should allow storing arbitrary key/values', function (done) {
         addon.settings.set('arbitrarySetting', 'someValue', helper.installedPayload.clientKey).then(function (setting) {
             assert.equal(setting, 'someValue');
