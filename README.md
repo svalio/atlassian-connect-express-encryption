@@ -218,6 +218,18 @@ when your add-on is installed.
 To see all of the available settings in the `atlassian-connect.json`, visit the module sections of the
 [atlassian-connect documentation](https://developer.atlassian.com/static/connect/docs/)
 
+If you need a pre-processing step to your descriptor, you can configure one by changing your `app.js`
+so that a transformer is included in the `config`. The `descriptorTransformer` property expects to be a
+function and passes in `descriptor` as an object, and the `app.config` object.
+
+    var addon = ac(app, { config: {
+      descriptorTransformer: function(descriptor, config) {
+        if (config.environment() === "production")
+          descriptor.key = "production-key";
+        return descriptor;
+      }
+    }});
+
 ## Sample Add-ons using `atlassian-connect-express`
 
 * [Sequence Diagramr](https://bitbucket.org/atlassianlabs/atlassian-connect-confluence-sequence-diagramr) -- a simple
@@ -325,7 +337,7 @@ You can embed the token anywhere in your iframe content using the `token` conten
 it in a meta tag, from where it can later be read by a script:
 
     <meta name="token" content="{{token}}">
-    
+
 #### In ACE 0.9.x
 
 A route can be secured by adding the `checkValidToken` middleware:
@@ -388,7 +400,7 @@ If not in a request context, you can perform the equivalent operation as follows
     });
 
 You can also set custom headers or send a form data. Take, for example this request which attaches a file to a JIRA issue
-    
+
     var filePath = path.join(__dirname, 'some.png');
     fs.readFile(filePath, function (err, data) {
         httpClient.post({
