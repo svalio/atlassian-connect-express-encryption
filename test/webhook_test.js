@@ -45,12 +45,12 @@ describe('Webhook', function () {
         // mock host
         host.get('/plugins/servlet/oauth/consumer-info', function (req, res) {
             res.set('Content-Type', 'application/xml');
-            res.send(200, helper.consumerInfo);
+            res.status(200).send(helper.consumerInfo);
         });
 
         host.head("/rest/plugins/1.0/", function (req, res) {
             res.setHeader("upm-token", "123");
-            res.send(200);
+            res.status(200).end();
         });
 
         host.get("/rest/plugins/1.0/", function(req, res) {
@@ -66,7 +66,7 @@ describe('Webhook', function () {
                 method: 'POST',
                 json: installedPayload
             });
-            res.send(200);
+            res.status(200).end();
         });
 
         hostServer = http.createServer(host).listen(3003, function () {
