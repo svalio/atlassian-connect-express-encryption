@@ -22,12 +22,12 @@ describe('Auto registration (UPM)', function () {
         // mock host
         app.get('/confluence/plugins/servlet/oauth/consumer-info', function (req, res) {
             res.set('Content-Type', 'application/xml');
-            res.send(200, helper.consumerInfo);
+            res.status(200).send(helper.consumerInfo);
         });
 
         app.head("/rest/plugins/1.0/", function (req, res) {
             res.setHeader("upm-token", "123");
-            res.send(200);
+            res.status(200).end();
         });
 
         // Post request to UPM installer
@@ -40,11 +40,11 @@ describe('Auto registration (UPM)', function () {
                 method: 'POST',
                 json: helper.installedPayload
             });
-            res.send(200);
+            res.status(200).end();
         });
 
         app.delete(/plugins\/1.0\/(.*?)-key/, function (req, res) {
-            res.send(200);
+            res.status(200).end();
         });
 
         ac.store.register("teststore", function (logger, opts) {

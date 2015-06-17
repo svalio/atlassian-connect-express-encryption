@@ -3,9 +3,9 @@
   "version": "1.0.5",
   "description": "Library for building Atlassian Add-ons on top of Express",
   "dependencies": {
-    "JSONPath": "~0.9.1",
     "colors": "~0.6.2",
     "express": "~3.4.8",
+    "JSONPath": "~0.9.1",
     "jsuri": "~1.2.2",
     "jugglingdb": "~0.2.10",
     "localtunnel": "0.2.2",
@@ -20,9 +20,13 @@
   },
   "main": "index.js",
   "devDependencies": {
+    "express": "^3.4.8",
     "mocha": "*",
     "sinon": "*",
     "xunit-file": "*"
+  },
+  "peerDependencies": {
+    "express": "3.0 - 4"
   },
   "repository": {
     "type": "git",
