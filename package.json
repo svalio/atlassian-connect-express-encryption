@@ -1,6 +1,6 @@
 {
   "name": "atlassian-connect-express",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Library for building Atlassian Add-ons on top of Express",
   "dependencies": {
     "colors": "~0.6.2",
