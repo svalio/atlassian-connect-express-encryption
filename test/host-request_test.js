@@ -79,8 +79,10 @@ describe('Host Request', function () {
     });
 
     after(function (done) {
-        server.close();
-        done();
+        setTimeout(function() {
+            server.close();
+            done();
+        }, 50);
     });
 
     function createJwtToken() {
