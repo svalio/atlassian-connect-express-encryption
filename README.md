@@ -31,19 +31,16 @@ Let's start by creating an add-on project:
 This creates a new project home directory with the following contents:
 
     .
-    ├── Procfile
     ├── README.md
     ├── app.js
     ├── atlassian-connect.json
     ├── config.json
     ├── package.json
-    ├── private-key.pem
     ├── public
     │   ├── css
     │   │   └── addon.css
     │   └── js
     │       └── addon.js
-    ├── public-key.pem
     ├── routes
     │   └── index.js
     └── views
