@@ -108,6 +108,7 @@ available extension point options, check out the modules sections of the [atlass
 
 The `./config.json` file contains all of the settings for the add-on server. This file is broken into environments.
 
+```javascript
     {
       // set to true if your app contains a errorHandler middleware
       // see http://expressjs.com/guide.html#error-handling
@@ -207,6 +208,7 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         ]
       }
     }
+```
 
 ### atlassian-connect.json
 
@@ -222,13 +224,16 @@ If you need a pre-processing step to your descriptor, you can configure one by c
 so that a transformer is included in the `config`. The `descriptorTransformer` property expects to be a
 function and passes in `descriptor` as an object, and the `app.config` object.
 
+```javascript
     var addon = ac(app, { config: {
-      descriptorTransformer: function(descriptor, config) {
-        if (config.environment() === "production")
-          descriptor.key = "production-key";
-        return descriptor;
+        descriptorTransformer: function(descriptor, config) {
+          if (config.environment() === "production") {
+              descriptor.key = "production-key";
+          }
+          return descriptor;
       }
     }});
+```
 
 ## Sample Add-ons using `atlassian-connect-express`
 
