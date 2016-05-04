@@ -446,15 +446,6 @@ Next, create the app on Heroku:
 
     heroku apps:create <add-on-name>
 
-Then set the public and private key as environment variables in Heroku (you don't ever want to commit these `*.pem`
-files into your scm). The two `.*pem` files were created in your project home directory when you ran the `atlas-connect new` command.
-
-    heroku config:set AC_PUBLIC_KEY="`cat public-key.pem`" --app <add-on-name>
-    heroku config:set AC_PRIVATE_KEY="`cat private-key.pem`" --app <add-on-name>
-
-We recommend that you don't use the automatically generated key pair in production. You can use any RSA key pair
-generation tool such as [JSEncrypt](http://travistidwell.com/jsencrypt/demo/) to generate a production key pair.
-
 Next, let's store our registration information in a Postgres database. In development, you were likely using the memory
 store. In production, you'll want to use a real database.
 
