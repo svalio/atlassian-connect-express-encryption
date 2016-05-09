@@ -4,6 +4,10 @@
 
 `atlassian-connect-express` is a toolkit for creating [Atlassian Connect](https://developer.atlassian.com/display/AC/Atlassian+Connect) based Add-ons with [Node.js](http://nodejs.org/). Atlassian Connect is a distributed component model for creating Atlassian add-ons. Add-ons built with Atlassian Connect extend Atlassian applications over standard web protocols and APIs.
 
+## SECURITY ADVICE: Please make sure you're up-to-date
+
+Versions of `atlassian-connect-exress` prior to `1.0.9` do not validate the JWT on re-install, meaning the shared secret can be overwritten by a spoofed install request. Please ensure you are on the latest version of `atlassian-connect-express`.
+
 ## More about `atlassian-connect-express`
 
 The `atlassian-connect-express` package helps you get started developing add-ons quickly, using Node.js and Express as the add-on server.
