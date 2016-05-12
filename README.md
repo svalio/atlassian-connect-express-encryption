@@ -4,6 +4,10 @@
 
 `atlassian-connect-express` is a toolkit for creating [Atlassian Connect](https://developer.atlassian.com/display/AC/Atlassian+Connect) based Add-ons with [Node.js](http://nodejs.org/). Atlassian Connect is a distributed component model for creating Atlassian add-ons. Add-ons built with Atlassian Connect extend Atlassian applications over standard web protocols and APIs.
 
+## SECURITY ADVICE: Please make sure you're up-to-date
+
+Versions of `atlassian-connect-exress` prior to `1.0.9` do not validate the JWT on re-install, meaning the shared secret can be overwritten by a spoofed install request. Please ensure you are on the latest version of `atlassian-connect-express`.
+
 ## More about `atlassian-connect-express`
 
 The `atlassian-connect-express` package helps you get started developing add-ons quickly, using Node.js and Express as the add-on server.
@@ -307,9 +311,7 @@ sign subsequent requests. A typical example is content that makes AJAX calls bac
 be used, as many browsers block third-party cookies by default. `atlassian-connect-express` provides middleware that
 works without cookies and helps making secure requests from the iframe.
 
-#### In ACE 1.0
-
-Starting with ACE 1.0, standard JWT tokens are used to authenticate requests from the iframe back to the add-on
+Standard JWT tokens are used to authenticate requests from the iframe back to the add-on
 service. A route can be secured using the `addon.checkValidToken()` middleware:
 
     module.exports = function (app, addon) {
@@ -339,44 +341,6 @@ You can embed the token anywhere in your iframe content using the `token` conten
 it in a meta tag, from where it can later be read by a script:
 
     <meta name="token" content="{{token}}">
-
-#### In ACE 0.9.x
-
-A route can be secured by adding the `checkValidToken` middleware:
-
-    module.exports = function (app, addon) {
-        app.get('/protected-resource',
-
-            // Require a valid token to access this resource
-            addon.checkValidToken(),
-
-            function(req, res) {
-              res.render('protected');
-            }
-        );
-    };
-
-In order to secure your route, the token must be part of the HTTP request back to the add-on service. This can be done
-by using a query parameter:
-
-    <a href="/protected-resource?acpt={{token}}">See more</a>
-
-The second option is to use an HTTP header, e.g. for AJAX requests:
-
-    beforeSend: function (request) {
-        request.setRequestHeader("X-acpt", {{token}});
-    }
-
-You can embed the token anywhere in your iframe content using the `token` content variable. For example, you can embed
-it in a meta tag, from where it can later be read by a script:
-
-    <meta name="acpt" content="{{token}}">
-
-Both the query parameter `acpt` and the HTTP request header `X-acpt` are automatically recognized and handled by
-`atlassian-connect-express` when a route is secured with the token middleware. The token remains valid for 15 minutes
-by default, and is automatically refreshed on each call. The expiration of the token can be configured using
-`maxTokenAge` (in seconds).
-
 
 ### How to send a signed outbound HTTP request back to the host
 
@@ -476,15 +440,6 @@ Before installing remotely on your product instance, create a marketplace listin
 token, and install it - [as described here](https://developer.atlassian.com/static/connect/docs/developing/installing-in-ondemand.html).
 
 ## Troubleshooting
-
-### "Unable to connect and retrieve descriptor from http://localhost:3000/atlassian-connect.json, message is: java.net.ConnectException: Connection refused"
-
-You'll get this error if JIRA or Confluence can't access `http://localhost:3000/atlassian-connect.json`.
-One way to debug this is to see what `hostname` returns:
-
-    $ hostname
-
-If it returns `localhost`, change it. On a OS X, you'll need to set a proper "Computer Name" in System Preferences > Sharing.
 
 ### Debugging HTTP Traffic
 
