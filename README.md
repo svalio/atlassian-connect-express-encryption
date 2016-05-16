@@ -39,6 +39,7 @@ This creates a new project home directory with the following contents:
     ├── app.js
     ├── atlassian-connect.json
     ├── config.json
+    ├── credentials.json.sample
     ├── package.json
     ├── public
     │   ├── css
@@ -62,19 +63,15 @@ Change to the new project directory and install dependencies:
 ### Setting up a development environment
 
 At this point, you're all set to run your add-on, but you still need the target application (i.e., JIRA or Confluence)
-for your add-on. You have a few options:
+for your add-on.
 
-1. You can do all your development work locally using the [Atlassian SDK](https://marketplace.atlassian.com/search?q=%22atlassian+plugin+sdk%22).
-You can start a local instance of JIRA or Confluence by reading the [guide to developing locally](https://developer.atlassian.com/static/connect/docs/developing/developing-locally.html).
-2. Install the add-on in [an Atlassian OnDemand instance](https://developer.atlassian.com/static/connect/docs/developing/installing-in-ondemand.html).
-for more information.
+Follow the [Development Setup](https://developer.atlassian.com/static/connect/docs/latest/guides/development-setup.html) guide to get a development ondemand instance. Then copy credentials.json.sample to credentials.json and replace the contents for your instance. With this file, starting the ACE application will create an ngrok tunnel and automatically install the add-on on your instance.
 
 ### Running your Add-on Server
 
-If you've chosen the first option and have a local running instance of JIRA or Confluence, you're all set. Now all you
-need to do to run your add-on inside your local JIRA or Confluence instance is:
+After setting up the credentials file, run the command:
 
-    node app.js
+    npm start
 
 This will boot up your Express server on the default port of 3000 and do the following:
 
@@ -167,17 +164,6 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         //  "dependencies": {
         //    "jugglingdb-postgres": "0.0.4"
         //  }
-        //
-        // Your add-on will be registered with the following hosts upon startup.
-        // In order to take advantage of the automatic registration/deregistration,
-        // you need to make sure that your express app calls `addon.register()`
-        // (see app.js). Also, you don't need to specify the user/pwd in the URL
-        // as in the examples below. If you don't provide a user/pwd, you will be
-        // prompted the first time you start the server.
-        "hosts": [
-          "http://admin:admin@localhost:1990/confluence",
-          "http://admin:admin@localhost:2990/jira"
-        ]
       },
 
       // This is the production add-on configuration, which is enabled by setting
@@ -425,10 +411,6 @@ If you aren't already there, switch to your project home directory. From there, 
 It will take a minute or two for Heroku to spin up your add-on. When it's done, you'll be given the URL where your
  add-on is deployed, however, you'll still need to register it on your Atlassian instance.
 
-If you're running an OnDemand instance of JIRA or Confluence locally, you can install it from the add-on administration
-console. See complete [getting started guide](https://developer.atlassian.com/static/connect/docs/guides/getting-started.html)
-for more information.
-
 In order to run your add-on on remote JIRA and Confluence instances, you must enter production mode. To achieve this,
 set the `NODE_ENV` variable to production like so:
 
@@ -436,7 +418,7 @@ set the `NODE_ENV` variable to production like so:
 
 For further detail, we recommend reading [Getting Started with Node.js on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs).
 
-Before installing remotely on your product instance, create a marketplace listing for your add-on, generate an access
+Before installing on your product instance, create a marketplace listing for your add-on, generate an access
 token, and install it - [as described here](https://developer.atlassian.com/static/connect/docs/developing/installing-in-ondemand.html).
 
 ## Troubleshooting
