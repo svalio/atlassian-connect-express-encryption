@@ -6,7 +6,7 @@ var app = express();
 var ac = require('../index');
 var request = require('request');
 var moment = require('moment');
-var jwt = require('../lib/internal/jwt');
+var jwt = require('atlassian-jwt');
 var logger = require('./logger');
 var _ = require('lodash');
 

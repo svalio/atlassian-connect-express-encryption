@@ -3,6 +3,7 @@
   "version": "1.0.10",
   "description": "Library for building Atlassian Add-ons on top of Express",
   "dependencies": {
+    "atlassian-jwt": "^0.1.1",
     "colors": "~0.6.2",
     "express": "~3.4.8",
     "JSONPath": "~0.9.1",
