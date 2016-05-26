@@ -4,10 +4,6 @@
 
 `atlassian-connect-express` is a toolkit for creating [Atlassian Connect](https://developer.atlassian.com/display/AC/Atlassian+Connect) based Add-ons with [Node.js](http://nodejs.org/). Atlassian Connect is a distributed component model for creating Atlassian add-ons. Add-ons built with Atlassian Connect extend Atlassian applications over standard web protocols and APIs.
 
-## SECURITY ADVICE: Please make sure you're up-to-date
-
-Versions of `atlassian-connect-exress` prior to `1.0.9` do not validate the JWT on re-install, meaning the shared secret can be overwritten by a spoofed install request. Please ensure you are on the latest version of `atlassian-connect-express`.
-
 ## More about `atlassian-connect-express`
 
 The `atlassian-connect-express` package helps you get started developing add-ons quickly, using Node.js and Express as the add-on server.
@@ -39,7 +35,6 @@ This creates a new project home directory with the following contents:
     ├── app.js
     ├── atlassian-connect.json
     ├── config.json
-    ├── credentials.json.sample
     ├── package.json
     ├── public
     │   ├── css
@@ -63,15 +58,19 @@ Change to the new project directory and install dependencies:
 ### Setting up a development environment
 
 At this point, you're all set to run your add-on, but you still need the target application (i.e., JIRA or Confluence)
-for your add-on.
+for your add-on. You have a few options:
 
-Follow the [Development Setup](https://developer.atlassian.com/static/connect/docs/latest/guides/development-setup.html) guide to get a development ondemand instance. Then copy credentials.json.sample to credentials.json and replace the contents for your instance. With this file, starting the ACE application will create an ngrok tunnel and automatically install the add-on on your instance.
+1. You can do all your development work locally using the [Atlassian SDK](https://marketplace.atlassian.com/search?q=%22atlassian+plugin+sdk%22).
+You can start a local instance of JIRA or Confluence by reading the [guide to developing locally](https://developer.atlassian.com/static/connect/docs/developing/developing-locally.html).
+2. Install the add-on in [an Atlassian OnDemand instance](https://developer.atlassian.com/static/connect/docs/developing/installing-in-ondemand.html).
+for more information.
 
 ### Running your Add-on Server
 
-After setting up the credentials file, run the command:
+If you've chosen the first option and have a local running instance of JIRA or Confluence, you're all set. Now all you
+need to do to run your add-on inside your local JIRA or Confluence instance is:
 
-    npm start
+    node app.js
 
 This will boot up your Express server on the default port of 3000 and do the following:
 
@@ -101,6 +100,8 @@ The configuration for your add-on is done in two files:
 comments to help you understand available settings.
 * `./atlassian-connect.json` -- This file is a manifest of all the extension points your add-on uses. To see all of the
 available extension point options, check out the modules sections of the [atlassian-connect documentation](https://developer.atlassian.com/static/connect/docs/).
+
+The behaviour of your add-on can be further configured by setting the `AC_OPTS` environment variable (see the end of this section).
 
 #### config.json
 
@@ -164,6 +165,17 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         //  "dependencies": {
         //    "jugglingdb-postgres": "0.0.4"
         //  }
+        //
+        // Your add-on will be registered with the following hosts upon startup.
+        // In order to take advantage of the automatic registration/deregistration,
+        // you need to make sure that your express app calls `addon.register()`
+        // (see app.js). Also, you don't need to specify the user/pwd in the URL
+        // as in the examples below. If you don't provide a user/pwd, you will be
+        // prompted the first time you start the server.
+        "hosts": [
+          "http://admin:admin@localhost:1990/confluence",
+          "http://admin:admin@localhost:2990/jira"
+        ]
       },
 
       // This is the production add-on configuration, which is enabled by setting
@@ -196,6 +208,24 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
       }
     }
 ```
+
+#### AC_OPTS
+
+The AC_OPTS environment variable can be used to change the behaviour of ACE for ease of development, like so:
+
+```
+AC_OPTS=no-auth,force-reg node app.js
+```
+
+Set it to a space- or comma-delimited list containing one or more of the following values.
+
+**force-reg** Make the add-on always register itself with running JIRAs & Confluences when it starts up (normally auto-registration only happens if the add-on is using a memory store).
+
+**force-dereg** Make the add-on always de-register itself with running JIRAs & Confluences on shutdown (normally auto-registration only happens if the add-on is using a memory store or running in development mode).
+
+**no-reg** Make the add-on never register itself with running JIRAs & Confluences (i.e. don't auto-register even if a memory store is being used).
+
+**no-auth** Skip authentication of incoming requests (i.e. don't check for or validate JWT tokens).
 
 ### atlassian-connect.json
 
@@ -297,7 +327,9 @@ sign subsequent requests. A typical example is content that makes AJAX calls bac
 be used, as many browsers block third-party cookies by default. `atlassian-connect-express` provides middleware that
 works without cookies and helps making secure requests from the iframe.
 
-Standard JWT tokens are used to authenticate requests from the iframe back to the add-on
+#### In ACE 1.0
+
+Starting with ACE 1.0, standard JWT tokens are used to authenticate requests from the iframe back to the add-on
 service. A route can be secured using the `addon.checkValidToken()` middleware:
 
     module.exports = function (app, addon) {
@@ -327,6 +359,44 @@ You can embed the token anywhere in your iframe content using the `token` conten
 it in a meta tag, from where it can later be read by a script:
 
     <meta name="token" content="{{token}}">
+
+#### In ACE 0.9.x
+
+A route can be secured by adding the `checkValidToken` middleware:
+
+    module.exports = function (app, addon) {
+        app.get('/protected-resource',
+
+            // Require a valid token to access this resource
+            addon.checkValidToken(),
+
+            function(req, res) {
+              res.render('protected');
+            }
+        );
+    };
+
+In order to secure your route, the token must be part of the HTTP request back to the add-on service. This can be done
+by using a query parameter:
+
+    <a href="/protected-resource?acpt={{token}}">See more</a>
+
+The second option is to use an HTTP header, e.g. for AJAX requests:
+
+    beforeSend: function (request) {
+        request.setRequestHeader("X-acpt", {{token}});
+    }
+
+You can embed the token anywhere in your iframe content using the `token` content variable. For example, you can embed
+it in a meta tag, from where it can later be read by a script:
+
+    <meta name="acpt" content="{{token}}">
+
+Both the query parameter `acpt` and the HTTP request header `X-acpt` are automatically recognized and handled by
+`atlassian-connect-express` when a route is secured with the token middleware. The token remains valid for 15 minutes
+by default, and is automatically refreshed on each call. The expiration of the token can be configured using
+`maxTokenAge` (in seconds).
+
 
 ### How to send a signed outbound HTTP request back to the host
 
@@ -396,6 +466,15 @@ Next, create the app on Heroku:
 
     heroku apps:create <add-on-name>
 
+Then set the public and private key as environment variables in Heroku (you don't ever want to commit these `*.pem`
+files into your scm). The two `.*pem` files were created in your project home directory when you ran the `atlas-connect new` command.
+
+    heroku config:set AC_PUBLIC_KEY="`cat public-key.pem`" --app <add-on-name>
+    heroku config:set AC_PRIVATE_KEY="`cat private-key.pem`" --app <add-on-name>
+
+We recommend that you don't use the automatically generated key pair in production. You can use any RSA key pair
+generation tool such as [JSEncrypt](http://travistidwell.com/jsencrypt/demo/) to generate a production key pair.
+
 Next, let's store our registration information in a Postgres database. In development, you were likely using the memory
 store. In production, you'll want to use a real database.
 
@@ -411,6 +490,10 @@ If you aren't already there, switch to your project home directory. From there, 
 It will take a minute or two for Heroku to spin up your add-on. When it's done, you'll be given the URL where your
  add-on is deployed, however, you'll still need to register it on your Atlassian instance.
 
+If you're running an OnDemand instance of JIRA or Confluence locally, you can install it from the add-on administration
+console. See complete [getting started guide](https://developer.atlassian.com/static/connect/docs/guides/getting-started.html)
+for more information.
+
 In order to run your add-on on remote JIRA and Confluence instances, you must enter production mode. To achieve this,
 set the `NODE_ENV` variable to production like so:
 
@@ -418,10 +501,19 @@ set the `NODE_ENV` variable to production like so:
 
 For further detail, we recommend reading [Getting Started with Node.js on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs).
 
-Before installing on your product instance, create a marketplace listing for your add-on, generate an access
+Before installing remotely on your product instance, create a marketplace listing for your add-on, generate an access
 token, and install it - [as described here](https://developer.atlassian.com/static/connect/docs/developing/installing-in-ondemand.html).
 
 ## Troubleshooting
+
+### "Unable to connect and retrieve descriptor from http://localhost:3000/atlassian-connect.json, message is: java.net.ConnectException: Connection refused"
+
+You'll get this error if JIRA or Confluence can't access `http://localhost:3000/atlassian-connect.json`.
+One way to debug this is to see what `hostname` returns:
+
+    $ hostname
+
+If it returns `localhost`, change it. On a OS X, you'll need to set a proper "Computer Name" in System Preferences > Sharing.
 
 ### Debugging HTTP Traffic
 
