@@ -1,7 +1,5 @@
 # atlassian-connect-express: Node.js package for Express based Atlassian Add-ons
 
-[![Build Status](https://drone.io/bitbucket.org/atlassian/atlassian-connect-express/status.png)](https://drone.io/bitbucket.org/atlassian/atlassian-connect-express/latest)
-
 `atlassian-connect-express` is a toolkit for creating [Atlassian Connect](https://developer.atlassian.com/display/AC/Atlassian+Connect) based Add-ons with [Node.js](http://nodejs.org/). Atlassian Connect is a distributed component model for creating Atlassian add-ons. Add-ons built with Atlassian Connect extend Atlassian applications over standard web protocols and APIs.
 
 ## More about `atlassian-connect-express`
