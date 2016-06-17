@@ -33,6 +33,7 @@ This creates a new project home directory with the following contents:
     ├── app.js
     ├── atlassian-connect.json
     ├── config.json
+    ├── credentials.json.sample
     ├── package.json
     ├── public
     │   ├── css
@@ -87,8 +88,22 @@ At this point, you can start building your add-on. Changes to views load automat
 any JavaScript, you need to restart Express. If you want your server to automatically restart when your JavaScript
 changes, consider using [nodemon](https://npmjs.org/package/nodemon) or the like.
 
-As you've noticed, `atlassian-connect-express` automatically registers your add-on with the target application when it's
-started. Another nice feature is that it automatically de-registers it at shutdown `<ctrl-c>`.
+#### Automatic Registration
+
+This section will describe how to configure ACE so that it can automatically register your add-on with your Atlassian 
+Cloud development instance, re-register on changes to the descriptor, and de-register on shut down.
+
+If you are using a template with the `credentials.json.sample` file:
+* Rename the file to `credentials.json`, and
+* Replace the fields inside the file with the url, admin credentials, and product
+
+If you are using an older template:
+* Create a file called `credentials.json`,
+* Copy and paste the contents of [this file](https://bitbucket.org/atlassian/atlassian-connect-express-template/src/f4c6c3f23d69dd06081d112236021bfbe50e492b/credentials.json.sample),
+* Add `credentials.json` to the `.gitignore` file, and
+* Change the contents of the file to contain the link to your Cloud Development environment, admin authentication, and product
+
+ACE will now read this file and automatically create an [ngrok](https://ngrok.com/) tunnel, and register your add-on on your development instance.
 
 ### Configuration
 
@@ -163,17 +178,6 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         //  "dependencies": {
         //    "jugglingdb-postgres": "0.0.4"
         //  }
-        //
-        // Your add-on will be registered with the following hosts upon startup.
-        // In order to take advantage of the automatic registration/deregistration,
-        // you need to make sure that your express app calls `addon.register()`
-        // (see app.js). Also, you don't need to specify the user/pwd in the URL
-        // as in the examples below. If you don't provide a user/pwd, you will be
-        // prompted the first time you start the server.
-        "hosts": [
-          "http://admin:admin@localhost:1990/confluence",
-          "http://admin:admin@localhost:2990/jira"
-        ]
       },
 
       // This is the production add-on configuration, which is enabled by setting
