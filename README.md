@@ -93,13 +93,9 @@ changes, consider using [nodemon](https://npmjs.org/package/nodemon) or the like
 This section will describe how to configure ACE so that it can automatically register your add-on with your Atlassian 
 Cloud development instance, re-register on changes to the descriptor, and de-register on shut down.
 
-If you are using a template with the `credentials.json.sample` file:
-* Rename the file to `credentials.json`, and
-* Replace the fields inside the file with the url, admin credentials, and product
-
-If you are using an older template:
+To get This functionality, you will need to:
 * Create a file called `credentials.json`,
-* Copy and paste the contents of [this file](https://bitbucket.org/atlassian/atlassian-connect-express-template/src/f4c6c3f23d69dd06081d112236021bfbe50e492b/credentials.json.sample),
+* Copy and paste the contents of [this file](https://bitbucket.org/atlassian/atlassian-connect-express-template/src/master/credentials.json.sample),
 * Add `credentials.json` to the `.gitignore` file, and
 * Change the contents of the file to contain the link to your Cloud Development environment, admin authentication, and product
 
