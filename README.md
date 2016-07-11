@@ -94,6 +94,7 @@ This section will describe how to configure ACE so that it can automatically reg
 Cloud development instance, re-register on changes to the descriptor, and de-register on shut down.
 
 To get This functionality, you will need to:
+
 * Create a file called `credentials.json`,
 * Copy and paste the contents of [this file](https://bitbucket.org/atlassian/atlassian-connect-express-template/src/master/credentials.json.sample),
 * Add `credentials.json` to the `.gitignore` file, and
