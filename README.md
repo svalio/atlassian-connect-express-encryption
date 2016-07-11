@@ -326,10 +326,8 @@ sign subsequent requests. A typical example is content that makes AJAX calls bac
 be used, as many browsers block third-party cookies by default. `atlassian-connect-express` provides middleware that
 works without cookies and helps making secure requests from the iframe.
 
-#### In ACE 1.0
-
-Starting with ACE 1.0, standard JWT tokens are used to authenticate requests from the iframe back to the add-on
-service. A route can be secured using the `addon.checkValidToken()` middleware:
+Standard JWT tokens are used to authenticate requests from the iframe back to the add-on service. A route can be secured 
+using the `addon.checkValidToken()` middleware:
 
     module.exports = function (app, addon) {
         app.get('/protected-resource',
@@ -358,44 +356,6 @@ You can embed the token anywhere in your iframe content using the `token` conten
 it in a meta tag, from where it can later be read by a script:
 
     <meta name="token" content="{{token}}">
-
-#### In ACE 0.9.x
-
-A route can be secured by adding the `checkValidToken` middleware:
-
-    module.exports = function (app, addon) {
-        app.get('/protected-resource',
-
-            // Require a valid token to access this resource
-            addon.checkValidToken(),
-
-            function(req, res) {
-              res.render('protected');
-            }
-        );
-    };
-
-In order to secure your route, the token must be part of the HTTP request back to the add-on service. This can be done
-by using a query parameter:
-
-    <a href="/protected-resource?acpt={{token}}">See more</a>
-
-The second option is to use an HTTP header, e.g. for AJAX requests:
-
-    beforeSend: function (request) {
-        request.setRequestHeader("X-acpt", {{token}});
-    }
-
-You can embed the token anywhere in your iframe content using the `token` content variable. For example, you can embed
-it in a meta tag, from where it can later be read by a script:
-
-    <meta name="acpt" content="{{token}}">
-
-Both the query parameter `acpt` and the HTTP request header `X-acpt` are automatically recognized and handled by
-`atlassian-connect-express` when a route is secured with the token middleware. The token remains valid for 15 minutes
-by default, and is automatically refreshed on each call. The expiration of the token can be configured using
-`maxTokenAge` (in seconds).
-
 
 ### How to send a signed outbound HTTP request back to the host
 
