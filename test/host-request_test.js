@@ -22,6 +22,7 @@ describe('Host Request', function () {
     before(function (done) {
         
         var mockAddon = {
+            logger: require('./logger'),
             key: addonKey,
             config: {
                 jwt: function () {
@@ -169,10 +170,7 @@ describe('Host Request', function () {
     it('post request with form sets form data', function (done) {
         var interceptor = nock(clientSettings.baseUrl)
                     .post('/some/path')
-                    .reply(function (uri, requestBody) {
-                        // console.log(this.req)
-                        this.req.file.should.eql(["file content", {"filename":"filename","ContentType":"text/plain"}]);
-                    });
+                    .reply(200);
 
 
         httpClient.post({
@@ -183,14 +181,18 @@ describe('Host Request', function () {
                     ContentType: 'text/plain'
                 }
             ]
-        }, function(request) {
-            interceptor.done();
+        }).then(function(request) {
+            request.file.should.eql(["file content", {"filename":"filename","ContentType":"text/plain"}]);
             done();
         });
     });
 
 
     it('post requests using multipartFormData have the right format', function (done) {
+        var interceptor = nock(clientSettings.baseUrl)
+                    .post('/some/path')
+                    .reply(200);
+
         var someData = 'some data';
         httpClient.post({
             url: '/some/path',
@@ -205,6 +207,10 @@ describe('Host Request', function () {
     });
 
     it('post requests using the deprecated form parameter still have the right format', function (done) {
+        var interceptor = nock(clientSettings.baseUrl)
+                    .post('/some/path')
+                    .reply(200);
+
         var someData = 'some data';
         httpClient.post({
             url: '/some/path',
@@ -215,10 +221,16 @@ describe('Host Request', function () {
             request._form.should.be.ok()
             request._form._valueLength.should.eql(someData.length);
             done();
+        }, function (err) {
+            console.log(err);
         });
     });
 
     it('post requests using urlEncodedFormData have the right format', function (done) {
+        var interceptor = nock(clientSettings.baseUrl)
+                    .post('/some/path')
+                    .reply(200);
+
         httpClient.post({
             url: '/some/path',
             urlEncodedFormData: {
