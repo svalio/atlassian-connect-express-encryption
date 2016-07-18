@@ -25,11 +25,6 @@ describe('Store', function () {
         app.use(express.urlencoded());
         app.use(express.json());
 
-        app.get('/confluence/plugins/servlet/oauth/consumer-info', function (req, res) {
-            res.set('Content-Type', 'application/xml');
-            res.status(200).send(helper.consumerInfo);
-        });
-
         // Head request to UPM installer
         app.head(/rest/, function (req, res) {
             res.status(200).end();

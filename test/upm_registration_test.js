@@ -19,12 +19,6 @@ describe('Auto registration (UPM)', function () {
         app.use(express.urlencoded());
         app.use(express.json());
 
-        // mock host
-        app.get('/confluence/plugins/servlet/oauth/consumer-info', function (req, res) {
-            res.set('Content-Type', 'application/xml');
-            res.status(200).send(helper.consumerInfo);
-        });
-
         app.head("/rest/plugins/1.0/", function (req, res) {
             res.setHeader("upm-token", "123");
             res.status(200).end();
