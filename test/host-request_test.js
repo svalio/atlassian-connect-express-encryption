@@ -7,7 +7,7 @@ var ac = require('../index');
 var request = require('request');
 var moment = require('moment');
 var jwt = require('atlassian-jwt');
-var hostRequest = require('../lib/internal/host-request');
+var HostRequest = require('../lib/internal/host-request');
 var logger = require('./logger');
 var addon = {};
 
@@ -75,7 +75,7 @@ describe('Host Request', function () {
             'baseUrl': helper.productBaseUrl
         };
         addon.settings.set('clientInfo', settings, helper.installedPayload.clientKey);
-        httpClient = hostRequest(addon, { 'userKey': 'admin' }, helper.installedPayload.clientKey);
+        httpClient = new HostRequest(addon, { 'userKey': 'admin' }, helper.installedPayload.clientKey);
     });
 
     after(function (done) {
