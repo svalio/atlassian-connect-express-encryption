@@ -2,36 +2,8 @@
   "name": "atlassian-connect-express",
   "version": "1.0.12",
   "description": "Library for building Atlassian Add-ons on top of Express",
-  "dependencies": {
-    "atlassian-jwt": "^0.1.1",
-    "colors": "~0.6.2",
-    "express": "~3.4.8",
-    "JSONPath": "~0.9.1",
-    "jsuri": "~1.2.2",
-    "jugglingdb": "~0.2.10",
-    "ngrok": "2.1.7",
-    "lodash": "~2.4.1",
-    "moment": "~2.5.1",
-    "node-json-minify": "~0.1.3-a",
-    "pg": "^4.5.1",
-    "qs": "~0.6.6",
-    "request": "^2.56.0",
-    "rsvp": "~3.0.3",
-    "sequelize": "^3.19.3",
-    "uglify-js": "~2.4.1",
-    "xml2js": "~0.2.8",
-    "urijs": "1.18.0"
-  },
-  "main": "index.js",
-  "devDependencies": {
-    "express": "^3.4.8",
-    "mocha": "*",
-    "sinon": "*",
-    "xunit-file": "*"
-  },
-  "peerDependencies": {
-    "express": "3.0 - 4"
-  },
+  "author": "Atlassian",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "http://bitbucket.org/atlassian/atlassian-connect-express"
@@ -47,31 +19,36 @@
     "express",
     "web"
   ],
+  "main": "index.js",
+  "dependencies": {
+    "atlassian-jwt": "^0.1.1",
+    "colors": "~0.6.2",
+    "express": "~3.4.8",
+    "JSONPath": "~0.9.1",
+    "jugglingdb": "~0.2.10",
+    "lodash": "~2.4.1",
+    "moment": "~2.5.1",
+    "ngrok": "2.1.7",
+    "node-json-minify": "~0.1.3-a",
+    "pg": "^4.5.1",
+    "request": "^2.56.0",
+    "rsvp": "~3.0.3",
+    "sequelize": "^3.19.3",
+    "uglify-js": "~2.4.1",
+    "urijs": "1.18.0",
+    "xml2js": "~0.2.8"
+  },
+  "devDependencies": {
+    "express": "^3.4.8",
+    "mocha": "^2.5.3",
+    "should": "^9.0.2",
+    "sinon": "*",
+    "xunit-file": "*"
+  },
+  "peerDependencies": {
+    "express": "3.0 - 4"
+  },
   "scripts": {
     "test": "mocha test"
-  },
-  "author": "Atlassian",
-  "contributors": [
-    {
-      "name": "Robert Bergman",
-      "email": "rbergman@atlassian.com"
-    },
-    {
-      "name": "Rich Manalang",
-      "email": "rmanalang@atlassian.com"
-    },
-    {
-      "name": "Tim Pettersen",
-      "email": "tim@atlassian.com"
-    },
-    {
-      "name": "Seb Ruiz",
-      "email": "sruiz@atlassian.com"
-    },
-    {
-      "name": "Patrick Streule",
-      "email": "pstreule@atlassian.com"
-    }
-  ],
-  "license": "Apache-2.0"
+  }
 }

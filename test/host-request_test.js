@@ -1,5 +1,5 @@
 var helper = require('./test_helper');
-var assert = require('assert');
+var should = require('should');
 var http = require('http');
 var express = require('express');
 var app = express();
@@ -98,21 +98,21 @@ describe('Host Request', function () {
 
     it('constructs non-null get request', function (done) {
         httpClient.get('/some/path/on/host').then(function(request) {
-            assert.ok(request);
+            request.should.be.ok();
             done();
         });
     });
 
     it('get request has headers', function (done) {
         httpClient.get('/some/path/on/host').then(function(request) {
-            assert.ok(request.headers);
+            request.headers.should.be.ok();
             done();
         });
     });
 
     it('get request has user-agent header', function (done) {
         httpClient.get('/some/path/on/host').then(function(request) {
-            assert.equal(request.headers['User-Agent'].indexOf('atlassian-connect-express/'), 0);
+            request.headers['User-Agent'].should.startWith('atlassian-connect-express/');
             done();
         });
     });
@@ -120,24 +120,21 @@ describe('Host Request', function () {
     it('get request has user-agent version set to package version', function (done) {
         var aceVersion = require('../package.json').version;
         httpClient.get('/some/path/on/host').then(function(request) {
-            var userAgentArr = request.headers['User-Agent'].split('/');
-            assert.equal(userAgentArr.length, 2);
-            assert.equal(userAgentArr[0], 'atlassian-connect-express');
-            assert.equal(userAgentArr[1], aceVersion);
+            request.headers['User-Agent'].should.eql('atlassian-connect-express/' + aceVersion);
             done();
         });
     });
 
     it('get request has Authorization header', function (done) {
         httpClient.get('/some/path/on/host').then(function(request) {
-            assert.ok(request.headers['Authorization']);
+            request.headers['Authorization'].should.exist;
             done();
         });
     });
 
     it('get request has Authorization header starting with "JWT "', function (done) {
         httpClient.get('/some/path/on/host').then(function(request) {
-            assert.equal(request.headers['Authorization'].indexOf('JWT '), 0);
+            request.headers['Authorization'].should.startWith('JWT ');
             done();
         });
     });
@@ -146,7 +143,7 @@ describe('Host Request', function () {
         httpClient.get('/some/path/on/host').then(function(request) {
             var jwtToken = request.headers['Authorization'].slice(4);
             var decoded = jwt.decode(jwtToken, helper.installedPayload.clientKey, true);
-            assert.equal(decoded.sub, 'admin');
+            decoded.sub.should.eql('admin');
             done();
         });
     });
@@ -160,15 +157,24 @@ describe('Host Request', function () {
               'path'  : '/some/path/on/host',
               'query' : { 'q' : '~ text'}
             }, false, helper.productBaseUrl);
-            assert.equal(decoded.qsh, expectedQsh);
+            decoded.qsh.should.eql(expectedQsh);
             done();
         });
     });
 
+    it('get request for absolute url on host has Authorization header', function (done) {
+        httpClient.get(helper.productBaseUrl + '/some/path/on/host').then(function(request) {
+            request.headers['Authorization'].should.exist
+            done();
+        });
+    });
+
+    
+
     it('post request has correct url', function (done) {
         var relativeUrl = '/some/path/on/host';
         httpClient.post(relativeUrl).then(function(request) {
-            assert.equal(request.uri.href, helper.productBaseUrl + relativeUrl);
+            request.uri.href.should.eql(helper.productBaseUrl + relativeUrl);
             done();
         });
     });
@@ -180,7 +186,7 @@ describe('Host Request', function () {
                 'custom_header': 'arbitrary value'
             }
         }).then(function(request) {
-            assert.equal(request.headers['custom_header'], 'arbitrary value');
+            request.headers['custom_header'].should.eql('arbitrary value');
             done();
         });
     });
@@ -195,7 +201,7 @@ describe('Host Request', function () {
                 }
             ]
         }).then(function(request) {
-            assert.deepEqual(request.file, ["file content",{"filename":"filename","ContentType":"text/plain"}]);
+            request.file.should.eql(["file content", {"filename":"filename","ContentType":"text/plain"}]);
             done();
         });
     });
@@ -209,8 +215,8 @@ describe('Host Request', function () {
                 file: [someData, { filename:'myattachmentagain.png' }]
             }
         }).then(function(request) {
-            assert.ok(request._form);
-            assert.equal(request._form._valueLength, someData.length);
+            request._form.should.be.ok();
+            request._form._valueLength.should.eql(someData.length);
             done();
         });
     });
@@ -223,8 +229,8 @@ describe('Host Request', function () {
                 file: [someData, { filename:'myattachmentagain.png' }]
             }
         }).then(function(request) {
-            assert.ok(request._form);
-            assert.equal(request._form._valueLength, someData.length);
+            request._form.should.be.ok()
+            request._form._valueLength.should.eql(someData.length);
             done();
         });
     });
@@ -236,7 +242,7 @@ describe('Host Request', function () {
                 param1: 'value1'
             }
         }).then(function(request) {
-            assert.equal(request.body.toString(), 'param1=value1');
+            request.body.toString().should.eql('param1=value1');
             done();
         });
     });
