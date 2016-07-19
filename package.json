@@ -21,11 +21,11 @@
   ],
   "main": "index.js",
   "dependencies": {
-    "JSONPath": "~0.9.1",
     "atlassian-jwt": "^0.1.1",
-    "atlassian-oauth2": "^0.1.0",
+    "atlassian-oauth2": "^0.1.1",
     "colors": "~0.6.2",
     "express": "~3.4.8",
+    "JSONPath": "~0.9.1",
     "jugglingdb": "~0.2.10",
     "lodash": "~2.4.1",
     "md5": "^2.1.0",
