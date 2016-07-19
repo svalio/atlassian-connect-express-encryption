@@ -360,12 +360,10 @@ it in a meta tag, from where it can later be read by a script:
 ### How to send a signed outbound HTTP request back to the host
 
 `atlassian-connect-express` bundles and extends the [request](https://github.com/mikeal/request) HTTP client. To make a
-JWT signed request back to the host, all you have to do is use `request` the way it was designed, but use a relative
-path as your URL back to the host's REST APIs. If `request` finds that you're using a relative URL, it will get signed.
-If you use an absolute URL, it bypasses signing.
+JWT signed request back to the host, all you have to do is use `request` the way it was designed, but use a URL back to the host's REST APIs.
 
     var httpClient = addon.httpClient(req);
-    httpClient.get('/', function(err, res, body){
+    httpClient.get('/', function(err, res, body) {
       ...
     });
 
@@ -375,9 +373,17 @@ If not in a request context, you can perform the equivalent operation as follows
       clientKey: clientKey, // the unique client key of the tenant to make a request to
       appKey: appKey
     });
-    httpClient.get('/', function(err, res, body){
+    httpClient.get('/', function(err, res, body) {
       ...
     });
+
+By default, these requests are authenticated as the add-on. If you would like to make a request as a specific user, the
+`#asUser()` method should be used. Under the covers, an OAuth2 bearer token will be retrieved for the user you've requested.
+
+    var httpClient = addon.httpClient(req);
+    httpClient.asUser('barney').get('/rest/api/latest/myself', function (err, res, body) {
+      ...
+    })
 
 You can also set custom headers or send a form data. Take, for example this request which attaches a file to a JIRA issue
 
