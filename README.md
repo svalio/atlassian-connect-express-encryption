@@ -373,7 +373,6 @@ If not in a request context, you can perform the equivalent operation as follows
 
     var httpClient = addon.httpClient({
       clientKey: clientKey, // the unique client key of the tenant to make a request to
-      userId: userId,
       appKey: appKey
     });
     httpClient.get('/', function(err, res, body){
