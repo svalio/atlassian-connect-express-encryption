@@ -1,5 +1,5 @@
 var OAuth2 = require('../lib/internal/oauth2'),
-    mocks = require('./mocks')
+    mocks = require('./mocks'),
     RSVP = require('rsvp'),
     md5 = require('md5'),
     moment = require('moment'),

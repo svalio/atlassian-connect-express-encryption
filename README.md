@@ -385,6 +385,8 @@ By default, these requests are authenticated as the add-on. If you would like to
       ...
     })
 
+Ensure you pass the `userKey` value into the method, and not the username.
+
 You can also set custom headers or send a form data. Take, for example this request which attaches a file to a JIRA issue
 
     var filePath = path.join(__dirname, 'some.png');

@@ -1,5 +1,5 @@
 
-var nock = require('nock')
+var nock = require('nock');
 
 module.exports = (function () {
     var OAUTH_ACCESS_TOKEN = {
