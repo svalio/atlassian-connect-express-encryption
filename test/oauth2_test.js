@@ -1,18 +1,9 @@
 var OAuth2 = require('../lib/internal/oauth2'),
-    nock = require('nock'),
+    mocks = require('./mocks')
     RSVP = require('rsvp'),
     md5 = require('md5'),
     moment = require('moment'),
     should = require('should');
-
-
-
-// var helper = require('./test_helper');
-// var shouldHttp = require('should-http');
-// var RSVP = require('rsvp');
-// var moment = require('moment');
-// var extend = require('extend');
-
 
 describe('OAuth2', function () {
     var clientSettings = {
@@ -20,12 +11,6 @@ describe('OAuth2', function () {
         sharedSecret: 'shared-secret',
         baseUrl: 'https://test.atlassian.net'
     }
-
-    var ACCESS_TOKEN = {
-        "access_token": "{your access token}",
-        "expires_in": 900,
-        "token_type": "Bearer"
-    }    
 
     var mockAddon = function () {
         var _store = {}
@@ -35,7 +20,6 @@ describe('OAuth2', function () {
                 scopes: ['READ', 'WRITE']
             },
             logger: require('./logger'),
-            __store: _store,
             settings: {
                 get: function (key, clientKey) {
                     var clientInfo = _store[clientKey];
@@ -52,27 +36,21 @@ describe('OAuth2', function () {
         }
     };
 
-    var mockAuthService = function (accessToken) {
-         return nock('https://auth.atlassian.io')
-                    .post('/oauth2/token')
-                    .reply(200, accessToken || ACCESS_TOKEN);
-    };
-
     describe('#getUserBearerToken', function () {
 
         it('calls OAuth service', function (done) {
-            var authServiceMock = mockAuthService();
+            var authServiceMock = mocks.oauth2.service();
 
             var addon = mockAddon();
             new OAuth2(addon).getUserBearerToken('BruceWayne', clientSettings).then(function (token) {
                 authServiceMock.done();
-                should.exist(token);
+                should.ok(token);
                 done();
             });
         });
 
         it('stores token in cache', function (done) {
-            var authServiceMock = mockAuthService();
+            var authServiceMock = mocks.oauth2.service();
 
             var addon = mockAddon();
             var oauth2 = new OAuth2(addon);
@@ -81,7 +59,7 @@ describe('OAuth2', function () {
                 
                 var cacheKey = "bearer-" + md5('BruceWayne');
                 addon.settings.get(cacheKey, clientSettings.clientKey).then(function (cachedToken) {
-                    cachedToken.token.should.eql(ACCESS_TOKEN);
+                    cachedToken.token.should.eql(mocks.oauth2.ACCESS_TOKEN);
                     done();
                 }, function (err) {
                     should.fail(err);
@@ -91,7 +69,7 @@ describe('OAuth2', function () {
         });
 
         it('retrieves token from cache', function (done) {
-            var authServiceMock = mockAuthService();
+            var authServiceMock = mocks.oauth2.service();
 
             var addon = mockAddon();
             var oauth2 = new OAuth2(addon);
@@ -125,7 +103,7 @@ describe('OAuth2', function () {
         });
 
         it('bypasses token cache if expired', function (done) {
-            var authServiceMock = mockAuthService();
+            var authServiceMock = mocks.oauth2.service();
 
             var addon = mockAddon();
             var oauth2 = new OAuth2(addon);
@@ -145,7 +123,7 @@ describe('OAuth2', function () {
                 .then(
                     function () {
                         oauth2.getUserBearerToken('BruceWayne', clientSettings).then(function (token) {
-                            token.should.eql(ACCESS_TOKEN);
+                            token.should.eql(mocks.oauth2.ACCESS_TOKEN);
                             done();
                         });
                     }, function (err) {

@@ -1,37 +1,56 @@
-var helper = require('./test_helper');
-var nock = require('nock');
-var should = require('should');
-var shouldHttp = require('should-http');
-var RSVP = require('rsvp');
-var moment = require('moment');
-var jwt = require('atlassian-jwt');
-var extend = require('extend');
-var HostRequest = require('../lib/internal/host-request');
+var helper = require('./test_helper'),
+    mocks = require('./mocks'),
+    HostRequest = require('../lib/internal/host-request'),
+    nock = require('nock'),
+    should = require('should'),
+    shouldHttp = require('should-http'),
+    RSVP = require('rsvp'),
+    moment = require('moment'),
+    jwt = require('atlassian-jwt'),
+    extend = require('extend');
 
 describe('Host Request', function () {
     var clientSettings = {
         clientKey: 'test-client-key',
+        oauthClientId: 'oauth-client-id',
         sharedSecret: 'shared-secret',
         baseUrl: 'https://test.atlassian.net'
     }
 
-    var mockAddon = {
-        logger: require('./logger'),
-        key: "test-addon-key",
-        config: {
-            jwt: function () {
-                return {
-                    validityInMinutes: 3
+
+    var mockAddon = function () {
+        var _store = {};
+        _store[clientSettings.clientKey] = {
+            clientInfo: clientSettings // init clientInfo
+        }
+
+        return {
+            logger: require('./logger'),
+            key: "test-addon-key",
+            config: {
+                jwt: function () {
+                    return {
+                        validityInMinutes: 3
+                    }
+                }
+            },
+            descriptor: {
+                scopes: ['READ', 'WRITE']
+            },
+            settings: {
+                get: function (key, clientKey) {
+                    var clientInfo = _store[clientKey];
+                    var val = clientInfo ? clientInfo[key] : null;
+                    return RSVP.Promise.resolve(val);
+                },
+                set: function (key, val, clientKey) {
+                    var clientInfo = _store[clientKey] || {};
+                    clientInfo[key] = val;
+                    _store[clientKey] = clientInfo;
+                    return RSVP.Promise.resolve(val);
                 }
             }
-        },
-        settings: {
-            get: function () {
-                return new RSVP.Promise(function (resolve, reject) {
-                    resolve(clientSettings);
-                });
-            }
-        }
+        };
     };
     
     function createJwtToken() {
@@ -49,7 +68,7 @@ describe('Host Request', function () {
         if (!context) {
             context = {};
         }
-        return new HostRequest(mockAddon, context, clientSettings.clientKey)
+        return new HostRequest(mockAddon(), context, clientSettings.clientKey)
     }
 
     function interceptRequest(testCallback, replyCallback, options) {
@@ -95,22 +114,42 @@ describe('Host Request', function () {
         interceptRequest(done, 200);
     });
 
-    it('get request has headers', function (done) {
-        interceptRequest(done, function (uri, requestBody) {
-            should.exist(this.req.headers);
+    describe('Headers', function () {
+        it('get request has headers', function (done) {
+            interceptRequest(done, function (uri, requestBody) {
+                should.exist(this.req.headers);
+            });
         });
-    });
 
-    it('get request has user-agent header', function (done) {
-        interceptRequest(done, function (uri, requestBody) {
-            this.req.headers['user-agent'].should.startWith('atlassian-connect-express/');
+        it('get request has user-agent header', function (done) {
+            interceptRequest(done, function (uri, requestBody) {
+                this.req.headers['user-agent'].should.startWith('atlassian-connect-express/');
+            });
         });
-    });
 
-    it('get request has user-agent version set to package version', function (done) {
-        var aceVersion = require('../package.json').version;
-        interceptRequest(done, function (uri, requestBody) {
-            this.req.headers['user-agent'].should.startWith('atlassian-connect-express/' + aceVersion);
+        it('get request has user-agent version set to package version', function (done) {
+            var aceVersion = require('../package.json').version;
+            interceptRequest(done, function (uri, requestBody) {
+                this.req.headers['user-agent'].should.startWith('atlassian-connect-express/' + aceVersion);
+            });
+        });
+
+        it('post request preserves custom header', function (done) {
+            var interceptor = nock(clientSettings.baseUrl)
+                                .post('/some/path')
+                                .reply(function (uri, requestBody) {
+                                    this.req.headers['custom_header'].should.eql('arbitrary value');
+                                });
+
+            getHttpClient().post({
+                'url': '/some/path',
+                'headers': {
+                    'custom_header': 'arbitrary value'
+                }
+            }, function(request) {
+                interceptor.done();
+                done();
+            });
         });
     });
 
@@ -167,108 +206,96 @@ describe('Host Request', function () {
 
     describe('User impersonation requests', function () {
         it('Request as user does not add JWT authorization header', function (done) {
+            var authServiceMock = mocks.oauth2.service();
             interceptRequestAsUser(done, function (uri, requestBody) {
+                authServiceMock.done();
                 this.req.headers['authorization'].should.not.startWith('JWT');
             }, { userKey: 'sruiz' });
         });
 
         it('Request as user adds a Bearer authorization header', function (done) {
+            var authServiceMock = mocks.oauth2.service();
             interceptRequestAsUser(done, function (uri, requestBody) {
+                authServiceMock.done();
                 this.req.headers['authorization'].should.startWith('Bearer');
             }, { userKey: 'sruiz' });
         });
     });
 
-    it('post request preserves custom header', function (done) {
-        var interceptor = nock(clientSettings.baseUrl)
-                            .post('/some/path')
-                            .reply(function (uri, requestBody) {
-                                this.req.headers['custom_header'].should.eql('arbitrary value');
-                            });
+    describe('Form requests', function () {
+        it('post request with form sets form data', function (done) {
+            var interceptor = nock(clientSettings.baseUrl)
+                        .post('/some/path')
+                        .reply(200);
 
-        getHttpClient().post({
-            'url': '/some/path',
-            'headers': {
-                'custom_header': 'arbitrary value'
-            }
-        }, function(request) {
-            interceptor.done();
-            done();
+
+            getHttpClient().post({
+                'url': '/some/path',
+                file: [
+                    'file content', {
+                        filename: 'filename',
+                        ContentType: 'text/plain'
+                    }
+                ]
+            }).then(function(request) {
+                request.file.should.eql(["file content", {"filename":"filename","ContentType":"text/plain"}]);
+                done();
+            });
         });
-    });
-
-    it('post request with form sets form data', function (done) {
-        var interceptor = nock(clientSettings.baseUrl)
-                    .post('/some/path')
-                    .reply(200);
 
 
-        getHttpClient().post({
-            'url': '/some/path',
-            file: [
-                'file content', {
-                    filename: 'filename',
-                    ContentType: 'text/plain'
+        it('post requests using multipartFormData have the right format', function (done) {
+            var interceptor = nock(clientSettings.baseUrl)
+                        .post('/some/path')
+                        .reply(200);
+
+            var someData = 'some data';
+            getHttpClient().post({
+                url: '/some/path',
+                multipartFormData: {
+                    file: [someData, { filename:'myattachmentagain.png' }]
                 }
-            ]
-        }).then(function(request) {
-            request.file.should.eql(["file content", {"filename":"filename","ContentType":"text/plain"}]);
-            done();
+            }).then(function(request) {
+                request._form.should.be.ok();
+                request._form._valueLength.should.eql(someData.length);
+                done();
+            });
         });
-    });
 
+        it('post requests using the deprecated form parameter still have the right format', function (done) {
+            var interceptor = nock(clientSettings.baseUrl)
+                        .post('/some/path')
+                        .reply(200);
 
-    it('post requests using multipartFormData have the right format', function (done) {
-        var interceptor = nock(clientSettings.baseUrl)
-                    .post('/some/path')
-                    .reply(200);
-
-        var someData = 'some data';
-        getHttpClient().post({
-            url: '/some/path',
-            multipartFormData: {
-                file: [someData, { filename:'myattachmentagain.png' }]
-            }
-        }).then(function(request) {
-            request._form.should.be.ok();
-            request._form._valueLength.should.eql(someData.length);
-            done();
+            var someData = 'some data';
+            getHttpClient().post({
+                url: '/some/path',
+                form: {
+                    file: [someData, { filename:'myattachmentagain.png' }]
+                }
+            }).then(function(request) {
+                request._form.should.be.ok()
+                request._form._valueLength.should.eql(someData.length);
+                done();
+            }, function (err) {
+                console.log(err);
+            });
         });
-    });
 
-    it('post requests using the deprecated form parameter still have the right format', function (done) {
-        var interceptor = nock(clientSettings.baseUrl)
-                    .post('/some/path')
-                    .reply(200);
+        it('post requests using urlEncodedFormData have the right format', function (done) {
+            var interceptor = nock(clientSettings.baseUrl)
+                        .post('/some/path')
+                        .reply(200);
 
-        var someData = 'some data';
-        getHttpClient().post({
-            url: '/some/path',
-            form: {
-                file: [someData, { filename:'myattachmentagain.png' }]
-            }
-        }).then(function(request) {
-            request._form.should.be.ok()
-            request._form._valueLength.should.eql(someData.length);
-            done();
-        }, function (err) {
-            console.log(err);
-        });
-    });
-
-    it('post requests using urlEncodedFormData have the right format', function (done) {
-        var interceptor = nock(clientSettings.baseUrl)
-                    .post('/some/path')
-                    .reply(200);
-
-        getHttpClient().post({
-            url: '/some/path',
-            urlEncodedFormData: {
-                param1: 'value1'
-            }
-        }).then(function(request) {
-            request.body.toString().should.eql('param1=value1');
-            done();
+            getHttpClient().post({
+                url: '/some/path',
+                urlEncodedFormData: {
+                    param1: 'value1'
+                }
+            }).then(function(request) {
+                request.body.toString().should.eql('param1=value1');
+                done();
+            });
         });
     });
 });
