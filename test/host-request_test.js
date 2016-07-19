@@ -1,151 +1,132 @@
 var helper = require('./test_helper');
+var nock = require('nock');
 var should = require('should');
-var http = require('http');
-var express = require('express');
-var app = express();
-var ac = require('../index');
-var request = require('request');
+var shouldHttp = require('should-http');
+var RSVP = require('rsvp');
 var moment = require('moment');
 var jwt = require('atlassian-jwt');
+var extend = require('extend');
 var HostRequest = require('../lib/internal/host-request');
-var logger = require('./logger');
-var addon = {};
 
 describe('Host Request', function () {
     var httpClient;
 
+    var addonKey = "test-addon-key";
+
+    var clientSettings = {
+        clientKey: 'test-client-key',
+        sharedSecret: 'shared-secret',
+        baseUrl: 'https://test.atlassian.net'
+    }
+    
     before(function (done) {
-
-        app.set('env', 'development');
-        app.use(express.urlencoded());
-        app.use(express.json());
-
-        // mock host
-        app.head("/confluence/rest/plugins/1.0/", function (req, res) {
-            res.setHeader("upm-token", "123");
-            res.status(200).end();
-        });
-
-        app.get("/confluence/rest/plugins/1.0/", function(req, res) {
-            res.json({plugins: []});
-        });
-
-        // Post request to UPM installer
-
-        app.post("/confluence/rest/plugins/1.0/", function (req, res) {
-            request({
-                url: helper.addonBaseUrl + '/installed',
-                query: {
-                    jwt: createJwtToken()
-                },
-                method: 'POST',
-                json: helper.installedPayload
-            });
-            res.status(200).end();
-        });
-
-        ac.store.register("teststore", function (logger, opts) {
-            return require("../lib/store/jugglingdb")(logger, opts);
-        });
-
-        addon = ac(app, {
+        
+        var mockAddon = {
+            logger: require('./logger'),
+            key: addonKey,
             config: {
-                "development": {
-                    store: {
-                        adapter: 'teststore',
-                        type: "memory"
-                    },
-                    "hosts": [
-                        helper.productBaseUrl
-                    ]
+                jwt: function () {
+                    return {
+                        validityInMinutes: 3
+                    }
+                }
+            },
+            settings: {
+                get: function () {
+                    return new RSVP.Promise(function (resolve, reject) {
+                        resolve(clientSettings);
+                    });
                 }
             }
-        }, logger);
-        server = http.createServer(app).listen(helper.addonPort, function () {
-            addon.register().then(done);
-        });
-
-        var settings = {
-            'sharedSecret': helper.installedPayload.sharedSecret,
-            'baseUrl': helper.productBaseUrl
         };
-        addon.settings.set('clientInfo', settings, helper.installedPayload.clientKey);
-        httpClient = new HostRequest(addon, { 'userKey': 'admin' }, helper.installedPayload.clientKey);
-    });
 
-    after(function (done) {
-        setTimeout(function() {
-            server.close();
-            done();
-        }, 50);
+        var context = {
+            'userKey': 'admin'
+        };
+        
+        httpClient = new HostRequest(mockAddon, context, clientSettings.clientKey);
+        
+        done();
     });
 
     function createJwtToken() {
         var jwtPayload = {
             "sub": 'admin',
-            "iss": helper.installedPayload.clientKey,
+            "iss": clientSettings.clientKey,
             "iat": moment().utc().unix(),
             "exp": moment().utc().add('minutes', 10).unix()
         };
 
         return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
+    };
+
+    function interceptRequest(testCallback, replyCallback, options) {
+        var opts = extend({
+            baseUrl: clientSettings.baseUrl,
+            method: 'get',
+            path: '/some/path/on/host'
+        }, options || {});
+
+        if (!opts.requestPath) {
+            opts.requestPath = opts.path;
+        }
+
+        var interceptor = nock(opts.baseUrl)
+                            [opts.method](opts.path)
+                            .reply(replyCallback);
+
+        httpClient[opts.method](opts.requestPath, function() {
+            interceptor.done(); // will throw assertion if endpoint is not intercepted
+            testCallback();
+        });
     }
 
     it('constructs non-null get request', function (done) {
-        httpClient.get('/some/path/on/host').then(function(request) {
-            request.should.be.ok();
-            done();
-        });
+        interceptRequest(done, 200);
     });
 
     it('get request has headers', function (done) {
-        httpClient.get('/some/path/on/host').then(function(request) {
-            request.headers.should.be.ok();
-            done();
+        interceptRequest(done, function (uri, requestBody) {
+            should.exist(this.req.headers);
         });
     });
 
     it('get request has user-agent header', function (done) {
-        httpClient.get('/some/path/on/host').then(function(request) {
-            request.headers['User-Agent'].should.startWith('atlassian-connect-express/');
-            done();
+        interceptRequest(done, function (uri, requestBody) {
+            this.req.headers['user-agent'].should.startWith('atlassian-connect-express/');
         });
     });
 
     it('get request has user-agent version set to package version', function (done) {
         var aceVersion = require('../package.json').version;
-        httpClient.get('/some/path/on/host').then(function(request) {
-            request.headers['User-Agent'].should.eql('atlassian-connect-express/' + aceVersion);
-            done();
+        interceptRequest(done, function (uri, requestBody) {
+            this.req.headers['user-agent'].should.startWith('atlassian-connect-express/' + aceVersion);
         });
     });
 
     it('get request has Authorization header', function (done) {
-        httpClient.get('/some/path/on/host').then(function(request) {
-            request.headers['Authorization'].should.exist;
-            done();
+        interceptRequest(done, function (uri, requestBody) {
+            should.exist(this.req.headers['authorization']);
         });
     });
 
     it('get request has Authorization header starting with "JWT "', function (done) {
-        httpClient.get('/some/path/on/host').then(function(request) {
-            request.headers['Authorization'].should.startWith('JWT ');
-            done();
+        interceptRequest(done, function (uri, requestBody) {
+            this.req.headers['authorization'].should.startWith('JWT ');
         });
     });
 
     it('get request has correct JWT subject claim', function (done) {
-        httpClient.get('/some/path/on/host').then(function(request) {
-            var jwtToken = request.headers['Authorization'].slice(4);
+        interceptRequest(done, function (uri, requestBody) {
+            var jwtToken = this.req.headers['authorization'].slice(4);
             var decoded = jwt.decode(jwtToken, helper.installedPayload.clientKey, true);
             decoded.sub.should.eql('admin');
-            done();
         });
     });
 
     it('get request has correct JWT qsh for encoded parameter', function (done) {
-        httpClient.get('/some/path/on/host?q=~%20text').then(function(request) {
-            var jwtToken = request.headers['Authorization'].slice(4);
+        interceptRequest(done, function (uri, requestBody) {
+            var jwtToken = this.req.headers['authorization'].slice(4);
             var decoded = jwt.decode(jwtToken, helper.installedPayload.clientKey, true);
             var expectedQsh = jwt.createQueryStringHash({
               'method': 'GET',
@@ -153,40 +134,45 @@ describe('Host Request', function () {
               'query' : { 'q' : '~ text'}
             }, false, helper.productBaseUrl);
             decoded.qsh.should.eql(expectedQsh);
-            done();
-        });
+        }, { path: '/some/path/on/host?q=~%20text'});
     });
 
     it('get request for absolute url on host has Authorization header', function (done) {
-        httpClient.get(helper.productBaseUrl + '/some/path/on/host').then(function(request) {
-            request.headers['Authorization'].should.exist
-            done();
-        });
+        interceptRequest(done, function (uri, requestBody) {
+            this.req.headers['authorization'].should.startWith('JWT ');
+        }, { requestPath: 'https://test.atlassian.net/some/path/on/host' });
     });
 
-    
-
     it('post request has correct url', function (done) {
-        var relativeUrl = '/some/path/on/host';
-        httpClient.post(relativeUrl).then(function(request) {
-            request.uri.href.should.eql(helper.productBaseUrl + relativeUrl);
-            done();
-        });
+        interceptRequest(done, function (uri, requestBody) {
+            this.req.headers['authorization'].should.startWith('JWT ');
+        }, { method: 'post' });
     });
 
     it('post request preserves custom header', function (done) {
+        var interceptor = nock(clientSettings.baseUrl)
+                            .post('/some/path')
+                            .reply(function (uri, requestBody) {
+                                this.req.headers['custom_header'].should.eql('arbitrary value');
+                            });
+
         httpClient.post({
             'url': '/some/path',
             'headers': {
                 'custom_header': 'arbitrary value'
             }
-        }).then(function(request) {
-            request.headers['custom_header'].should.eql('arbitrary value');
+        }, function(request) {
+            interceptor.done();
             done();
         });
     });
 
     it('post request with form sets form data', function (done) {
+        var interceptor = nock(clientSettings.baseUrl)
+                    .post('/some/path')
+                    .reply(200);
+
+
         httpClient.post({
             'url': '/some/path',
             file: [
@@ -203,6 +189,10 @@ describe('Host Request', function () {
 
 
     it('post requests using multipartFormData have the right format', function (done) {
+        var interceptor = nock(clientSettings.baseUrl)
+                    .post('/some/path')
+                    .reply(200);
+
         var someData = 'some data';
         httpClient.post({
             url: '/some/path',
@@ -217,6 +207,10 @@ describe('Host Request', function () {
     });
 
     it('post requests using the deprecated form parameter still have the right format', function (done) {
+        var interceptor = nock(clientSettings.baseUrl)
+                    .post('/some/path')
+                    .reply(200);
+
         var someData = 'some data';
         httpClient.post({
             url: '/some/path',
@@ -227,10 +221,16 @@ describe('Host Request', function () {
             request._form.should.be.ok()
             request._form._valueLength.should.eql(someData.length);
             done();
+        }, function (err) {
+            console.log(err);
         });
     });
 
     it('post requests using urlEncodedFormData have the right format', function (done) {
+        var interceptor = nock(clientSettings.baseUrl)
+                    .post('/some/path')
+                    .reply(200);
+
         httpClient.post({
             url: '/some/path',
             urlEncodedFormData: {
