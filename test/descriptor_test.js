@@ -1,14 +1,12 @@
 var assert = require('assert');
 var http = require('http');
-var express = require('express');
-var app = express();
+var app = require('express')();
 var ac = require('../index');
 var logger = require('./logger');
 var _ = require('lodash');
 var addon = {};
 
 describe('Descriptor', function () {
-    var server = {};
     var addon;
     var options = {
         config: {
@@ -28,10 +26,6 @@ describe('Descriptor', function () {
         before(function (done) {
             app.set('env', 'development');
             addon = ac(app, options, logger);
-            done();
-        });
-
-        after(function (done) {
             done();
         });
 
@@ -59,14 +53,6 @@ describe('Descriptor', function () {
             var vendorUrl = addon.descriptor.vendor.url;
             assert.equal(typeof vendorUrl, 'string');
             assert.equal(vendorUrl, 'http://example.com');
-            // var permissions = addon.descriptor.permissions;
-            // assert.deepEqual(permissions, ['create_oauth_link']);
-            // var docUrl = addon.descriptor.documentationUrl();
-            // assert.equal(typeof docUrl, 'string');
-            // assert.equal(docUrl, 'http://example.com');
-            // var configUrl = addon.descriptor.configureUrl();
-            // assert.equal(typeof configUrl, 'string');
-            // assert.equal(configUrl, '/plugins/servlet/atlassian-connect/my-test-app-key/config-page');
             done();
         });
 

@@ -1,5 +1,5 @@
 var helper = require('./test_helper');
-var assert = require('assert');
+var should = require('should');
 var http = require('http');
 var express = require('express');
 var app = express();
@@ -78,8 +78,8 @@ describe('Store', function () {
     it('should store client info', function (done) {
         addon.on('host_settings_saved', function (clientKey, settings) {
             addon.settings.get('clientInfo', helper.installedPayload.clientKey).then(function (settings) {
-                assert.equal(settings.clientKey, helper.installedPayload.clientKey);
-                assert.equal(settings.sharedSecret, helper.installedPayload.sharedSecret);
+                settings.clientKey.should.eql(helper.installedPayload.clientKey);
+                settings.sharedSecret.should.eql(helper.installedPayload.sharedSecret);
                 done();
             });
         });
@@ -89,10 +89,10 @@ describe('Store', function () {
         addon.settings.getAllClientInfos().then(function (initialClientInfos) {
             addon.settings.set('clientInfo', '{"correctPayload":true}', 'fake').then(function() {
                 addon.settings.getAllClientInfos().then(function (clientInfos) {
-                    assert.equal(clientInfos.length, initialClientInfos.length + 1);
+                    clientInfos.should.have.length(initialClientInfos.length + 1);
                     var latestClientInfo = clientInfos[clientInfos.length - 1];
                     var correctPayload = latestClientInfo['correctPayload'];
-                    assert.equal(correctPayload, true);
+                    correctPayload.should.be.true();
                     done();
                 });
             });
@@ -101,14 +101,14 @@ describe('Store', function () {
 
     it('should allow storing arbitrary key/values', function (done) {
         addon.settings.set('arbitrarySetting', 'someValue', helper.installedPayload.clientKey).then(function (setting) {
-            assert.equal(setting, 'someValue');
+            setting.should.eql('someValue');
             done();
         })
     });
 
     it('should allow storing arbitrary key/values as JSON', function (done) {
         addon.settings.set('arbitrarySetting2', {data: 1}, helper.installedPayload.clientKey).then(function (setting) {
-            assert.deepEqual(setting, {data: 1});
+            setting.should.eql({data: 1});
             done();
         })
     });
@@ -131,15 +131,15 @@ describe('Store', function () {
                             ]
                         }
                     }, function (err, model) {
-                        assert.equal(model.name, "Rich");
+                        model.name.should.eql("Rich");
                         User.all({ name: "Rich" }, function (err, user) {
-                            assert.equal(user[0].name, model.name);
+                            user[0].name.should.eql(model.name);
                             done();
                         });
                     });
                 },
                 function (err) {
-                    assert.fail(err.toString());
+                    should.fail(err.toString());
                 }
         );
     });
@@ -151,12 +151,12 @@ describe('Store', function () {
             addon.settings.del('custom key')
         ];
         RSVP.all(promises).then(function () {
-            assert.ok(storeSetSpy.callCount > 0);
-            assert.ok(storeGetSpy.callCount > 0);
-            assert.ok(storeDelSpy.callCount > 0);
+            storeSetSpy.callCount.should.be.above(0);
+            storeGetSpy.callCount.should.be.above(0);
+            storeDelSpy.callCount.should.be.above(0);
             done();
         }, function (err) {
-            assert.fail(err);
+            should.fail(err);
         });
     });
 
