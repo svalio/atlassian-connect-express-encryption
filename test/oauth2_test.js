@@ -1,9 +1,9 @@
-var OAuth2 = require('../lib/internal/oauth2'),
-    mocks = require('./mocks'),
-    RSVP = require('rsvp'),
-    md5 = require('md5'),
-    moment = require('moment'),
-    should = require('should');
+var OAuth2 = require('../lib/internal/oauth2');
+var mocks = require('./mocks');
+var RSVP = require('rsvp');
+var md5 = require('md5');
+var moment = require('moment');
+var should = require('should');
 
 describe('OAuth2', function () {
     var clientSettings = {

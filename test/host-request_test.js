@@ -1,13 +1,13 @@
-var helper = require('./test_helper'),
-    mocks = require('./mocks'),
-    HostRequest = require('../lib/internal/host-request'),
-    nock = require('nock'),
-    should = require('should'),
-    shouldHttp = require('should-http'),
-    RSVP = require('rsvp'),
-    moment = require('moment'),
-    jwt = require('atlassian-jwt'),
-    extend = require('extend');
+var helper = require('./test_helper');
+var mocks = require('./mocks');
+var HostRequest = require('../lib/internal/host-request');
+var nock = require('nock');
+var should = require('should');
+var shouldHttp = require('should-http');
+var RSVP = require('rsvp');
+var moment = require('moment');
+var jwt = require('atlassian-jwt');
+var extend = require('extend');
 
 describe('Host Request', function () {
     var clientSettings = {
