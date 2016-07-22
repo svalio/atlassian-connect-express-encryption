@@ -72,7 +72,7 @@ describe('Auto registration (UPM)', function () {
         var jwtPayload = {
             "iss": helper.installedPayload.clientKey,
             "iat": moment().utc().unix(),
-            "exp": moment().utc().add('minutes', 10).unix()
+            "exp": moment().utc().add(10, 'minutes').unix()
         };
 
         return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);

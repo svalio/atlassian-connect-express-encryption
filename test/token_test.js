@@ -86,7 +86,7 @@ describe('Token verification', function () {
             "sub": USER_ID,
             "iss": helper.installedPayload.clientKey,
             "iat": moment().utc().unix(),
-            "exp": moment().utc().add('minutes', 10).unix()
+            "exp": moment().utc().add(10, 'minutes').unix()
         };
 
         if (req) {

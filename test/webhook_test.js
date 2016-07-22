@@ -84,7 +84,7 @@ describe('Webhook', function () {
         var jwtPayload = {
             "iss": helper.installedPayload.clientKey,
             "iat": moment().utc().unix(),
-            "exp": moment().utc().add('minutes', 10).unix()
+            "exp": moment().utc().add(10, 'minutes').unix()
         };
 
         if (req) {
@@ -97,8 +97,8 @@ describe('Webhook', function () {
     function createExpiredJwtToken(req) {
         var jwtPayload = {
             "iss": helper.installedPayload.clientKey,
-            "iat": moment().utc().subtract('minutes', 20).unix(),
-            "exp": moment().utc().subtract('minutes', 10).unix()
+            "iat": moment().utc().subtract(20, 'minutes').unix(),
+            "exp": moment().utc().subtract(10, 'minutes').unix()
         };
 
         if (req) {
