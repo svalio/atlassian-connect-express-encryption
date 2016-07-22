@@ -27,7 +27,7 @@
     "express": "~3.4.8",
     "JSONPath": "~0.9.1",
     "jugglingdb": "~0.2.10",
-    "lodash": "~2.4.1",
+    "lodash": "^4.13.1",
     "md5": "^2.1.0",
     "moment": "~2.5.1",
     "ngrok": "2.1.7",
