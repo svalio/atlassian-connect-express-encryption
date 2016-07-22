@@ -2,6 +2,7 @@ var helper = require('./test_helper');
 var assert = require('assert');
 var http = require('http');
 var express = require('express');
+var bodyParser = require('body-parser');
 var app = express();
 var ac = require('../index');
 var request = require('request');
@@ -22,8 +23,8 @@ describe('Webhook', function () {
         });
 
         app.set('env', 'development');
-        app.use(express.urlencoded());
-        app.use(express.json());
+        app.use(bodyParser.urlencoded({extended: false}));
+        app.use(bodyParser.json());
 
         var installedPayload = helper.installedPayload;
         installedPayload.baseUrl = "http://admin:admin@localhost:3003";

@@ -37,7 +37,8 @@
     "urijs": "^1.18.1"
   },
   "devDependencies": {
-    "express": "~3.4.8",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
     "extend": "^3.0.0",
     "mocha": "^2.5.3",
     "nock": "^8.0.0",
