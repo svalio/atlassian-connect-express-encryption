@@ -22,7 +22,7 @@
   "main": "index.js",
   "dependencies": {
     "atlassian-jwt": "^0.1.1",
-    "atlassian-oauth2": "0.2.1",
+    "atlassian-oauth2": "0.2.2",
     "colors": "~0.6.2",
     "express": "~3.4.8",
     "JSONPath": "~0.9.1",
