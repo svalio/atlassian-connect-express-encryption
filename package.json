@@ -24,15 +24,12 @@
     "atlassian-jwt": "^0.1.1",
     "atlassian-oauth2": "0.2.2",
     "colors": "^1.1.2",
-    "express": "~3.4.8",
-    "JSONPath": "^0.11.2",
     "jugglingdb": "^0.2.14",
     "lodash": "^4.13.1",
     "md5": "^2.1.0",
     "moment": "^2.14.1",
     "ngrok": "^2.2.2",
     "node-json-minify": "^1.0.0",
-    "pg": "^4.5.1",
     "request": "^2.73.0",
     "rsvp": "~3.2.1",
     "sequelize": "^3.23.6",
@@ -40,6 +37,7 @@
     "urijs": "^1.18.1"
   },
   "devDependencies": {
+    "express": "~3.4.8",
     "extend": "^3.0.0",
     "mocha": "^2.5.3",
     "nock": "^8.0.0",
