@@ -4,16 +4,17 @@ var RSVP = require('rsvp');
 var md5 = require('md5');
 var moment = require('moment');
 var should = require('should');
+var _ = require('lodash');
 
 describe('OAuth2', function () {
     var clientSettings = {
         clientKey: 'test-client-key',
         sharedSecret: 'shared-secret',
         baseUrl: 'https://test.atlassian.net'
-    }
+    };
 
     var mockAddon = function () {
-        var _store = {}
+        var _store = {};
         return {
             key: "test-addon-key",
             descriptor: {
@@ -49,6 +50,18 @@ describe('OAuth2', function () {
             });
         });
 
+        it('calls dev OAuth service for jira-dev instances', function (done) {
+            var authServiceMock = mocks.oauth2.service(null, 'https://auth.dev.atlassian.io');
+            var addon = mockAddon();
+
+            var settings = _.extend({}, clientSettings, { baseUrl: 'https://test.jira-dev.com' });
+            new OAuth2(addon).getUserBearerToken('BruceWayne', settings).then(function (token) {
+                authServiceMock.done();
+                should.ok(token);
+                done();
+            });
+        });
+
         it('stores token in cache', function (done) {
             var authServiceMock = mocks.oauth2.service();
 
@@ -56,7 +69,7 @@ describe('OAuth2', function () {
             var oauth2 = new OAuth2(addon);
             oauth2.getUserBearerToken('BruceWayne', clientSettings).then(function (token) {
                 authServiceMock.done();
-                
+
                 var cacheKey = "bearer-" + md5('BruceWayne');
                 addon.settings.get(cacheKey, clientSettings.clientKey).then(function (cachedToken) {
                     cachedToken.token.should.eql(mocks.oauth2.ACCESS_TOKEN);
@@ -91,7 +104,7 @@ describe('OAuth2', function () {
                         oauth2.getUserBearerToken('BruceWayne', clientSettings).then(function (token) {
                             // should not have called out to external service
                             authServiceMock.isDone().should.be.false();
-                            
+
                             token.should.eql(cachedToken.token);
                             done();
                         });

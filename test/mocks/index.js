@@ -10,10 +10,10 @@ module.exports = (function () {
 
     return {
         oauth2: {
-            service: function (accessToken) {
-                return nock('https://auth.atlassian.io')
+            service: function (accessToken, url) {
+                return nock(url || 'https://auth.atlassian.io')
                         .post('/oauth2/token')
-                        .reply(200, accessToken === undefined ? OAUTH_ACCESS_TOKEN : accessToken);
+                        .reply(200, accessToken == null ? OAUTH_ACCESS_TOKEN : accessToken);
             },
             ACCESS_TOKEN: OAUTH_ACCESS_TOKEN
         }
