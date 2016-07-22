@@ -2,6 +2,7 @@ var helper = require('./test_helper');
 var should = require('should');
 var http = require('http');
 var express = require('express');
+var bodyParser = require('body-parser');
 var app = express();
 var ac = require('../index');
 var request = require('request');
@@ -22,8 +23,8 @@ describe('Store', function () {
     before(function (done) {
         process.env.AC_OPTS = 'no-auth';
         app.set('env', 'development');
-        app.use(express.urlencoded());
-        app.use(express.json());
+        app.use(bodyParser.urlencoded({extended: false}));
+        app.use(bodyParser.json());
 
         // Head request to UPM installer
         app.head(/rest/, function (req, res) {
