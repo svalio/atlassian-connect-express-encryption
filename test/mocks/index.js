@@ -1,5 +1,6 @@
 
 var nock = require('nock');
+var RSVP = require('RSVP');
 
 module.exports = (function () {
     var OAUTH_ACCESS_TOKEN = {
@@ -16,6 +17,27 @@ module.exports = (function () {
                         .reply(200, accessToken == null ? OAUTH_ACCESS_TOKEN : accessToken);
             },
             ACCESS_TOKEN: OAUTH_ACCESS_TOKEN
+        },
+
+        store: function (clientSettings, clientKey) {
+            var _store = {};
+            _store[clientSettings.clientKey] = {
+                clientInfo: clientSettings // init clientInfo
+            }
+
+            return {
+                get: function (key, clientKey) {
+                    var clientInfo = _store[clientKey];
+                    var val = clientInfo ? clientInfo[key] : null;
+                    return RSVP.Promise.resolve(val);
+                },
+                set: function (key, val, clientKey) {
+                    var clientInfo = _store[clientKey] || {};
+                    clientInfo[key] = val;
+                    _store[clientKey] = clientInfo;
+                    return RSVP.Promise.resolve(val);
+                }
+            }
         }
     }
 

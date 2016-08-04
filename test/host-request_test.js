@@ -19,11 +19,6 @@ describe('Host Request', function () {
 
 
     var mockAddon = function () {
-        var _store = {};
-        _store[clientSettings.clientKey] = {
-            clientInfo: clientSettings // init clientInfo
-        }
-
         return {
             logger: require('./logger'),
             key: "test-addon-key",
@@ -37,19 +32,7 @@ describe('Host Request', function () {
             descriptor: {
                 scopes: ['READ', 'WRITE']
             },
-            settings: {
-                get: function (key, clientKey) {
-                    var clientInfo = _store[clientKey];
-                    var val = clientInfo ? clientInfo[key] : null;
-                    return RSVP.Promise.resolve(val);
-                },
-                set: function (key, val, clientKey) {
-                    var clientInfo = _store[clientKey] || {};
-                    clientInfo[key] = val;
-                    _store[clientKey] = clientInfo;
-                    return RSVP.Promise.resolve(val);
-                }
-            }
+            settings: mocks.store(clientSettings, clientSettings.clientKey)
         };
     };
     

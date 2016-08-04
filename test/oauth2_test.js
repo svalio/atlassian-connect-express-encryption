@@ -14,26 +14,13 @@ describe('OAuth2', function () {
     };
 
     var mockAddon = function () {
-        var _store = {};
         return {
             key: "test-addon-key",
             descriptor: {
                 scopes: ['READ', 'WRITE']
             },
             logger: require('./logger'),
-            settings: {
-                get: function (key, clientKey) {
-                    var clientInfo = _store[clientKey];
-                    var val = clientInfo ? clientInfo[key] : null;
-                    return RSVP.Promise.resolve(val);
-                },
-                set: function (key, val, clientKey) {
-                    var clientInfo = _store[clientKey] || {};
-                    clientInfo[key] = val;
-                    _store[clientKey] = clientInfo;
-                    return RSVP.Promise.resolve(val);
-                }
-            }
+            settings: mocks.store(clientSettings, clientSettings.clientKey)
         }
     };
 
