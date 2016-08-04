@@ -1,6 +1,6 @@
 
 var nock = require('nock');
-var RSVP = require('RSVP');
+var RSVP = require('rsvp');
 
 module.exports = (function () {
     var OAUTH_ACCESS_TOKEN = {
