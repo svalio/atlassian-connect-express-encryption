@@ -35,25 +35,7 @@ Let's start by creating an add-on project:
 
     atlas-connect new <project_name>
 
-This creates a new project home directory with the following contents:
-
-    .
-    ├── README.md
-    ├── app.js
-    ├── atlassian-connect.json
-    ├── config.json
-    ├── credentials.json.sample
-    ├── package.json
-    ├── public
-    │   ├── css
-    │   │   └── addon.css
-    │   └── js
-    │       └── addon.js
-    ├── routes
-    │   └── index.js
-    └── views
-        ├── hello-world.hbs
-        └── layout.hbs
+This creates a new project in the current directory.
 
 ### Install dependencies
 
@@ -262,12 +244,11 @@ function and passes in `descriptor` as an object, and the `app.config` object.
 
 ## Sample Add-ons using `atlassian-connect-express`
 
-* [Sequence Diagramr](https://bitbucket.org/atlassianlabs/atlassian-connect-confluence-sequence-diagramr) -- a simple
-Confluence remote macro for creating UML sequence diagrams
+* [JIRA Example](https://bitbucket.org/atlassianlabs/atlassian-connect-jira-example) -- a simple JIRA example add-on
+* [Confluence Example](https://bitbucket.org/atlassianlabs/atlassian-connect-confluence-example) -- a simple Confluence example add-on
+* [Sequence Diagramr](https://bitbucket.org/atlassianlabs/atlassian-connect-confluence-sequence-diagramr) -- an add-on with a Confluence remote macro for creating UML sequence diagrams
 * [Confluence Word Cloud](https://bitbucket.org/atlassianlabs/atlassian-connect-confluence-word-cloud) -- a macro that
 takes the contents of a page and constructs an SVG-based word cloud
-* [Atlassian Connect Webhook Inspector](https://bitbucket.org/atlassianlabs/webhook-inspector) -- a simple tool to log
-webhooks fired in Atlassian apps for development purposes.
 
 ## The `atlassian-connect-express` scaffold
 
@@ -314,6 +295,7 @@ that links elsewhere in the host:
 Add-ons are authenticated through JWT. To simplify JWT verification on your routes, you can simply add a
 `atlassian-connect-express` middleware to your route:
 
+```javascript
     module.exports = function (app, addon) {
         app.get('/protected-resource',
 
@@ -325,6 +307,7 @@ Add-ons are authenticated through JWT. To simplify JWT verification on your rout
             }
         );
     };
+```
 
 Simply adding the `addon.authenticate()` middleware will protect your resource.
 
@@ -338,6 +321,7 @@ works without cookies and helps making secure requests from the iframe.
 Standard JWT tokens are used to authenticate requests from the iframe back to the add-on service. A route can be secured 
 using the `addon.checkValidToken()` middleware:
 
+```javascript
     module.exports = function (app, addon) {
         app.get('/protected-resource',
 
@@ -349,6 +333,7 @@ using the `addon.checkValidToken()` middleware:
             }
         );
     };
+```
 
 In order to secure your route, the token must be part of the HTTP request back to the add-on service. This can be done
 by using the standard `jwt` query parameter:
@@ -357,9 +342,11 @@ by using the standard `jwt` query parameter:
 
 The second option is to use the Authorization HTTP header, e.g. for AJAX requests:
 
+```javascript
     beforeSend: function (request) {
         request.setRequestHeader("Authorization", "JWT {{token}}");
     }
+```
 
 You can embed the token anywhere in your iframe content using the `token` content variable. For example, you can embed
 it in a meta tag, from where it can later be read by a script:
@@ -371,13 +358,16 @@ it in a meta tag, from where it can later be read by a script:
 `atlassian-connect-express` bundles and extends the [request](https://github.com/mikeal/request) HTTP client. To make a
 JWT signed request back to the host, all you have to do is use `request` the way it was designed, but use a URL back to the host's REST APIs.
 
+```javascript
     var httpClient = addon.httpClient(req);
     httpClient.get('/', function(err, res, body) {
       ...
     });
+```
 
 If not in a request context, you can perform the equivalent operation as follows:
 
+```javascript
     var httpClient = addon.httpClient({
       clientKey: clientKey, // the unique client key of the tenant to make a request to
       appKey: appKey
@@ -385,19 +375,23 @@ If not in a request context, you can perform the equivalent operation as follows
     httpClient.get('/', function(err, res, body) {
       ...
     });
+```
 
 By default, these requests are authenticated as the add-on. If you would like to make a request as a specific user, the
 `#asUser()` method should be used. Under the covers, an OAuth2 bearer token will be retrieved for the user you've requested.
 
+```javascript
     var httpClient = addon.httpClient(req);
     httpClient.asUser('barney').get('/rest/api/latest/myself', function (err, res, body) {
       ...
     })
+```
 
 Ensure you pass the `userKey` value into the method, and not the username.
 
 You can also set custom headers or send a form data. Take, for example this request which attaches a file to a JIRA issue
 
+```javascript
     var filePath = path.join(__dirname, 'some.png');
     fs.readFile(filePath, function (err, data) {
         httpClient.post({
@@ -416,6 +410,7 @@ You can also set custom headers or send a form data. Take, for example this requ
             console.log('Upload successful:', body);
         });
     });
+```
 
 ### Using the product REST API
 
@@ -429,6 +424,7 @@ Before you start, install Git and the [Heroku Toolbelt](https://toolbelt.heroku.
 If you aren't using git to track your add-on, now is a good time to do so as it is required for Heroku. Ensure you are
 in your project home directory and run the following commands:
 
+```bash
 	git config --global user.name "John Doe"
 	git config --global user.email johndoe@example.com
 	ssh-keygen -t rsa
@@ -436,13 +432,11 @@ in your project home directory and run the following commands:
 	git add .
 	git commit . -m "some message"
 	heroku keys:add
+```
 
 Next, create the app on Heroku:
 
     heroku apps:create <add-on-name>
-
-We recommend that you don't use the automatically generated key pair in production. You can use any RSA key pair
-generation tool such as [JSEncrypt](http://travistidwell.com/jsencrypt/demo/) to generate a production key pair.
 
 Next, let's store our registration information in a Postgres database. In development, you were likely using the memory
 store. In production, you'll want to use a real database.
