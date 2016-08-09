@@ -35,17 +35,6 @@ describe('Host Request', function () {
             settings: mocks.store(clientSettings, clientSettings.clientKey)
         };
     };
-    
-    function createJwtToken() {
-        var jwtPayload = {
-            "sub": 'admin',
-            "iss": clientSettings.clientKey,
-            "iat": moment().utc().unix(),
-            "exp": moment().utc().add('minutes', 10).unix()
-        };
-
-        return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
-    };
 
     function getHttpClient(context) {
         if (!context) {
@@ -89,7 +78,7 @@ describe('Host Request', function () {
             httpClientWrapper: function (httpClient) {
                 return httpClient.asUser(userKey);
             }
-        })
+        });
         interceptRequest(testCallback, replyCallback, opts);
     }
 
