@@ -23,6 +23,10 @@ It's important to understand that [Express](http://expressjs.com/) by itself is 
 * Automatic persistence of host details (i.e., client key, host public key, host base url, etc.)
 * Localtunnel'd server for testing with OnDemand instances
 
+## Release Notes
+
+For detailed release notes and upgrade guides, please see the [Release Notes](RELEASENOTES.md).
+
 ## Getting Started
 
 The fastest way to get started is to install the `atlas-connect` CLI tool. The CLI makes it possible to generate a `atlassian-connect-express` enabled add-on scaffold very quickly. To install:

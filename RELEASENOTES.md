@@ -1,10 +1,23 @@
 # Release notes for Atlassian Connect Express
 
+### 1.1.0
+
+* Add support for user impersonation using OAuth 2.0 ([AC-1080](https://ecosystem.atlassian.net/browse/AC-1080)).
+To leverage this feature, use the httpClient as follows:
+
+```javascript
+var httpClient = addon.httpClient(req);
+httpClient.asUser('barney').get('/rest/api/latest/myself', function (err, res, body) {
+  ...
+});
+```
+
+
 ### 1.0.1
 
 * Explicit support for multipart form data and url-encoded form data: A bug caused some multipart form uploads (e.g. 
-for JIRA attachments) to fail. The ambiguous `options.form` parameter for HTTP requests back to the product host is now deprecated.
-Please use these parameters instead:
+for JIRA attachments) to fail. The ambiguous `options.form` parameter for HTTP requests back to the product host is 
+now deprecated. Please use these parameters instead:
     * `multipart/form-data`: Use `options.multipartFormData`
     * `application/x-www-form-urlencoded`: Use `options.urlEncodedFormData`
 
