@@ -1,5 +1,6 @@
 var helper = require('./test_helper');
 var mocks = require('./mocks');
+var config = require('../lib/internal/config');
 var HostRequest = require('../lib/internal/host-request');
 var nock = require('nock');
 var should = require('should');
@@ -15,20 +16,29 @@ describe('Host Request', function () {
         oauthClientId: 'oauth-client-id',
         sharedSecret: 'shared-secret',
         baseUrl: 'https://test.atlassian.net'
-    }
+    };
 
+    createAddonConfig = function (opts) {
+        opts = extend({
+            jwt: {
+                validityInMinutes: 3
+            }
+        }, opts);
+        
+        return config({}, "development", {
+            "development": opts
+        });
+    };
 
-    var mockAddon = function () {
+    var mockAddon = function (addonConfig) {
+        if (!addonConfig) {
+            addonConfig = {};
+        }
+
         return {
             logger: require('./logger'),
             key: "test-addon-key",
-            config: {
-                jwt: function () {
-                    return {
-                        validityInMinutes: 3
-                    }
-                }
-            },
+            config: createAddonConfig(addonConfig),
             descriptor: {
                 scopes: ['READ', 'WRITE']
             },
@@ -36,11 +46,16 @@ describe('Host Request', function () {
         };
     };
 
-    function getHttpClient(context) {
-        if (!context) {
-            context = {};
+    function getHttpClient(addonConfig, context) {
+        if (arguments.length === 0) {
+            addonConfig = context = {};
+        } else if (arguments.length === 1) {
+            context = addonConfig;
+            addonConfig = {};
         }
-        return new HostRequest(mockAddon(), context, clientSettings.clientKey)
+
+        var a = mockAddon(addonConfig);
+        return new HostRequest(a, context, clientSettings.clientKey);
     }
 
     function interceptRequest(testCallback, replyCallback, options) {
@@ -59,7 +74,7 @@ describe('Host Request', function () {
                             [opts.method](opts.path)
                             .reply(replyCallback);
 
-        var httpClient = getHttpClient(opts.httpClientContext);
+        var httpClient = getHttpClient(opts.addonConfig, opts.httpClientContext);
 
         if (opts.httpClientWrapper) {
             httpClient = opts.httpClientWrapper(httpClient);
@@ -74,7 +89,7 @@ describe('Host Request', function () {
     function interceptRequestAsUser(testCallback, replyCallback, options) {
         var userKey = options.userKey;
         delete options.userKey;
-        var opts = extend({}, opts, {
+        var opts = extend({}, options, {
             httpClientWrapper: function (httpClient) {
                 return httpClient.asUser(userKey);
             }
@@ -110,7 +125,7 @@ describe('Host Request', function () {
             var interceptor = nock(clientSettings.baseUrl)
                                 .post('/some/path')
                                 .reply(function (uri, requestBody) {
-                                    this.req.headers['custom_header'].should.eql('arbitrary value');
+                                    this.req.headers.custom_header.should.eql('arbitrary value');
                                 });
 
             getHttpClient().post({
@@ -128,32 +143,33 @@ describe('Host Request', function () {
     describe('Add-on JWT authentication', function () {
         it('get request has Authorization header', function (done) {
             interceptRequest(done, function (uri, requestBody) {
-                should.exist(this.req.headers['authorization']);
+                should.exist(this.req.headers.authorization);
+            });
+        });
+
+        it('bitbucket request sets sub claim as clientKey', function (done) {
+            interceptRequest(done, function (uri, requestBody) {
+                var jwtToken = this.req.headers.authorization.slice(4);
+                var clientKey = clientSettings.clientKey;
+                var decoded = jwt.decode(jwtToken, clientKey, true);
+                decoded.sub.should.eql(clientKey);
+            }, {
+                addonConfig: {
+                    product: 'bitbucket'
+                }
             });
         });
 
         it('get request has Authorization header starting with "JWT "', function (done) {
             interceptRequest(done, function (uri, requestBody) {
-                this.req.headers['authorization'].should.startWith('JWT ');
-            });
-        });
-
-        it('get request has correct JWT subject claim', function (done) {
-            interceptRequest(done, function (uri, requestBody) {
-                var jwtToken = this.req.headers['authorization'].slice(4);
-                var decoded = jwt.decode(jwtToken, helper.installedPayload.clientKey, true);
-                decoded.sub.should.eql('admin');
-            }, {
-                httpClientContext: {
-                    userKey: 'admin'
-                }
+                this.req.headers.authorization.should.startWith('JWT ');
             });
         });
 
         it('get request has correct JWT qsh for encoded parameter', function (done) {
             interceptRequest(done, function (uri, requestBody) {
-                var jwtToken = this.req.headers['authorization'].slice(4);
-                var decoded = jwt.decode(jwtToken, helper.installedPayload.clientKey, true);
+                var jwtToken = this.req.headers.authorization.slice(4);
+                var decoded = jwt.decode(jwtToken, clientSettings.clientKey, true);
                 var expectedQsh = jwt.createQueryStringHash({
                   'method': 'GET',
                   'path'  : '/some/path/on/host',
@@ -165,13 +181,13 @@ describe('Host Request', function () {
 
         it('get request for absolute url on host has Authorization header', function (done) {
             interceptRequest(done, function (uri, requestBody) {
-                this.req.headers['authorization'].should.startWith('JWT ');
+                this.req.headers.authorization.should.startWith('JWT ');
             }, { requestPath: 'https://test.atlassian.net/some/path/on/host' });
         });
 
         it('post request has correct url', function (done) {
             interceptRequest(done, function (uri, requestBody) {
-                this.req.headers['authorization'].should.startWith('JWT ');
+                this.req.headers.authorization.should.startWith('JWT ');
             }, { method: 'post' });
         });
     });
@@ -181,7 +197,7 @@ describe('Host Request', function () {
             var authServiceMock = mocks.oauth2.service();
             interceptRequestAsUser(done, function (uri, requestBody) {
                 authServiceMock.done();
-                this.req.headers['authorization'].should.not.startWith('JWT');
+                this.req.headers.authorization.should.not.startWith('JWT');
             }, { userKey: 'sruiz' });
         });
 
@@ -189,7 +205,7 @@ describe('Host Request', function () {
             var authServiceMock = mocks.oauth2.service();
             interceptRequestAsUser(done, function (uri, requestBody) {
                 authServiceMock.done();
-                this.req.headers['authorization'].should.startWith('Bearer');
+                this.req.headers.authorization.should.startWith('Bearer');
             }, { userKey: 'sruiz' });
         });
     });
@@ -246,7 +262,7 @@ describe('Host Request', function () {
                     file: [someData, { filename:'myattachmentagain.png' }]
                 }
             }).then(function(request) {
-                request._form.should.be.ok()
+                request._form.should.be.ok();
                 request._form._valueLength.should.eql(someData.length);
                 done();
             }, function (err) {

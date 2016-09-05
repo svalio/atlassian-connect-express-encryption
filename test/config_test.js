@@ -73,6 +73,9 @@ describe('Configuration', function () {
                 product: 'jira'
             });
             config.product().id.should.be.eql('jira');
+            config.product().isJIRA.should.be.true();
+            config.product().isConfluence.should.be.false();
+            config.product().isBitbucket.should.be.false();
             done();
         });
 
@@ -81,6 +84,10 @@ describe('Configuration', function () {
                 product: 'confluence'
             });
             config.product().id.should.be.eql('confluence');
+            config.product().isJIRA.should.be.false();
+            config.product().isConfluence.should.be.true();
+            config.product().isBitbucket.should.be.false();
+            
             done();
         });
 
@@ -89,6 +96,10 @@ describe('Configuration', function () {
                 product: 'bitbucket'
             });
             config.product().id.should.be.eql('bitbucket');
+            config.product().isJIRA.should.be.false();
+            config.product().isConfluence.should.be.false();
+            config.product().isBitbucket.should.be.true();
+            
             done();
         });
 
