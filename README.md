@@ -277,7 +277,7 @@ To learn more about how Handlebars works in express.js, take a look at the [expr
 of these within your templates:
 
 * `title`: the add-on's name (derived from `atlassian-connect.json`)
-* `appKey`: the application key defined in `atlassian-connect.json`
+* `addonKey`: the add-on key defined in `atlassian-connect.json`
 * `localBaseUrl`: the base URI of the add-on
 * `hostBaseUrl`: the base URI of the target application (includes the context path if available)
 * `hostStylesheetUrl`: the URL to the base CSS file for Connect add-ons. This stylesheet is a bare minimum set of styles
@@ -374,7 +374,7 @@ If not in a request context, you can perform the equivalent operation as follows
 ```javascript
     var httpClient = addon.httpClient({
       clientKey: clientKey, // the unique client key of the tenant to make a request to
-      appKey: appKey
+      addonKey: addonKey
     });
     httpClient.get('/', function(err, res, body) {
       ...

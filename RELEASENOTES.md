@@ -12,6 +12,8 @@ httpClient.asUser('barney').get('/rest/api/latest/myself', function (err, res, b
 });
 ```
 
+* Setting the JWT `sub` claim from the userKey is no longer supported. Please use the `asUser()` method instead.
+* The attribute `appKey` in the render context is now `addonKey`. 
 
 ### 1.0.1
 
