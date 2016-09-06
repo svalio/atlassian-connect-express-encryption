@@ -18,7 +18,7 @@ describe('Host Request', function () {
         baseUrl: 'https://test.atlassian.net'
     };
 
-    createAddonConfig = function (opts) {
+    var createAddonConfig = function (opts) {
         opts = extend({
             jwt: {
                 validityInMinutes: 3
