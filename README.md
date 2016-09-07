@@ -15,7 +15,8 @@ as much as possible to aid development.
 
 The `atlassian-connect-express` package helps you get started developing add-ons quickly, using Node.js and Express as the add-on server.
 
-It's important to understand that [Express](http://expressjs.com/) by itself is a web app framework for Node. `atlassian-connect-express` just provides a library of middleware and convenience helpers that make it easier to build Atlassian add-ons. Specifically, `atlassian-connect-express` adds:
+It's important to understand that [Express](http://expressjs.com/) by itself is a web app framework for Node. `atlassian-connect-express` just provides 
+a library of middleware and convenience helpers that make it easier to build Atlassian add-ons. Specifically, `atlassian-connect-express` adds:
 
 * An optimized dev loop by handling registration and deregistration on the target Atlassian application for you at startup and shutdown
 * A filesystem watcher that detects changes to `atlassian-connect.json`. When changes are detected, the add-on is re-registered with the host(s)
