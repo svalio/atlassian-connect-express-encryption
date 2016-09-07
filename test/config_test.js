@@ -39,8 +39,8 @@ describe('Configuration', function () {
         var config = createConfig({
             customShadowed: "global"
         }, {
-            customShadowed: "env"
-        });
+                customShadowed: "env"
+            });
         config.customShadowed().should.be.eql('env');
         done();
     });
@@ -87,7 +87,21 @@ describe('Configuration', function () {
             config.product().isJIRA.should.be.false();
             config.product().isConfluence.should.be.true();
             config.product().isBitbucket.should.be.false();
-            
+
+            done();
+        });
+
+        it('should read type confluence from global config', function (done) {
+            var config = createConfig({
+                product: 'confluence'
+            }, "development", {
+                notProduct: 'boring'
+            });
+            config.product().id.should.be.eql('confluence');
+            config.product().isJIRA.should.be.false();
+            config.product().isConfluence.should.be.true();
+            config.product().isBitbucket.should.be.false();
+
             done();
         });
 
@@ -99,7 +113,7 @@ describe('Configuration', function () {
             config.product().isJIRA.should.be.false();
             config.product().isConfluence.should.be.false();
             config.product().isBitbucket.should.be.true();
-            
+
             done();
         });
 
@@ -120,7 +134,7 @@ describe('Configuration', function () {
         });
     });
 
-    describe('Whitelist', function() {
+    describe('Whitelist', function () {
         it('should accept single-segment hostnames in dev mode', function (done) {
             matches(createConfig(), 'localhost').should.be.true();
             done();
@@ -166,7 +180,7 @@ describe('Configuration', function () {
         }
 
         function createConfigForEnv(env, domain) {
-            return config(domain, { 
+            return config(domain, {
                 "development": subConfig
             });
         }
