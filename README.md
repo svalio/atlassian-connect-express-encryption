@@ -1,4 +1,4 @@
-# atlassian-connect-express: Node.js package for Express based Atlassian Add-ons
+# atlassian-connect-express: Node.js package for Express.js based Atlassian Add-ons
 
 ![build-status](https://bitbucket-badges.atlassian.io/badge/atlassian/atlassian-connect-express.svg)
 
@@ -258,7 +258,7 @@ takes the contents of a page and constructs an SVG-based word cloud
 ## The `atlassian-connect-express` scaffold
 
 When you generate a new `atlassian-connect-express` add-on, you're actually just downloading a copy of the
-[Atlassian Connect Expressjs template](https://bitbucket.org/atlassian/atlassian-connect-express-template/).
+[Atlassian Connect for Express.js template](https://bitbucket.org/atlassian/atlassian-connect-express-template/).
 
 ### Handlebars layouts and templates
 

@@ -1,4 +1,4 @@
-# Release notes for Atlassian Connect Express
+# Atlassian Connect for Express.js Release Notes
 
 ### 1.1.0
 
