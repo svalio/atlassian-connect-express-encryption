@@ -55,14 +55,16 @@ describe('Token verification', function () {
         });
 
         // default test routes
-        app.get(
+        var routeArgs = [
             JWT_AUTH_RESPONDER_PATH,
             addon.authenticate(),
             function (req, res) {
                 var token = res.locals.token;
                 res.send(token);
             }
-        );
+        ];
+        app.get.apply(app, routeArgs);
+        app.post.apply(app, routeArgs);
 
         app.get(
             CHECK_TOKEN_RESPONDER_PATH,
@@ -97,21 +99,33 @@ describe('Token verification', function () {
         return jwt.encode(jwtPayload, secret || helper.installedPayload.sharedSecret);
     }
 
-    function createRequestOptions(path, jwt) {
-        return {
-            qs: {
-                "xdm_e": helper.productBaseUrl,
-                "jwt": jwt || createJwtToken({
-                    // mock the request
-                    method: 'get',
-                    path: path,
-                    query: {
-                        "xdm_e": helper.productBaseUrl
-                    }
-                })
-            },
+    function createRequestOptions(path, jwt, method) {
+        method = (method || 'GET').toUpperCase();
+
+        var data = {
+            "xdm_e": helper.productBaseUrl,
+            "jwt": jwt || createJwtToken({
+                // mock the request
+                method: method,
+                path: path,
+                query: {
+                    "xdm_e": helper.productBaseUrl
+                }
+            })
+        };
+
+        var option = {
+            method: method,
             jar: false
         };
+
+        if (method === 'GET') {
+            option['qs'] = data;
+        } else {
+            option['form'] = data;
+        }
+
+        return option;
     }
 
     function createTokenRequestOptions(token) {
@@ -127,7 +141,7 @@ describe('Token verification', function () {
         return value && (value.indexOf("ey") == 0)
     }
 
-    it('should generate a token for authenticated requests', function (done) {
+    it('should generate a token for authenticated GET requests', function (done) {
         var requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
         var requestOpts = createRequestOptions(JWT_AUTH_RESPONDER_PATH);
 
@@ -140,7 +154,20 @@ describe('Token verification', function () {
         });
     });
 
-    it('should not create tokens for unauthenticated requests', function (done) {
+    it('should generate a token for authenticated POST requests', function (done) {
+        var requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
+        var requestOpts = createRequestOptions(JWT_AUTH_RESPONDER_PATH, undefined, 'POST');
+
+        request(requestUrl, requestOpts, function (err, res, body) {
+            assert.equal(err, null);
+            assert.equal(res.statusCode, 200);
+            assert.ok(isBase64EncodedJson(body));
+            assert.ok(isBase64EncodedJson(res.headers['x-acpt']));
+            done();
+        });
+    });
+
+    it('should not create tokens for unauthenticated GET requests', function (done) {
         app.get(
             '/unprotected',
             function (req, res) {
@@ -151,6 +178,31 @@ describe('Token verification', function () {
         var requestUrl = helper.addonBaseUrl + '/unprotected';
         var requestOpts = {
             qs: {
+                "xdm_e": helper.productBaseUrl,
+                "user_id": USER_ID
+            },
+            jar: false
+        };
+        request(requestUrl, requestOpts, function (err, res, body) {
+            assert.equal(err, null);
+            assert.equal(res.statusCode, 200);
+            assert.equal(body, "no token");
+            done();
+        });
+    });
+
+    it('should not create tokens for unauthenticated POST requests', function (done) {
+        app.post(
+            '/unprotected',
+            function (req, res) {
+                res.send(undefined === res.locals.token ? "no token" : res.locals.token);
+            }
+        );
+
+        var requestUrl = helper.addonBaseUrl + '/unprotected';
+        var requestOpts = {
+            method: 'POST',
+            form: {
                 "xdm_e": helper.productBaseUrl,
                 "user_id": USER_ID
             },
