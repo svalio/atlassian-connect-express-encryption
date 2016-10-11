@@ -1,6 +1,6 @@
 # Atlassian Connect for Express.js Release Notes
 
-### 1.1.0
+### 2.0.0
 
 * Adds support for Bitbucket add-ons.
 * Adds support for user impersonation in JIRA and Confluence using OAuth 2.0 
