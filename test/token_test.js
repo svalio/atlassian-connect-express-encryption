@@ -19,11 +19,22 @@ var CHECK_TOKEN_RESPONDER_PATH = '/check_token_responder';
 
 describe('Token verification', function () {
     var server;
+    var useBodyParser = true;
+
+    function conditionalUseBodyParser(fn) {
+        return function(req, res, next) {
+            if (useBodyParser) {
+                fn(req, res, next);
+            } else {
+                next();
+            }
+        }
+    }
 
     before(function (done) {
         app.set('env', 'development');
-        app.use(bodyParser.urlencoded({extended: false}));
-        app.use(bodyParser.json());
+        app.use(conditionalUseBodyParser(bodyParser.urlencoded({extended: false})));
+        app.use(conditionalUseBodyParser(bodyParser.json()));
 
         // configure test store
         ac.store.register("teststore", function (logger, opts) {
@@ -54,6 +65,9 @@ describe('Token verification', function () {
             });
         });
 
+        // Include the goodies
+        app.use(addon.middleware());
+
         // default test routes
         var routeArgs = [
             JWT_AUTH_RESPONDER_PATH,
@@ -82,6 +96,10 @@ describe('Token verification', function () {
     after(function (done) {
         server.close();
         done();
+    });
+
+    afterEach(function() {
+        useBodyParser = true;
     });
 
     function createJwtToken(req, secret) {
@@ -171,7 +189,7 @@ describe('Token verification', function () {
         app.get(
             '/unprotected',
             function (req, res) {
-                res.send(undefined === res.locals.token ? "no token" : res.locals.token);
+                res.send(!res.locals.token ? "no token" : res.locals.token);
             }
         );
 
@@ -195,7 +213,7 @@ describe('Token verification', function () {
         app.post(
             '/unprotected',
             function (req, res) {
-                res.send(undefined === res.locals.token ? "no token" : res.locals.token);
+                res.send(!res.locals.token ? "no token" : res.locals.token);
             }
         );
 
@@ -278,8 +296,92 @@ describe('Token verification', function () {
         });
     });
 
-    it('should reject requests with invalid tokens', function (done) {
+    it('should reject requests with no token in query and no request body', function (done) {
+        useBodyParser = false;
         var requestUrl = helper.addonBaseUrl + CHECK_TOKEN_RESPONDER_PATH;
+        request(requestUrl, {jar: false}, function (err, res) {
+            assert.equal(err, null);
+            assert.equal(res.statusCode, 401);
+            done();
+        });
+    });
+
+    it('should not throw exception if request body is undefined', function (done) {
+        useBodyParser = false;
+        app.post(
+          '/return-host',
+          function (req, res) {
+              res.send(res.locals.hostBaseUrl);
+          }
+        );
+
+        var requestUrl = helper.addonBaseUrl + '/return-host';
+        var requestOpts = {
+            method: 'POST',
+            form: {
+                "xdm_e": 'xdm_e_value'
+            },
+            jar: false
+        };
+        request(requestUrl, requestOpts, function (err, res) {
+            assert.equal(err, null);
+            assert.equal(res.body, '');
+            done();
+        });
+    });
+
+    it('should reject requests with token appeared in both query and body', function (done) {
+        var requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH + '?jwt=token_in_query';
+        var requestOpts = {
+            method: 'POST',
+            form: {
+                "jwt": 'token_in_body'
+            },
+            jar: false
+        };
+        request(requestUrl, requestOpts, function (err, res) {
+            assert.equal(err, null);
+            assert.equal(res.statusCode, 401);
+            done();
+        });
+    });
+
+    it('should use token from query parameter if appears both in body and header', function (done) {
+        var requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH + '?jwt=token_in_query';
+        var requestOpts = {
+            headers: {
+                'Authorization': 'JWT token_in_header'
+            },
+            jar: false
+        };
+        request(requestUrl, requestOpts, function (err, res) {
+            assert.equal(err, null);
+            assert.equal(res.statusCode, 401);
+            done();
+        });
+    });
+
+    it('should use token from request body if appears both in body and header', function (done) {
+        var requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
+        var requestOpts = {
+            method: 'POST',
+            headers: {
+                'Authorization': 'JWT token_in_header'
+            },
+            form: {
+                "jwt": 'token_in_body'
+            },
+            jar: false
+        };
+        request(requestUrl, requestOpts, function (err, res) {
+            assert.equal(err, null);
+            assert.equal(res.statusCode, 401);
+            done();
+        });
+    });
+
+    it('should reject requests with invalid tokens', function (done) {
+        var requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
         var requestOpts = createTokenRequestOptions("invalid");
         request(requestUrl, requestOpts, function (err, res) {
             assert.equal(err, null);
