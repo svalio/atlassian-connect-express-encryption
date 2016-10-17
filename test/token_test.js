@@ -19,11 +19,22 @@ var CHECK_TOKEN_RESPONDER_PATH = '/check_token_responder';
 
 describe('Token verification', function () {
     var server;
+    var useBodyParser = true;
+
+    function conditionalUseBodyParser(fn) {
+        return function(req, res, next) {
+            if (useBodyParser) {
+                fn(req, res, next);
+            } else {
+                next();
+            }
+        }
+    }
 
     before(function (done) {
         app.set('env', 'development');
-        app.use(bodyParser.urlencoded({extended: false}));
-        app.use(bodyParser.json());
+        app.use(conditionalUseBodyParser(bodyParser.urlencoded({extended: false})));
+        app.use(conditionalUseBodyParser(bodyParser.json()));
 
         // configure test store
         ac.store.register("teststore", function (logger, opts) {
@@ -54,15 +65,20 @@ describe('Token verification', function () {
             });
         });
 
+        // Include the goodies
+        app.use(addon.middleware());
+
         // default test routes
-        app.get(
+        var routeArgs = [
             JWT_AUTH_RESPONDER_PATH,
             addon.authenticate(),
             function (req, res) {
                 var token = res.locals.token;
                 res.send(token);
             }
-        );
+        ];
+        app.get.apply(app, routeArgs);
+        app.post.apply(app, routeArgs);
 
         app.get(
             CHECK_TOKEN_RESPONDER_PATH,
@@ -82,6 +98,10 @@ describe('Token verification', function () {
         done();
     });
 
+    afterEach(function() {
+        useBodyParser = true;
+    });
+
     function createJwtToken(req, secret) {
         var jwtPayload = {
             "sub": USER_ID,
@@ -97,21 +117,33 @@ describe('Token verification', function () {
         return jwt.encode(jwtPayload, secret || helper.installedPayload.sharedSecret);
     }
 
-    function createRequestOptions(path, jwt) {
-        return {
-            qs: {
-                "xdm_e": helper.productBaseUrl,
-                "jwt": jwt || createJwtToken({
-                    // mock the request
-                    method: 'get',
-                    path: path,
-                    query: {
-                        "xdm_e": helper.productBaseUrl
-                    }
-                })
-            },
+    function createRequestOptions(path, jwt, method) {
+        method = (method || 'GET').toUpperCase();
+
+        var data = {
+            "xdm_e": helper.productBaseUrl,
+            "jwt": jwt || createJwtToken({
+                // mock the request
+                method: method,
+                path: path,
+                query: {
+                    "xdm_e": helper.productBaseUrl
+                }
+            })
+        };
+
+        var option = {
+            method: method,
             jar: false
         };
+
+        if (method === 'GET') {
+            option['qs'] = data;
+        } else {
+            option['form'] = data;
+        }
+
+        return option;
     }
 
     function createTokenRequestOptions(token) {
@@ -127,7 +159,7 @@ describe('Token verification', function () {
         return value && (value.indexOf("ey") == 0)
     }
 
-    it('should generate a token for authenticated requests', function (done) {
+    it('should generate a token for authenticated GET requests', function (done) {
         var requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
         var requestOpts = createRequestOptions(JWT_AUTH_RESPONDER_PATH);
 
@@ -140,17 +172,55 @@ describe('Token verification', function () {
         });
     });
 
-    it('should not create tokens for unauthenticated requests', function (done) {
+    it('should generate a token for authenticated POST requests', function (done) {
+        var requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
+        var requestOpts = createRequestOptions(JWT_AUTH_RESPONDER_PATH, undefined, 'POST');
+
+        request(requestUrl, requestOpts, function (err, res, body) {
+            assert.equal(err, null);
+            assert.equal(res.statusCode, 200);
+            assert.ok(isBase64EncodedJson(body));
+            assert.ok(isBase64EncodedJson(res.headers['x-acpt']));
+            done();
+        });
+    });
+
+    it('should not create tokens for unauthenticated GET requests', function (done) {
         app.get(
             '/unprotected',
             function (req, res) {
-                res.send(undefined === res.locals.token ? "no token" : res.locals.token);
+                res.send(!res.locals.token ? "no token" : res.locals.token);
             }
         );
 
         var requestUrl = helper.addonBaseUrl + '/unprotected';
         var requestOpts = {
             qs: {
+                "xdm_e": helper.productBaseUrl,
+                "user_id": USER_ID
+            },
+            jar: false
+        };
+        request(requestUrl, requestOpts, function (err, res, body) {
+            assert.equal(err, null);
+            assert.equal(res.statusCode, 200);
+            assert.equal(body, "no token");
+            done();
+        });
+    });
+
+    it('should not create tokens for unauthenticated POST requests', function (done) {
+        app.post(
+            '/unprotected',
+            function (req, res) {
+                res.send(!res.locals.token ? "no token" : res.locals.token);
+            }
+        );
+
+        var requestUrl = helper.addonBaseUrl + '/unprotected';
+        var requestOpts = {
+            method: 'POST',
+            form: {
                 "xdm_e": helper.productBaseUrl,
                 "user_id": USER_ID
             },
@@ -226,8 +296,92 @@ describe('Token verification', function () {
         });
     });
 
-    it('should reject requests with invalid tokens', function (done) {
+    it('should reject requests with no token in query and no request body', function (done) {
+        useBodyParser = false;
         var requestUrl = helper.addonBaseUrl + CHECK_TOKEN_RESPONDER_PATH;
+        request(requestUrl, {jar: false}, function (err, res) {
+            assert.equal(err, null);
+            assert.equal(res.statusCode, 401);
+            done();
+        });
+    });
+
+    it('should not throw exception if request body is undefined', function (done) {
+        useBodyParser = false;
+        app.post(
+          '/return-host',
+          function (req, res) {
+              res.send(res.locals.hostBaseUrl);
+          }
+        );
+
+        var requestUrl = helper.addonBaseUrl + '/return-host';
+        var requestOpts = {
+            method: 'POST',
+            form: {
+                "xdm_e": 'xdm_e_value'
+            },
+            jar: false
+        };
+        request(requestUrl, requestOpts, function (err, res) {
+            assert.equal(err, null);
+            assert.equal(res.body, '');
+            done();
+        });
+    });
+
+    it('should reject requests with token appeared in both query and body', function (done) {
+        var requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH + '?jwt=token_in_query';
+        var requestOpts = {
+            method: 'POST',
+            form: {
+                "jwt": 'token_in_body'
+            },
+            jar: false
+        };
+        request(requestUrl, requestOpts, function (err, res) {
+            assert.equal(err, null);
+            assert.equal(res.statusCode, 401);
+            done();
+        });
+    });
+
+    it('should use token from query parameter if appears both in body and header', function (done) {
+        var requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH + '?jwt=token_in_query';
+        var requestOpts = {
+            headers: {
+                'Authorization': 'JWT token_in_header'
+            },
+            jar: false
+        };
+        request(requestUrl, requestOpts, function (err, res) {
+            assert.equal(err, null);
+            assert.equal(res.statusCode, 401);
+            done();
+        });
+    });
+
+    it('should use token from request body if appears both in body and header', function (done) {
+        var requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
+        var requestOpts = {
+            method: 'POST',
+            headers: {
+                'Authorization': 'JWT token_in_header'
+            },
+            form: {
+                "jwt": 'token_in_body'
+            },
+            jar: false
+        };
+        request(requestUrl, requestOpts, function (err, res) {
+            assert.equal(err, null);
+            assert.equal(res.statusCode, 401);
+            done();
+        });
+    });
+
+    it('should reject requests with invalid tokens', function (done) {
+        var requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
         var requestOpts = createTokenRequestOptions("invalid");
         request(requestUrl, requestOpts, function (err, res) {
             assert.equal(err, null);
