@@ -1,6 +1,6 @@
 {
   "name": "atlassian-connect-express",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Library for building Atlassian Add-ons on top of Express",
   "author": "Atlassian",
   "license": "Apache-2.0",
@@ -24,7 +24,6 @@
     "atlassian-jwt": "^0.1.1",
     "colors": "~0.6.2",
     "express": "~3.4.8",
-    "JSONPath": "~0.9.1",
     "jugglingdb": "~0.2.10",
     "lodash": "~2.4.1",
     "moment": "~2.5.1",
