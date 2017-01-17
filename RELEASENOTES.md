@@ -1,5 +1,9 @@
 # Atlassian Connect for Express.js Release Notes
 
+### 2.0.1
+
+* Fixes bug with auto registration for HipChat add-ons that are generated with `atlas-connect`.
+
 ### 2.0.0
 
 * Adds support for Bitbucket add-ons.
