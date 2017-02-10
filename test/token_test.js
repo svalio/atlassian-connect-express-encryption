@@ -54,12 +54,12 @@ describe('Token verification', function () {
                     ]
                 }
             }
-        }, logger, function() {
+        }, logger, function () {
             request({
                 url: helper.addonBaseUrl + '/installed',
                 method: 'POST',
                 json: helper.installedPayload
-            }, function (err, res, body) {
+            }, function (err, res) {
                 assert.equal(res.statusCode, 204, "Install hook failed");
                 done();
             });
@@ -102,10 +102,10 @@ describe('Token verification', function () {
         useBodyParser = true;
     });
 
-    function createJwtToken(req, secret) {
+    function createJwtToken(req, secret, iss) {
         var jwtPayload = {
             "sub": USER_ID,
-            "iss": helper.installedPayload.clientKey,
+            "iss": iss || helper.installedPayload.clientKey,
             "iat": moment().utc().unix(),
             "exp": moment().utc().add(10, 'minutes').unix()
         };
@@ -156,7 +156,7 @@ describe('Token verification', function () {
     }
 
     function isBase64EncodedJson(value) {
-        return value && (value.indexOf("ey") == 0)
+        return value && (value.indexOf("ey") == 0);
     }
 
     it('should generate a token for authenticated GET requests', function (done) {
@@ -260,7 +260,7 @@ describe('Token verification', function () {
             var tokenUrl = helper.addonBaseUrl + CHECK_TOKEN_RESPONDER_PATH;
             var tokenRequestOpts = createTokenRequestOptions(theToken);
 
-            request(tokenUrl, tokenRequestOpts, function (err, res, body) {
+            request(tokenUrl, tokenRequestOpts, function (err, res) {
                 assert.equal(err, null);
                 assert.equal(res.statusCode, 200);
                 done();
@@ -279,7 +279,7 @@ describe('Token verification', function () {
             var tokenUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
             var tokenRequestOpts = createRequestOptions(JWT_AUTH_RESPONDER_PATH, theToken);
 
-            request(tokenUrl, tokenRequestOpts, function (err, res, body) {
+            request(tokenUrl, tokenRequestOpts, function (err, res) {
                 assert.equal(err, null);
                 assert.equal(res.statusCode, 401);
                 done();
@@ -436,7 +436,7 @@ describe('Token verification', function () {
             url: helper.addonBaseUrl + '/installed',
             method: 'POST',
             json: helper.installedPayload
-        }, function (err, res, body) {
+        }, function (err, res) {
             assert.equal(res.statusCode, 401, "re-installation not verified");
             done();
         });
@@ -453,9 +453,9 @@ describe('Token verification', function () {
                     path: '/installed'
                 })
             }
-        }, function (err, res, body) {
+        }, function (err, res) {
             assert.equal(err, null);
-            assert.equal(res.statusCode, 204, "signed reinstall request not accepted");
+            assert.equal(res.statusCode, 204, "signed reinstall request should have been accepted");
             done();
         });
     });
@@ -472,11 +472,41 @@ describe('Token verification', function () {
                     path: '/installed'
                 }, newSecret)
             }
-        }, function (err, res, body) {
+        }, function (err, res) {
             assert.equal(err, null);
-            assert.equal(res.statusCode, 400, "reinstall request signed with old request was accepted");
+            assert.equal(res.statusCode, 400, "reinstall request signed with old secret should not have been accepted");
             done();
         });
+    });
+
+    it('should only accept install requests for the authenticated client', function (done) {
+        var maliciousSecret = 'mwahaha';
+        var maliciousClient = _.extend({}, helper.installedPayload, {
+            sharedSecret: maliciousSecret,
+            clientKey: 'crafty-client'
+        });
+        request({
+            url: helper.addonBaseUrl + '/installed',
+            method: 'POST',
+            json: maliciousClient
+        });
+        request({
+            url: helper.addonBaseUrl + '/installed',
+            method: 'POST',
+            json: _.extend({}, helper.installedPayload, {sharedSecret: 'newSharedSecret'}),
+            headers: {
+                'Authorization': 'JWT ' + createJwtToken({
+                    method: 'POST',
+                    path: '/installed'
+                }, maliciousSecret, maliciousClient.clientKey)
+            }
+        }, function (err, res) {
+            assert.equal(err, null);
+            assert.equal(res.statusCode, 401,
+                "reinstall request authenticated as the wrong client should not have been accepted");
+            done();
+        });
+
     });
 
     function hostResourceUrl(app, baseUrl, type) {
