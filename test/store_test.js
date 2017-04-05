@@ -10,27 +10,14 @@ var Sequelize = require('sequelize');
 var logger = require('./logger');
 var sinon = require("sinon");
 
-var stores = [{
-    name: "jugglingdb",
-    config: {
-        adapter: "teststore",
-        type: "memory"
-    }
-}, {
-    name: "sequelize",
-    config: {
-        adapter: "teststore",
-        dialect: "sqlite",
-        storage: ":memory:"
-    }
-}];
+var stores = ["jugglingdb", "sequelize"];
 
 stores.forEach(function(store) {
     var app = express();
     var ac = require('../index');
     var addon = {};
 
-    describe('Store ' + store.name, function () {
+    describe('Store ' + store, function () {
         var server = {};
         var oldACOpts = process.env.AC_OPTS;
 
@@ -66,7 +53,7 @@ stores.forEach(function(store) {
             });
 
             ac.store.register("teststore", function (logger, opts) {
-                var Store = require("../lib/store/" + store.name)();
+                var Store = require("../lib/store/" + store)();
                 storeGetSpy = self.sandbox.spy(Store.prototype, "get");
                 storeSetSpy = self.sandbox.spy(Store.prototype, "set");
                 storeDelSpy = self.sandbox.spy(Store.prototype, "del");
@@ -76,7 +63,10 @@ stores.forEach(function(store) {
             addon = ac(app, {
                 config: {
                     development: {
-                        store: store.config,
+                        store: {
+                            adapter: "teststore",
+                            type: "memory"
+                        },
                         hosts: [ helper.productBaseUrl ]
                     }
                 }
@@ -118,23 +108,31 @@ stores.forEach(function(store) {
             });
         });
 
-        it('should allow storing arbitrary key/values', function (done) {
-            var value = {someKey: 'someValue'};
+        it('should allow storing arbitrary key/values as a JSON string', function (done) {
+            var value = '{"someKey": "someValue"}';
             addon.settings.set('arbitrarySetting', value, helper.installedPayload.clientKey).then(function (setting) {
-                setting.should.eql(value);
+                setting.should.eql({someKey: "someValue"});
                 done();
-            })
+            });
         });
 
-        it('should allow storing arbitrary key/values as JSON', function (done) {
+        it('should allow storing arbitrary key/values as object', function (done) {
             addon.settings.set('arbitrarySetting2', {data: 1}, helper.installedPayload.clientKey).then(function (setting) {
                 setting.should.eql({data: 1});
                 done();
-            })
+            });
         });
 
-        if(store.name === 'jugglingdb') {
-            it('should allow storage of arbitrary models [' + store.name + ']', function (done) {
+        it('should allow storing arbitrary key/values', function (done) {
+            var value = 'barf';
+            addon.settings.set('arbitrarySetting3', value, helper.installedPayload.clientKey).then(function (setting) {
+                setting.should.eql('barf');
+                done();
+            });
+        });
+
+        if(store === 'jugglingdb') {
+            it('should allow storage of arbitrary models [' + store + ']', function (done) {
                 addon.schema.extend('User', {
                     name: String,
                     email: String,
@@ -166,8 +164,8 @@ stores.forEach(function(store) {
             });
         }
 
-        if(store.name === 'sequelize') {
-            it('should allow storage of arbitrary models [' + store.name + ']', function (done) {
+        if(store === 'sequelize') {
+            it('should allow storage of arbitrary models [' + store + ']', function (done) {
                 var User = addon.schema.define('User', {
                     id: {type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true},
                     name: {type: Sequelize.STRING},
