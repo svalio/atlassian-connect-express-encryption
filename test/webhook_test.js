@@ -67,10 +67,10 @@ describe('Webhook', function () {
 
         hostServer = http.createServer(host).listen(3003, function () {
             server = http.createServer(app).listen(helper.addonPort, function () {
-                addon.register().then(done);
                 addon.once('host_settings_saved', function () {
                     addonRegistered = true;
                 });
+                addon.register().then(done);
             });
         });
     });
