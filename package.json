@@ -1,6 +1,6 @@
 {
   "name": "atlassian-connect-express",
-  "version": "2.1.0-0",
+  "version": "2.1.1",
   "description": "Library for building Atlassian Add-ons on top of Express",
   "author": "Atlassian",
   "license": "Apache-2.0",
@@ -54,6 +54,6 @@
   "scripts": {
     "preversion": "npm test",
     "postversion": "git push && git push --tags",
-    "test": "mocha test"
+    "test": "mocha"
   }
 }
