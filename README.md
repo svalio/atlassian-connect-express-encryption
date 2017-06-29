@@ -485,6 +485,10 @@ One way to debug this is to see what `hostname` returns:
 
 If it returns `localhost`, change it. On a OS X, you'll need to set a proper "Computer Name" in System Preferences > Sharing.
 
+### Problems starting up in heroku, message is: TypeError: Cannot read property 'forEach' of undefined
+
+Specify a node version of 5.12.0 in your package.json to work around [this issue](https://github.com/jugglingdb/postgres-adapter/issues/56#issuecomment-264286085).
+
 ### Debugging HTTP Traffic
 
 Several tools exist to help snoop the HTTP traffic between your add-on and the host server:
