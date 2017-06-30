@@ -33,13 +33,10 @@ stores.forEach(function(store) {
             app.use(bodyParser.urlencoded({extended: false}));
             app.use(bodyParser.json());
 
-            // Head request to UPM installer
-            app.head(/rest/, function (req, res) {
-                res.status(200).end();
-            });
-
             app.get("/confluence/rest/plugins/1.0/", function(req, res) {
+                res.setHeader("upm-token", "123");
                 res.json({plugins: []});
+                res.status(200).end();
             });
 
             // Post request to UPM installer

@@ -44,12 +44,8 @@ describe('Webhook', function () {
 
         var host = express();
         // mock host
-        host.head("/rest/plugins/1.0/", function (req, res) {
-            res.setHeader("upm-token", "123");
-            res.status(200).end();
-        });
-
         host.get("/rest/plugins/1.0/", function(req, res) {
+            res.setHeader("upm-token", "123");
             res.json({plugins: []});
         });
 

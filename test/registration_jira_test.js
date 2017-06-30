@@ -20,8 +20,9 @@ describe('Auto registration (UPM)', function () {
         app.use(bodyParser.urlencoded({extended: false}));
         app.use(bodyParser.json());
 
-        app.head("/rest/plugins/1.0/", function (req, res) {
+        app.get("/rest/plugins/1.0/", function (req, res) {
             res.setHeader("upm-token", "123");
+            res.json({plugins: []});
             res.status(200).end();
         });
 
