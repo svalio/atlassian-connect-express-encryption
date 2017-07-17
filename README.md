@@ -50,7 +50,7 @@ Change to the new project directory and install dependencies:
 
     npm install
 
-`atlassian-connect-express` requires Node.js v0.10.12 or greater to run.
+`atlassian-connect-express` requires Node.js v4.8.4 or later. Please also ensure you have relevant [security updates](https://nodejs.org/en/blog/vulnerability/) installed.
 
 ### Setting up a development environment
 
