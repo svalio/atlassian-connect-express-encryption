@@ -54,13 +54,9 @@ Change to the new project directory and install dependencies:
 
 ### Setting up a development environment
 
-At this point, you're all set to run your add-on, but you still need the target application (i.e., JIRA or Confluence)
-for your add-on. You have a few options:
-
-1. You can do all your development work locally using the [Atlassian SDK](https://marketplace.atlassian.com/search?q=%22atlassian+plugin+sdk%22).
-You can start a local instance of JIRA or Confluence by reading the [guide to developing locally](https://developer.atlassian.com/static/connect/docs/developing/developing-locally.html).
-2. Install the add-on in [an Atlassian OnDemand instance](https://developer.atlassian.com/static/connect/docs/developing/installing-in-ondemand.html).
-for more information.
+At this point, you're all set to run your add-on, but you still need to install it in JIRA Cloud or Confluence Cloud. You can install your new add-on in any JIRA Cloud or 
+Confluence Cloud site where you are an administrator, but usually it's best to create a new site for you to use during development. [Follow this link to sign up](http://go.atlassian.com/cloud-dev) 
+for a free development version of JIRA Cloud or Confluence Cloud.
 
 ### Running your Add-on Server
 
@@ -91,7 +87,7 @@ changes, consider using [nodemon](https://npmjs.org/package/nodemon) or the like
 This section will describe how to configure ACE so that it can automatically register your add-on with your Atlassian 
 Cloud development instance, re-register on changes to the descriptor, and de-register on shut down.
 
-To get This functionality, you will need to:
+To get this functionality, you will need to:
 
 * Create a file called `credentials.json`,
 * Copy and paste the contents of [this file](https://bitbucket.org/atlassian/atlassian-connect-express-template/src/master/credentials.json.sample),
