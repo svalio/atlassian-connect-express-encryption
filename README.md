@@ -494,11 +494,17 @@ Several tools exist to help snoop the HTTP traffic between your add-on and the h
 * Try local TCP sniffing with [justniffer](http://justniffer.sourceforge.net/) by running something like
 `justniffer -i eth0 -r`, substituting the correct interface value
 
-## Getting Help or Support
+## Getting help
 
-You can get help by emailing <atlassian-connect-dev@googlegroups.com> or report bugs on our
-[JIRA](https://ecosystem.atlassian.net/browse/AC). If you want to learn more about Atlassian Connect, you can visit
-<https://developer.atlassian.com/static/connect/docs>.
+If you need help using Express, see the [API reference](https://expressjs.com/en/4x/api.html) or developer's guide.
+
+If you need help developing against Atlassian products, see the [Atlassian Developer](https://developer.atlassian.com/) site.
+
+If you need help using functionality provided by `atlassian-connect-express`, please ask in the
+[Atlassian Developer Community](https://community.developer.atlassian.com/).
+
+If you want to report a problem, please raise a support request in Atlassian Ecosystem's
+[Developer Service Desk](http://go.atlassian.com/ecosystem-developer-support).
 
 ## Contributing
 
