@@ -60,21 +60,11 @@ for a free development version of JIRA Cloud or Confluence Cloud.
 
 ### Running your Add-on Server
 
-If you've chosen the first option and have a local running instance of JIRA or Confluence, you're all set. Now all you
-need to do to run your add-on inside your local JIRA or Confluence instance is:
+In your project directory, run:
 
     node app.js
 
-This will boot up your Express server on the default port of 3000 and do the following:
-
-* Register your add-on's `atlassian-connect.json` (at <http://localhost:3000/atlassian-connect.json>) with the host
-* Start watching for changes to your `atlassian-connect.json`. If the file is modified, `atlassian-connect-express` will
-re-register your add-on with the host.
-
-The created project already contains a sample atlassian-connect.json file which adds a "Hello World" general page to
-your local running JIRA or Confluence instance. To ensure that everything is working as expected, navigate to your local
-running instance and check that a "Hello World" link is present in the application's header and displays a "Hello World"
-page when clicked.
+This will boot up your Express server on the default port of 3000.
 
 ### The Dev Loop
 
