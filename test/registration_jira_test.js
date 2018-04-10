@@ -3,19 +3,28 @@ var assert = require('assert');
 var http = require('http');
 var express = require('express');
 var bodyParser = require('body-parser');
-var app = express();
 var ac = require('../index');
 var request = require('request');
 var jwt = require('atlassian-jwt');
 var logger = require('./logger');
-var moment = require("moment");
-var addon = {};
+var moment = require('moment');
+var sinon = require('sinon');
+var RSVP = require('rsvp');
+var requireOptional = require('../lib/internal/require-optional');
 
 describe('Auto registration (UPM)', function () {
-    var server = {};
-    var regPromise;
+    var requireOptionalStub;
+    var requestGetStub;
+    var server;
+    var app;
+    var addon;
 
-    before(function (done) {
+    beforeEach(function () {
+        requireOptionalStub = sinon.stub(requireOptional, 'requireOptional');
+        
+        app = express();
+        addon = {};
+
         app.set('env', 'development');
         app.use(bodyParser.urlencoded({extended: false}));
         app.use(bodyParser.json());
@@ -46,27 +55,13 @@ describe('Auto registration (UPM)', function () {
         ac.store.register("teststore", function (logger, opts) {
             return require("../lib/store/jugglingdb")(logger, opts);
         });
-
-        addon = ac(app, {
-            config: {
-                "development": {
-                    store: {
-                        adapter: 'teststore',
-                        type: "memory"
-                    },
-                    "hosts": [
-                        helper.productBaseUrl
-                    ]
-                }
-            }
-        }, logger);
-        server = http.createServer(app).listen(helper.addonPort, function () {
-            regPromise = addon.register().then(done);
-        });
     });
 
-    after(function (done) {
-        server.close();
+    afterEach(function (done) {
+        delete process.env.AC_LOCAL_BASE_URL;
+        requireOptionalStub.restore();
+        if (requestGetStub) { requestGetStub.restore(); }
+        if (server) { server.close(); }
         done();
     });
 
@@ -80,29 +75,81 @@ describe('Auto registration (UPM)', function () {
         return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
     }
 
-    function testIfEventCalled(spy, done) {
-        return setTimeout(function () {
-            assert(false, 'Event never fired');
-            done();
-        }, 1000);
+    function createAddon(hosts) {
+        addon = ac(app, {
+            config: {
+                "development": {
+                    store: {
+                        adapter: 'teststore',
+                        type: "memory"
+                    },
+                    hosts
+                }
+            }
+        }, logger);
     }
 
-    function eventFired(timer, done, cb) {
-        clearTimeout(timer);
-        assert(true, "Event fired");
-        if (cb) {
-            cb(done);
-        }
-        else {
-            done();
-        }
+    function startServer(cb) {
+        server = http.createServer(app).listen(helper.addonPort, cb);
     }
 
-    it('event fired when addon.register() is called', function (done) {
-        var timer = testIfEventCalled();
-        regPromise.then(function () {
-            eventFired(timer, done);
+    function stubInstalledPluginsResponse(key) {
+        requestGetStub = sinon.stub(request, 'get');
+        requestGetStub.callsArgWith(1, null, null, JSON.stringify({
+            plugins: [{
+                key: 'my-test-app-key'
+            }]
+        }));
+    }
+
+    function stubNgrokWorking() { 
+        requireOptionalStub.returns(RSVP.resolve({
+            connect: function (port, cb) {
+                cb(null, 'https://test.ngrok.io');
+            }
+        }));
+    }
+
+    function stubNgrokUnavailable() { 
+        const error = new Error("Cannot find module 'ngrok'");
+        error.code = 'MODULE_NOT_FOUND';
+        requireOptionalStub.returns(RSVP.reject(error));
+    }
+
+    it('registration works with local host and does not involve ngrok', function (done) {
+        createAddon([helper.productBaseUrl]);
+        startServer(function () {
+            addon.register().then(function () {
+                assert(requireOptionalStub.notCalled, "ngrok should not be called");
+                done();
+            }, done);
         });
-    });
+    }).timeout(1000);
 
+    it('registration works with remote host via ngrok', function (done) {
+        stubNgrokWorking();
+        stubInstalledPluginsResponse('my-test-app-key')
+
+        createAddon(['http://admin:admin@example.atlassian.net/wiki']);
+
+        addon.register().then(function () {
+            assert(requireOptionalStub.called, 'ngrok should be called');
+            done();
+        });
+    }).timeout(1000);
+
+    it('registration fails with remote host when ngrok unavailable', function (done) {
+        stubNgrokUnavailable();
+
+        createAddon(['http://admin:admin@example.atlassian.net/wiki']);
+
+        addon.register().then(
+            function onSuccess() {
+                done(new Error('Registration should have failed'));
+            },
+            function onError(err) {
+                assert(err.code === 'MODULE_NOT_FOUND');
+                done();
+            });
+    }).timeout(1000);
 });
