@@ -53,7 +53,7 @@ describe('Auto registration (UPM)', function () {
         });
 
         ac.store.register("teststore", function (logger, opts) {
-            return require("../lib/store/jugglingdb")(logger, opts);
+            return require("../lib/store/sequelize")(logger, opts);
         });
     });
 

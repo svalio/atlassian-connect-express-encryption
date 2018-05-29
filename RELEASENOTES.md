@@ -1,5 +1,11 @@
 # Atlassian Connect for Express.js Release Notes
 
+### 3.0.0
+
+* Removes JugglingDB as the default adapter, replacing with Sequelize. This is in part due to Juggling
+no longer being maintained, and (consequently) having several security issues as per npm audit. Removing
+Juggling removes these issues.
+
 ### 2.0.1
 
 * Fixes bug with auto registration for HipChat add-ons that are generated with `atlas-connect`.

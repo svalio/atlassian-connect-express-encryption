@@ -5,12 +5,11 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
 var RSVP = require('rsvp');
-var Schema = require('jugglingdb').Schema;
 var Sequelize = require('sequelize');
 var logger = require('./logger');
 var sinon = require("sinon");
 
-var stores = ["jugglingdb", "sequelize"];
+var stores = ["sequelize"];
 
 stores.forEach(function(store) {
     var app = express();
@@ -127,39 +126,6 @@ stores.forEach(function(store) {
                 done();
             });
         });
-
-        if(store === 'jugglingdb') {
-            it('should allow storage of arbitrary models [' + store + ']', function (done) {
-                addon.schema.extend('User', {
-                    name: String,
-                    email: String,
-                    bio: Schema.JSON
-                }).then(
-                    function (User) {
-                        User.create({
-                            name: "Rich",
-                            email: "rich@example.com",
-                            bio: {
-                                description: "Male 6' tall",
-                                favoriteColors: [
-                                    "blue",
-                                    "green"
-                                ]
-                            }
-                        }, function (err, model) {
-                            model.name.should.eql("Rich");
-                            User.all({name: "Rich"}, function (err, user) {
-                                user[0].name.should.eql(model.name);
-                                done();
-                            });
-                        });
-                    },
-                    function (err) {
-                        should.fail(err.toString());
-                    }
-                );
-            });
-        }
 
         if(store === 'sequelize') {
             it('should allow storage of arbitrary models [' + store + ']', function (done) {
