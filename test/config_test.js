@@ -171,18 +171,18 @@ describe('Configuration', function () {
             done();
         });
 
+        it('should default to [\'*.atlassian.net\'] in production', function (done) {
+            var defaultProdCfg = createConfig({}, 'production', {});
+            defaultProdCfg.whitelist().should.deepEqual(['*.atlassian.net']);
+            done();
+        });
+
         function matches(cfg, host) {
             return cfg.whitelistRegexp().some(function (re) { return re.test(host); });
         }
 
         function createWhiteListConfig(domain) {
             return createConfig({ "whitelist": domain });
-        }
-
-        function createConfigForEnv(env, domain) {
-            return config(domain, {
-                "development": subConfig
-            });
         }
     });
 
