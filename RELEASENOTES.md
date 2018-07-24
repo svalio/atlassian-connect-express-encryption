@@ -1,5 +1,9 @@
 # Atlassian Connect for Express.js Release Notes
 
+### 3.0.2
+
+* Accept JWTs without query string hash claim
+
 ### 3.0.0
 
 * Removes JugglingDB as the default adapter, replacing with Sequelize. This is in part due to Juggling
