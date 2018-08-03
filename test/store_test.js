@@ -8,8 +8,9 @@ var RSVP = require('rsvp');
 var Sequelize = require('sequelize');
 var logger = require('./logger');
 var sinon = require("sinon");
+var MongodbMemoryServer = require('mongodb-memory-server').default;
 
-var stores = ["sequelize"];
+var stores = ["sequelize", "mongodb"];
 
 stores.forEach(function(store) {
     var app = express();
@@ -17,7 +18,7 @@ stores.forEach(function(store) {
     var addon = {};
 
     describe('Store ' + store, function () {
-        var server = {};
+        var server = {}, dbServer = null;
         var oldACOpts = process.env.AC_OPTS;
 
         var storeGetSpy;
@@ -56,20 +57,40 @@ stores.forEach(function(store) {
                 return new Store(logger, opts);
             });
 
-            addon = ac(app, {
-                config: {
-                    development: {
-                        store: {
+            var storeOptsPromise;
+            switch (store) {
+                case "sequelize":
+                    storeOptsPromise = RSVP.resolve({
+						adapter: "teststore",
+						type: "memory"
+					});
+                    break;
+                case "mongodb":
+                    // Prepare an in-memory database for this test
+                    dbServer = new MongodbMemoryServer({
+                        // debug: true // this is fairly verbose
+                    });
+                    storeOptsPromise = dbServer.getConnectionString().then(function (connectionString) {
+                        return {
                             adapter: "teststore",
-                            type: "memory"
-                        },
-                        hosts: [ helper.productBaseUrl ]
+                            url: connectionString
+                        };
+                    });
+                    break;
+			}
+			storeOptsPromise.then(function (storeOpts) {
+                addon = ac(app, {
+                    config: {
+                        development: {
+                            store: storeOpts,
+                            hosts: [ helper.productBaseUrl ]
+                        }
                     }
-                }
-            }, logger);
+                }, logger);
 
-            server = http.createServer(app).listen(helper.addonPort, function () {
-                addon.register().then(done);
+                server = http.createServer(app).listen(helper.addonPort, function () {
+                    addon.register().then(done);
+                });
             });
         });
 
@@ -77,6 +98,9 @@ stores.forEach(function(store) {
             this.sandbox.restore();
             process.env.AC_OPTS = oldACOpts;
             server.close();
+            if (dbServer) {
+                dbServer.stop();
+            }
             done();
         });
 
@@ -86,14 +110,16 @@ stores.forEach(function(store) {
                     settings.clientKey.should.eql(helper.installedPayload.clientKey);
                     settings.sharedSecret.should.eql(helper.installedPayload.sharedSecret);
                     done();
-                });
+                }, function (err) {
+					should.fail(err.toString());
+				});
             });
         });
 
         it('should return a list of clientInfo objects', function (done) {
             addon.settings.getAllClientInfos().then(function (initialClientInfos) {
-                addon.settings.set('clientInfo', {"correctPayload":true}, 'fake').then(function() {
-                    addon.settings.getAllClientInfos().then(function (clientInfos) {
+                return addon.settings.set('clientInfo', {"correctPayload":true}, 'fake').then(function() {
+                    return addon.settings.getAllClientInfos().then(function (clientInfos) {
                         clientInfos.should.have.length(initialClientInfos.length + 1);
                         var latestClientInfo = clientInfos[clientInfos.length - 1];
                         var correctPayload = latestClientInfo['correctPayload'];
@@ -101,7 +127,9 @@ stores.forEach(function(store) {
                         done();
                     });
                 });
-            });
+            }, function (err) {
+				should.fail(err.toString());
+			});
         });
 
         it('should allow storing arbitrary key/values as a JSON string', function (done) {
@@ -109,14 +137,18 @@ stores.forEach(function(store) {
             addon.settings.set('arbitrarySetting', value, helper.installedPayload.clientKey).then(function (setting) {
                 setting.should.eql({someKey: "someValue"});
                 done();
-            });
+            }, function (err) {
+				should.fail(err.toString());
+			});
         });
 
         it('should allow storing arbitrary key/values as object', function (done) {
             addon.settings.set('arbitrarySetting2', {data: 1}, helper.installedPayload.clientKey).then(function (setting) {
                 setting.should.eql({data: 1});
                 done();
-            });
+            }, function (err) {
+				should.fail(err.toString());
+			});
         });
 
         it('should allow storing arbitrary key/values', function (done) {
@@ -124,40 +156,55 @@ stores.forEach(function(store) {
             addon.settings.set('arbitrarySetting3', value, helper.installedPayload.clientKey).then(function (setting) {
                 setting.should.eql('barf');
                 done();
-            });
+            }, function (err) {
+				should.fail(err.toString());
+			});
         });
 
-        if(store === 'sequelize') {
-            it('should allow storage of arbitrary models [' + store + ']', function (done) {
-                var User = addon.schema.define('User', {
-                    id: {type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true},
-                    name: {type: Sequelize.STRING},
-                    email: {type: Sequelize.STRING},
-                    bio: {type: Sequelize.JSON}
-                });
+        switch (store) {
+            case 'sequelize': {
+                it('should allow storage of arbitrary models [' + store + ']', function (done) {
+                    var User = addon.schema.define('User', {
+                        id: {type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true},
+                        name: {type: Sequelize.STRING},
+                        email: {type: Sequelize.STRING},
+                        bio: {type: Sequelize.JSON}
+                    });
 
-                addon.schema.sync().then(function () {
-                    User.create({
-                        name: "Rich",
-                        email: "rich@example.com",
-                        bio: {
-                            description: "Male 6' tall",
-                            favoriteColors: [
-                                "blue",
-                                "green"
-                            ]
-                        }
-                    }).then(function (model) {
-                        model.name.should.eql("Rich");
-                        User.findAll({name: "Rich"}).then(function (user) {
-                            user[0].name.should.eql(model.name);
-                            done();
-                        });
-                    })
-                }, function (err) {
-                    should.fail(err.toString());
+                    addon.schema.sync().then(function () {
+                        User.create({
+                            name: "Rich",
+                            email: "rich@example.com",
+                            bio: {
+                                description: "Male 6' tall",
+                                favoriteColors: [
+                                    "blue",
+                                    "green"
+                                ]
+                            }
+                        }).then(function (model) {
+                            model.name.should.eql("Rich");
+                            User.findAll({name: "Rich"}).then(function (user) {
+                                user[0].name.should.eql(model.name);
+                                done();
+                            });
+                        })
+                    }, function (err) {
+                        should.fail(err.toString());
+                    });
                 });
-            });
+                break;
+            }
+            case 'mongodb': {
+                // The following code can be used if you ever decide to change the isMemnortStore API to Promises:
+				// it('should read the storage engine', function (done) {
+                //     addon.settings.isMemoryStore().then(function (value) {
+                //         console.log(value);
+                //         done();
+                //     });
+				// });
+				break;
+			}
         }
 
         it('should work with a custom store', function (done) {
