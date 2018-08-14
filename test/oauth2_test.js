@@ -37,6 +37,17 @@ describe('OAuth2', function () {
             });
         });
 
+        it('calls OAuth service with accountId', function(done) {
+            var authServiceMock = mocks.oauth2.service();
+
+            var addon = mockAddon();
+            new OAuth2(addon).getUserBearerTokenByUserAccountId('048abaf9-04ea-44d1-acb9-b37de6cc5d2f', addon.descriptor.scopes, clientSettings).then(function (token) {
+                authServiceMock.done();
+                should.ok(token);
+                done();
+            });
+        });
+
         it('calls dev OAuth service for jira-dev instances', function (done) {
             var authServiceMock = mocks.oauth2.service(null, 'https://auth.dev.atlassian.io');
             var addon = mockAddon();

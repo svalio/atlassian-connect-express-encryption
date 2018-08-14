@@ -97,6 +97,17 @@ describe('Host Request', function () {
         interceptRequest(testCallback, replyCallback, opts);
     }
 
+    function interceptRequestAsUserByAccountId(testCallback, replyCallback, options) {
+        var userAccountId = options.userAccountId;
+        delete options.userAccountId;
+        var opts = extend({}, options, {
+            httpClientWrapper: function (httpClient) {
+                return httpClient.asUserByAccountId(userAccountId);
+            }
+        });
+        interceptRequest(testCallback, replyCallback, opts);
+    }
+
     it('constructs non-null get request', function (done) {
         interceptRequest(done, 200);
     });
@@ -207,6 +218,14 @@ describe('Host Request', function () {
                 authServiceMock.done();
                 this.req.headers.authorization.should.startWith('Bearer');
             }, { userKey: 'sruiz' });
+        });
+
+        it('Request as user adds a Bearer authorization header when using account id', function(done) {
+            var authServiceMock = mocks.oauth2.service();
+            interceptRequestAsUserByAccountId(done, function (uri, requestBody) {
+                authServiceMock.done();
+                this.req.headers.authorization.should.startWith('Bearer');
+            }, { userAccountId: '048abaf9-04ea-44d1-acb9-b37de6cc5d2f' });     
         });
     });
 

@@ -1,5 +1,16 @@
 # Atlassian Connect for Express.js Release Notes
 
+### 3.1.0
+
+* Deprecates existing (stored) `userKeys` for identifying users when using OAuth 2.0 JWT Bearer Tokens (`asUser()`).
+* Introduces support for OAuth 2.0 JWT Bearer Token using Atlassian Account ID, using `asUserByAccountId()`.
+* Please see migration guide on developer.atlassian.com for an overview of how to migrate from `userKey`
+to `userAccountId`. The README.md also covers this
+* Removes JWT User Impersonation logic altogether
+* Deprecates `userId`, `locale` and `timezone` request context parameters. 
+* Introduces `userAccountId` request context parameter.
+* Please see [ACEJS-115](https://ecosystem.atlassian.net/browse/ACEJS-115) for more details.
+
 ### 3.0.2
 
 * Accept JWTs without query string hash claim
