@@ -111,7 +111,7 @@ describe('Token verification', function () {
         };
 
         if (req) {
-            jwtPayload.qsh = jwt.createQueryStringHash(req);
+            jwtPayload.qsh = jwt.createQueryStringHash(jwt.fromExpressRequest(req));
         }
 
         return jwt.encode(jwtPayload, secret || helper.installedPayload.sharedSecret);
