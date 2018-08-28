@@ -272,6 +272,12 @@ to help you get started. It's not a full AUI stylesheet.
 iframe bridge between the add-on and its parent. It also contains a handful of methods and objects for accessing data
 through the parent (look for the `AP` JS object).
 * `token`: the token that can be used to authenticate calls from the iframe back to the add-on service.
+* `license`: the license status
+* `clientKey`: the client consumer key used to identity the instance from which the request came
+* `userAccountId`: the Atlassian Account ID of the user.
+* `userId`: (deprecated) the username of the user from which the request came.
+* `timeZone`: (deprecated) the user's timezone
+* `locale`: (deprecated) the user's locale
 
 You can access any of the variables above as normal Handlebars variables. For example, to generate a link in your page
 that links elsewhere in the host:
@@ -346,7 +352,8 @@ it in a meta tag, from where it can later be read by a script:
 ### How to send a signed outbound HTTP request back to the host
 
 `atlassian-connect-express` bundles and extends the [request](https://github.com/mikeal/request) HTTP client. To make a
-JWT signed request back to the host, all you have to do is use `request` the way it was designed, but use a URL back to the host's REST APIs.
+JWT signed request back to the host, all you have to do is use `request` the way it was designed, but use a URL back to 
+the host's REST APIs.
 
 ```javascript
     var httpClient = addon.httpClient(req);
@@ -359,8 +366,7 @@ If not in a request context, you can perform the equivalent operation as follows
 
 ```javascript
     var httpClient = addon.httpClient({
-      clientKey: clientKey, // the unique client key of the tenant to make a request to
-      addonKey: addonKey
+      clientKey: clientKey // the unique client key of the tenant to make a request to
     });
     httpClient.get('/', function(err, res, body) {
       ...
@@ -368,16 +374,21 @@ If not in a request context, you can perform the equivalent operation as follows
 ```
 
 By default, these requests are authenticated as the add-on. If you would like to make a request as a specific user, the
-`#asUser()` method should be used. Under the covers, an OAuth2 bearer token will be retrieved for the user you've requested.
+`#asUserByAccountId()` method should be used. Under the covers, an OAuth2 bearer token will be retrieved for the user 
+you've requested.
 
 ```javascript
     var httpClient = addon.httpClient(req);
-    httpClient.asUser('barney').get('/rest/api/latest/myself', function (err, res, body) {
+    httpClient.asUserByAccountId('ebcab857-c769-4fbd-8ad6-469510a43b87').get('/rest/api/latest/myself', function (err, res, body) {
       ...
     })
 ```
 
-Ensure you pass the `userKey` value into the method, and not the username.
+Ensure you pass the `userAccountId` value into the method, and not the username or userKey. If you were previously using
+`#asUser()` with `userKey`, you can convert it into a userAccountId through the User REST resource on the host product.
+
+[Jira](https://developer.atlassian.com/cloud/jira/platform/rest/#api-api-2-user-get)
+[Confluence](https://developer.atlassian.com/cloud/confluence/rest/#api-user-get)
 
 You can also set custom headers or send a form data. Take, for example this request which attaches a file to a JIRA issue
 
