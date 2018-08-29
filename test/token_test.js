@@ -14,6 +14,7 @@ var _ = require('lodash');
 var addon = {};
 
 var USER_ID = 'admin';
+var USER_ACCOUNT_ID = "048abaf9-04ea-44d1-acb9-b37de6cc5d2f";
 var JWT_AUTH_RESPONDER_PATH = '/jwt_auth_responder';
 var CHECK_TOKEN_RESPONDER_PATH = '/check_token_responder';
 
@@ -104,10 +105,17 @@ describe('Token verification', function () {
 
     function createJwtToken(req, secret, iss) {
         var jwtPayload = {
-            "sub": USER_ID,
+            "sub": USER_ACCOUNT_ID,
             "iss": iss || helper.installedPayload.clientKey,
             "iat": moment().utc().unix(),
-            "exp": moment().utc().add(10, 'minutes').unix()
+            "exp": moment().utc().add(10, 'minutes').unix(),
+            "context": {
+                "user": {
+                    "accountId": USER_ACCOUNT_ID,
+                    "userKey": USER_ID,
+                    "userId": USER_ID
+                }
+            }
         };
 
         if (req) {
@@ -244,7 +252,7 @@ describe('Token verification', function () {
 
             var verifiedToken = jwt.decode(theToken, helper.installedPayload.sharedSecret);
             assert.equal(verifiedToken.aud[0], helper.installedPayload.clientKey);
-            assert.equal(verifiedToken.sub, USER_ID);
+            assert.equal(verifiedToken.sub, USER_ACCOUNT_ID);
             done();
         });
     });
@@ -399,6 +407,7 @@ describe('Token verification', function () {
                     clientKey: res.locals.clientKey,
                     token: res.locals.token,
                     userId: res.locals.userId,
+                    userAccountId: res.locals.userAccountId,
                     hostBaseUrl: res.locals.hostBaseUrl,
                     hostStylesheetUrl: res.locals.hostStylesheetUrl,
                     hostScriptUrl: res.locals.hostScriptUrl
@@ -421,10 +430,11 @@ describe('Token verification', function () {
                 assert.equal(null, err);
                 assert.equal(200, res.statusCode);
                 assert.equal(payload.clientKey, helper.installedPayload.clientKey);
-                assert.equal(payload.userId, USER_ID);
                 assert.equal(payload.hostBaseUrl, helper.productBaseUrl);
                 assert.equal(payload.hostStylesheetUrl, hostResourceUrl(app, helper.productBaseUrl, 'css'));
                 assert.equal(payload.hostScriptUrl, hostResourceUrl(app, helper.productBaseUrl, 'js'));
+                assert.equal(payload.userAccountId, USER_ACCOUNT_ID);
+                assert.equal(payload.userId, USER_ID);
                 jwt.decode(payload.token, helper.installedPayload.sharedSecret);
                 done();
             });
