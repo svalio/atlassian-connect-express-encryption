@@ -103,18 +103,19 @@ describe('Token verification', function () {
         useBodyParser = true;
     });
 
-    function createJwtToken(req, secret, iss) {
+    function createJwtToken(req, secret, iss, context) {
         var jwtPayload = {
             "sub": USER_ACCOUNT_ID,
             "iss": iss || helper.installedPayload.clientKey,
             "iat": moment().utc().unix(),
-            "exp": moment().utc().add(10, 'minutes').unix(),
-            "context": {
-                "user": {
-                    "accountId": USER_ACCOUNT_ID,
-                    "userKey": USER_ID,
-                    "userId": USER_ID
-                }
+            "exp": moment().utc().add(10, 'minutes').unix()
+        };
+
+        jwtPayload.context = context ?  context : {
+            "user": {
+                "accountId": USER_ACCOUNT_ID,
+                "userKey": USER_ID,
+                "userId": USER_ID
             }
         };
 
@@ -435,6 +436,52 @@ describe('Token verification', function () {
                 assert.equal(payload.hostScriptUrl, hostResourceUrl(app, helper.productBaseUrl, 'js'));
                 assert.equal(payload.userAccountId, USER_ACCOUNT_ID);
                 assert.equal(payload.userId, USER_ID);
+                jwt.decode(payload.token, helper.installedPayload.sharedSecret);
+                done();
+            });
+        });
+    });
+
+    it('should rehydrate response local variables from context JWT', function (done) {
+        app.get(
+            '/protected_context_resource',
+            addon.checkValidToken(),
+            function (req, res) {
+                res.send({
+                    clientKey: res.locals.clientKey,
+                    token: res.locals.token,
+                    userId: res.locals.userId,
+                    userAccountId: res.locals.userAccountId,
+                    hostBaseUrl: res.locals.hostBaseUrl,
+                    hostStylesheetUrl: res.locals.hostStylesheetUrl,
+                    hostScriptUrl: res.locals.hostScriptUrl,
+                    context: res.locals.context
+                });
+            }
+        );
+
+        var requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
+        var context = {issue: {key: 'ABC-123'}};
+        var token = createJwtToken(null, null, null, context);
+        var requestOpts = createRequestOptions(JWT_AUTH_RESPONDER_PATH, token);
+
+        request(requestUrl, requestOpts, function (err, res, theToken) {
+            assert.equal(err, null);
+            assert.equal(res.statusCode, 200);
+
+            var tokenUrl = helper.addonBaseUrl + '/protected_context_resource';
+            var tokenRequestOpts = createTokenRequestOptions(theToken);
+
+            request(tokenUrl, tokenRequestOpts, function (err, res, body) {
+                var payload = JSON.parse(body);
+                assert.strictEqual(null, err);
+                assert.strictEqual(200, res.statusCode);
+                assert.strictEqual(payload.clientKey, helper.installedPayload.clientKey);
+                assert.strictEqual(payload.hostBaseUrl, helper.productBaseUrl);
+                assert.strictEqual(payload.hostStylesheetUrl, hostResourceUrl(app, helper.productBaseUrl, 'css'));
+                assert.strictEqual(payload.hostScriptUrl, hostResourceUrl(app, helper.productBaseUrl, 'js'));
+                assert.strictEqual(payload.userAccountId, USER_ACCOUNT_ID);
+                assert.deepStrictEqual(payload.context, context);
                 jwt.decode(payload.token, helper.installedPayload.sharedSecret);
                 done();
             });
