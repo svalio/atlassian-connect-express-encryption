@@ -1,5 +1,10 @@
 # Atlassian Connect for Express.js Release Notes
 
+### 3.2.0
+
+* Expose JWT `context` claim as context variable
+* `userAccountId` context variable not set for JWT with `context` claim without `user` field
+
 ### 3.1.0
 
 * Deprecates existing (stored) `userKeys` for identifying users when using OAuth 2.0 JWT Bearer Tokens (`asUser()`).
