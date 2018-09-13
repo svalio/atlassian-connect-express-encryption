@@ -3,7 +3,7 @@
 ### 3.2.0
 
 * Expose JWT `context` claim as context variable
-* `userAccountId` context variable not set for JWT with `context` claim without `user` field
+* `userAccountId` context variable now set for JWT with `context` claim without `user` field
 
 ### 3.1.0
 
