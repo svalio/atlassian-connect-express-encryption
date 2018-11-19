@@ -281,6 +281,7 @@ iframe bridge between the add-on and its parent. It also contains a handful of m
 through the parent (look for the `AP` JS object).
 * `token`: the token that can be used to authenticate calls from the iframe back to the add-on service.
 * `license`: the license status
+* `context`: the JWT `context` claim
 * `clientKey`: the client consumer key used to identity the instance from which the request came
 * `userAccountId`: the Atlassian Account ID of the user.
 * `userId`: (deprecated) the username of the user from which the request came.
