@@ -244,6 +244,15 @@ stores.forEach(function (store) {
                         done();
                     });
                 });
+                it('should allow an empty string key and value', function (done) {
+                    addon.settings.set('', '', helper.installedPayload.clientKey).then(function (setting) {
+                        should(setting).equal('');
+                        return addon.settings.get('', helper.installedPayload.clientKey);
+                    }).then(function (setting) {
+                        should(setting).equal('');
+                        done();
+                    }).catch(done);
+                });
                 break;
             }
         }
