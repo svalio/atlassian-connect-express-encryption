@@ -12,7 +12,7 @@ var MongodbMemoryServer = require('mongodb-memory-server').default;
 
 var stores = ["sequelize", "mongodb"];
 
-stores.forEach(function(store) {
+stores.forEach(function (store) {
     var app = express();
     var ac = require('../index');
     var addon = {};
@@ -33,7 +33,7 @@ stores.forEach(function(store) {
             app.use(bodyParser.urlencoded({extended: false}));
             app.use(bodyParser.json());
 
-            app.get("/confluence/rest/plugins/1.0/", function(req, res) {
+            app.get("/confluence/rest/plugins/1.0/", function (req, res) {
                 res.setHeader("upm-token", "123");
                 res.json({plugins: []});
                 res.status(200).end();
@@ -61,9 +61,9 @@ stores.forEach(function(store) {
             switch (store) {
                 case "sequelize":
                     storeOptsPromise = RSVP.resolve({
-						adapter: "teststore",
-						type: "memory"
-					});
+                        adapter: "teststore",
+                        type: "memory"
+                    });
                     break;
                 case "mongodb":
                     // Prepare an in-memory database for this test
@@ -77,13 +77,13 @@ stores.forEach(function(store) {
                         };
                     });
                     break;
-			}
-			storeOptsPromise.then(function (storeOpts) {
+            }
+            storeOptsPromise.then(function (storeOpts) {
                 addon = ac(app, {
                     config: {
                         development: {
                             store: storeOpts,
-                            hosts: [ helper.productBaseUrl ]
+                            hosts: [helper.productBaseUrl]
                         }
                     }
                 }, logger);
@@ -111,14 +111,14 @@ stores.forEach(function(store) {
                     settings.sharedSecret.should.eql(helper.installedPayload.sharedSecret);
                     done();
                 }, function (err) {
-					should.fail(err.toString());
-				});
+                    should.fail(err.toString());
+                });
             });
         });
 
         it('should return a list of clientInfo objects', function (done) {
             addon.settings.getAllClientInfos().then(function (initialClientInfos) {
-                return addon.settings.set('clientInfo', {"correctPayload":true}, 'fake').then(function() {
+                return addon.settings.set('clientInfo', {"correctPayload": true}, 'fake').then(function () {
                     return addon.settings.getAllClientInfos().then(function (clientInfos) {
                         clientInfos.should.have.length(initialClientInfos.length + 1);
                         var latestClientInfo = clientInfos[clientInfos.length - 1];
@@ -128,8 +128,8 @@ stores.forEach(function(store) {
                     });
                 });
             }, function (err) {
-				should.fail(err.toString());
-			});
+                should.fail(err.toString());
+            });
         });
 
         it('should allow storing arbitrary key/values as a JSON string', function (done) {
@@ -138,8 +138,8 @@ stores.forEach(function(store) {
                 setting.should.eql({someKey: "someValue"});
                 done();
             }, function (err) {
-				should.fail(err.toString());
-			});
+                should.fail(err.toString());
+            });
         });
 
         it('should allow storing arbitrary key/values as object', function (done) {
@@ -147,8 +147,8 @@ stores.forEach(function(store) {
                 setting.should.eql({data: 1});
                 done();
             }, function (err) {
-				should.fail(err.toString());
-			});
+                should.fail(err.toString());
+            });
         });
 
         it('should allow storing arbitrary key/values', function (done) {
@@ -157,8 +157,8 @@ stores.forEach(function(store) {
                 setting.should.eql('barf');
                 done();
             }, function (err) {
-				should.fail(err.toString());
-			});
+                should.fail(err.toString());
+            });
         });
 
         switch (store) {
@@ -193,34 +193,59 @@ stores.forEach(function(store) {
                         should.fail(err.toString());
                     });
                 });
+
+                it('should work with a custom store', function (done) {
+                    var promises = [
+                        addon.settings.set('custom key', {customKey: 'custom value'}),
+                        addon.settings.get('custom key'),
+                        addon.settings.del('custom key')
+                    ];
+                    RSVP.all(promises).then(function () {
+                        storeSetSpy.callCount.should.be.above(0);
+                        storeGetSpy.callCount.should.be.above(0);
+                        storeDelSpy.callCount.should.be.above(0);
+                        done();
+                    }, function (err) {
+                        should.fail(err);
+                    });
+                });
                 break;
             }
             case 'mongodb': {
-                // The following code can be used if you ever decide to change the isMemnortStore API to Promises:
-				// it('should read the storage engine', function (done) {
-                //     addon.settings.isMemoryStore().then(function (value) {
-                //         console.log(value);
-                //         done();
-                //     });
-				// });
-				break;
-			}
+                it('should not allow storing a non-string key', function (done) {
+                    var value = 'barf';
+                    addon.settings.set(42, value, helper.installedPayload.clientKey).then(function () {
+                        done(new Error('Expected non-string key storage to be disallowed'));
+                    }).catch(function () {
+                        done();
+                    });
+                });
+                it('should not allow deleting a non-string key', function (done) {
+                    var value = 'barf';
+                    addon.settings.del(42, helper.installedPayload.clientKey).then(function () {
+                        done(new Error('Expected non-string key deletion to be disallowed'));
+                    }).catch(function () {
+                        done();
+                    });
+                });
+                it('should not allow storing a non-string clientKey', function (done) {
+                    var value = 'barf';
+                    addon.settings.set('additionalSetting4', value, 42).then(function () {
+                        done(new Error('Expected non-string clientKey storage to be disallowed'));
+                    }).catch(function () {
+                        done();
+                    });
+                });
+                it('should not allow deleting a non-string key', function (done) {
+                    var value = 'barf';
+                    addon.settings.del('additionalSetting4', 42).then(function () {
+                        done(new Error('Expected non-string clientKey deletion to be disallowed'));
+                    }).catch(function () {
+                        done();
+                    });
+                });
+                break;
+            }
         }
-
-        it('should work with a custom store', function (done) {
-            var promises = [
-                addon.settings.set('custom key', {customKey: 'custom value'}),
-                addon.settings.get('custom key'),
-                addon.settings.del('custom key')
-            ];
-            RSVP.all(promises).then(function () {
-                storeSetSpy.callCount.should.be.above(0);
-                storeGetSpy.callCount.should.be.above(0);
-                storeDelSpy.callCount.should.be.above(0);
-                done();
-            }, function (err) {
-                should.fail(err);
-            });
-        });
     });
 });
