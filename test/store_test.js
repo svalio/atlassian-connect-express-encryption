@@ -66,6 +66,8 @@ stores.forEach(function (store) {
                     });
                     break;
                 case "mongodb":
+                    // Increase timeout in case the download needs to be run.
+                    this.timeout(60000);
                     // Prepare an in-memory database for this test
                     dbServer = new MongodbMemoryServer({
                         // debug: true // this is fairly verbose
