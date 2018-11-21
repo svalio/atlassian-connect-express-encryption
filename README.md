@@ -151,6 +151,14 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
         //     "url": "postgres://localhost/my_addon_database"
         //   },
         //
+        // For MongoDB, use the following:
+        //
+        //   "store": {
+        //     "adapter": "mongodb",
+        //     "url": "mongodb://localhost:27017/my_addon_database",
+        //     "collection": "AddonSettings"
+        //   },
+        //
         // You will also need an appropriate Sequelize driver if you choose something
         // other than the default "diaclet".  In the PostgreSQL case you'd need to
         // run the following command to add the proper support:
