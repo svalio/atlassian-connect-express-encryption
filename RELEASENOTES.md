@@ -1,5 +1,8 @@
 # Atlassian Connect for Express.js Release Notes
 
+### 3.3.0
+* Added MongoDB storage adapter 
+
 ### 3.2.0
 
 * Expose JWT `context` claim as context variable
