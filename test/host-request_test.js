@@ -24,7 +24,7 @@ describe('Host Request', function () {
                 validityInMinutes: 3
             }
         }, opts);
-        
+
         return config({}, "development", {
             "development": opts
         });
@@ -181,11 +181,11 @@ describe('Host Request', function () {
             interceptRequest(done, function (uri, requestBody) {
                 var jwtToken = this.req.headers.authorization.slice(4);
                 var decoded = jwt.decode(jwtToken, clientSettings.clientKey, true);
-                var expectedQsh = jwt.createQueryStringHash({
+                var expectedQsh = jwt.createQueryStringHash(jwt.fromExpressRequest({
                   'method': 'GET',
                   'path'  : '/some/path/on/host',
                   'query' : { 'q' : '~ text'}
-                }, false, helper.productBaseUrl);
+                }), false, helper.productBaseUrl);
                 decoded.qsh.should.eql(expectedQsh);
             }, { path: '/some/path/on/host?q=~%20text'});
         });
