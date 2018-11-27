@@ -85,7 +85,7 @@ describe('Webhook', function () {
         };
 
         if (req) {
-            jwtPayload.qsh = jwt.createQueryStringHash(req);
+            jwtPayload.qsh = jwt.createQueryStringHash(jwt.fromExpressRequest(req));
         }
 
         return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
@@ -99,7 +99,7 @@ describe('Webhook', function () {
         };
 
         if (req) {
-            jwtPayload.qsh = jwt.createQueryStringHash(req);
+            jwtPayload.qsh = jwt.createQueryStringHash(jwt.fromExpressRequest(req));
         }
 
         return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
