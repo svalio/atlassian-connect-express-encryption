@@ -225,7 +225,7 @@ describe('Host Request', function () {
             interceptRequestAsUserByAccountId(done, function (uri, requestBody) {
                 authServiceMock.done();
                 this.req.headers.authorization.should.startWith('Bearer');
-            }, { userAccountId: '048abaf9-04ea-44d1-acb9-b37de6cc5d2f' });     
+            }, { userAccountId: '048abaf9-04ea-44d1-acb9-b37de6cc5d2f' });
         });
     });
 
@@ -301,6 +301,25 @@ describe('Host Request', function () {
                 }
             }).then(function(request) {
                 request.body.toString().should.eql('param1=value1');
+                done();
+            });
+        });
+
+        it('post request with undefined clientKey returns promise reject', function (done) {
+            var interceptor = nock(clientSettings.baseUrl)
+                .post('/some/path')
+                .reply(200);
+
+            new HostRequest(mockAddon({}), {}, undefined).post({
+                url: '/some/path',
+                urlEncodedFormData: {
+                    param1: 'value1'
+                }
+            }).then(function() {
+                // Promise is resolved
+                done(new Error('Promise should not be resolved'));
+            }, function(reason) {
+                // Promise is rejected
                 done();
             });
         });
