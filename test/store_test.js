@@ -70,7 +70,7 @@ stores.forEach(function (store) {
                     this.timeout(60000);
                     // Prepare an in-memory database for this test
                     dbServer = new MongodbMemoryServer({
-                        // debug: true // this is fairly verbose
+                        debug: true // this is fairly verbose
                     });
                     storeOptsPromise = dbServer.getConnectionString().then(function (connectionString) {
                         return {
