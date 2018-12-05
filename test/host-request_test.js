@@ -225,7 +225,7 @@ describe('Host Request', function () {
             interceptRequestAsUserByAccountId(done, function (uri, requestBody) {
                 authServiceMock.done();
                 this.req.headers.authorization.should.startWith('Bearer');
-            }, { userAccountId: '048abaf9-04ea-44d1-acb9-b37de6cc5d2f' });
+            }, { userAccountId: '048abaf9-04ea-44d1-acb9-b37de6cc5d2f' });     
         });
     });
 
