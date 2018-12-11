@@ -22,7 +22,7 @@
   "main": "index.js",
   "dependencies": {
     "atlassian-jwt": "^1.0.0",
-    "atlassian-oauth2": "0.2.3",
+    "atlassian-oauth2": "^0.3.0",
     "colors": "^1.1.2",
     "inquirer": "^5.0.1",
     "lodash": "^4.17.4",
