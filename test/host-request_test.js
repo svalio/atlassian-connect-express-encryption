@@ -304,5 +304,24 @@ describe('Host Request', function () {
                 done();
             });
         });
+
+        it('post request with undefined clientKey returns promise reject', function (done) {
+            var interceptor = nock(clientSettings.baseUrl)
+                .post('/some/path')
+                .reply(200);
+
+            new HostRequest(mockAddon({}), {}, undefined).post({
+                url: '/some/path',
+                urlEncodedFormData: {
+                    param1: 'value1'
+                }
+            }).then(function() {
+                // Promise is resolved
+                done(new Error('Promise should not be resolved'));
+            }, function(reason) {
+                // Promise is rejected
+                done();
+            });
+        });
     });
 });
