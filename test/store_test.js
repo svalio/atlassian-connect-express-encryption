@@ -27,7 +27,7 @@ stores.forEach(function (store) {
 
         before(function (done) {
             var self = this;
-            this.sandbox = sinon.sandbox.create();
+            this.sandbox = sinon.createSandbox();
             process.env.AC_OPTS = 'no-auth';
             app.set('env', 'development');
             app.use(bodyParser.urlencoded({extended: false}));
