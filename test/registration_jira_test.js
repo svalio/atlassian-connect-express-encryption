@@ -21,7 +21,7 @@ describe('Auto registration (UPM)', function () {
 
     beforeEach(function () {
         requireOptionalStub = sinon.stub(requireOptional, 'requireOptional');
-        
+
         app = express();
         addon = {};
 
@@ -102,7 +102,7 @@ describe('Auto registration (UPM)', function () {
         }));
     }
 
-    function stubNgrokWorking() { 
+    function stubNgrokWorking() {
         requireOptionalStub.returns(RSVP.resolve({
             connect: function (port, cb) {
                 cb(null, 'https://test.ngrok.io');
@@ -110,8 +110,8 @@ describe('Auto registration (UPM)', function () {
         }));
     }
 
-    function stubNgrokUnavailable() { 
-        const error = new Error("Cannot find module 'ngrok'");
+    function stubNgrokUnavailable() {
+        const error = new Error("Cannot find module 'ngrok' (no worries, this error is thrown on purpose by stubNgrokUnavailable in test)");
         error.code = 'MODULE_NOT_FOUND';
         requireOptionalStub.returns(RSVP.reject(error));
     }

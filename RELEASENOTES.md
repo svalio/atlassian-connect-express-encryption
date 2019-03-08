@@ -1,5 +1,9 @@
 # Atlassian Connect for Express.js Release Notes
 
+## 3.4.0
+
+* Updates dependency libraries to fix `npm audit` warnings
+
 ## 3.3.0
 
 * Added MongoDB storage adapter
