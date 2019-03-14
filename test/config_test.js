@@ -27,7 +27,7 @@ describe('Configuration', function () {
         return config(baseConfig, mode, opts);
     };
 
-    it('should allow you to disable re-registration on plugin.xml change', function (done) {
+    it('should allow you to disable re-registration on atlassian-connect.json change', function (done) {
         var config = createConfig({
             watch: false
         });
