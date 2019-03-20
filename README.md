@@ -59,10 +59,7 @@ npm install
 ```
 
 If you get any errors related to node-gyp (especially with Node 8 on Windows), try
-[installing its prerequisites](https://github.com/nodejs/node-gyp#installation).
-
-ACE requires Node.js v4.8.4 or later. Please also ensure you have relevant
-[security updates](https://nodejs.org/en/blog/vulnerability/) installed.
+[installing its prerequisites](https://www.npmjs.com/package/node-gyp#installation).
 
 ### Setting up a development environment
 
@@ -273,7 +270,7 @@ When you generate a new ACE add-on, you're actually just downloading a copy of t
 
 ### Handlebars layouts and templates
 
-The base scaffold uses the [Handlebars](http://handlebarsjs.com) template library via the [express-hbs](https://github.com/barc/express-hbs) package.
+The base scaffold uses the [Handlebars](http://handlebarsjs.com) template library via the [express-hbs](https://www.npmjs.com/package/express-hbs) package.
 
 Handlebars views are stored in the `./views` directory. The base template contains a `layout.hbs` and a sample page
 (`hello-world.hbs`). Handlebars alone doesn't provide layouts, but the `express-hbs` package does. To apply the
@@ -283,7 +280,7 @@ Handlebars views are stored in the `./views` directory. The base template contai
 {{!< layout}}
 ```
 
-To learn more about how Handlebars works in express.js, take a look at the [express-hbs documentation](https://github.com/barc/express-hbs#readme).
+To learn more about how Handlebars works in express.js, take a look at the [express-hbs documentation](https://www.npmjs.com/package/express-hbs).
 
 ### Special context variables
 
@@ -386,7 +383,7 @@ it in a meta tag, from where it can later be read by a script:
 
 ### How to send a signed outbound HTTP request back to the host
 
-ACE bundles and extends the [request](https://github.com/mikeal/request) HTTP client. To make a
+ACE bundles and extends the [request](https://www.npmjs.com/package/request) HTTP client. To make a
 JWT signed request back to the host, all you have to do is use `request` the way it was designed, but use a URL back to
 the host's REST APIs.
 
@@ -513,11 +510,6 @@ You'll get this error if Jira or Confluence can't access `http://localhost:3000/
 One way to debug this is to see what the command `hostname` returns.
 
 If it returns `localhost`, change it. On a OS X, you'll need to set a proper "Computer Name" in System Preferences > Sharing.
-
-### Problems starting up in Heroku: "TypeError: Cannot read property 'forEach' of undefined"
-
-Specify a node version of 5.12.0 in your package.json to work around
-[this issue](https://github.com/jugglingdb/postgres-adapter/issues/56#issuecomment-264286085).
 
 ### Debugging HTTP Traffic
 
