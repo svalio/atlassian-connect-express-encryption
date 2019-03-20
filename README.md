@@ -59,10 +59,7 @@ npm install
 ```
 
 If you get any errors related to node-gyp (especially with Node 8 on Windows), try
-[installing its prerequisites](https://github.com/nodejs/node-gyp#installation).
-
-ACE requires Node.js v4.8.4 or later. Please also ensure you have relevant
-[security updates](https://nodejs.org/en/blog/vulnerability/) installed.
+[installing its prerequisites](https://www.npmjs.com/package/node-gyp#installation).
 
 ### Setting up a development environment
 
@@ -248,14 +245,14 @@ so that a transformer is included in the `config`. The `descriptorTransformer` p
 function and passes in `descriptor` as an object, and the `app.config` object.
 
 ```javascript
-    var addon = ac(app, { config: {
-        descriptorTransformer: function(descriptor, config) {
-          if (config.environment() === "production") {
-              descriptor.key = "production-key";
-          }
-          return descriptor;
-      }
-    }});
+var addon = ac(app, { config: {
+  descriptorTransformer: function(descriptor, config) {
+    if (config.environment() === "production") {
+      descriptor.key = "production-key";
+    }
+    return descriptor;
+  }
+}});
 ```
 
 ## Sample Add-ons
@@ -273,7 +270,7 @@ When you generate a new ACE add-on, you're actually just downloading a copy of t
 
 ### Handlebars layouts and templates
 
-The base scaffold uses the [Handlebars](http://handlebarsjs.com) template library via the [express-hbs](https://github.com/barc/express-hbs) package.
+The base scaffold uses the [Handlebars](http://handlebarsjs.com) template library via the [express-hbs](https://www.npmjs.com/package/express-hbs) package.
 
 Handlebars views are stored in the `./views` directory. The base template contains a `layout.hbs` and a sample page
 (`hello-world.hbs`). Handlebars alone doesn't provide layouts, but the `express-hbs` package does. To apply the
@@ -283,7 +280,7 @@ Handlebars views are stored in the `./views` directory. The base template contai
 {{!< layout}}
 ```
 
-To learn more about how Handlebars works in express.js, take a look at the [express-hbs documentation](https://github.com/barc/express-hbs#readme).
+To learn more about how Handlebars works in express.js, take a look at the [express-hbs documentation](https://www.npmjs.com/package/express-hbs).
 
 ### Special context variables
 
@@ -324,15 +321,16 @@ ACE middleware to your route:
 
 ```javascript
 module.exports = function(app, addon) {
-    app.get('/protected-resource',
+  app.get(
+    '/protected-resource',
 
-        // Protect this resource with JWT
-        addon.authenticate(),
+    // Protect this resource with JWT
+    addon.authenticate(),
 
-        function(req, res) {
-          res.render('protected');
-        }
-    );
+    function(req, res) {
+      res.render('protected');
+    }
+  );
 };
 ```
 
@@ -350,15 +348,16 @@ using the `addon.checkValidToken()` middleware:
 
 ```javascript
 module.exports = function(app, addon) {
-    app.get('/protected-resource',
+  app.get(
+    '/protected-resource',
 
-        // Require a valid token to access this resource
-        addon.checkValidToken(),
+    // Require a valid token to access this resource
+    addon.checkValidToken(),
 
-        function(req, res) {
-          res.render('protected');
-        }
-    );
+    function(req, res) {
+      res.render('protected');
+    }
+  );
 };
 ```
 
@@ -373,7 +372,7 @@ The second option is to use the Authorization HTTP header, e.g. for AJAX request
 
 ```javascript
 beforeSend: function(request) {
-    request.setRequestHeader("Authorization", "JWT {{token}}");
+  request.setRequestHeader("Authorization", "JWT {{token}}");
 }
 ```
 
@@ -386,7 +385,7 @@ it in a meta tag, from where it can later be read by a script:
 
 ### How to send a signed outbound HTTP request back to the host
 
-ACE bundles and extends the [request](https://github.com/mikeal/request) HTTP client. To make a
+ACE bundles and extends the [request](https://www.npmjs.com/package/request) HTTP client. To make a
 JWT signed request back to the host, all you have to do is use `request` the way it was designed, but use a URL back to
 the host's REST APIs.
 
@@ -430,21 +429,21 @@ You can also set custom headers or send a form data. Take, for example this requ
 ```javascript
 var filePath = path.join(__dirname, 'some.png');
 fs.readFile(filePath, function(err, data) {
-    httpClient.post({
-        url: '/rest/api/2/issue/' + issueKey + '/attachments',
-        headers: {
-            'X-Atlassian-Token': 'nocheck'
-        },
-        multipartFormData: {
-            file: [data, { filename: 'some.png' }]
-        }
+  httpClient.post({
+    url: '/rest/api/2/issue/' + issueKey + '/attachments',
+    headers: {
+      'X-Atlassian-Token': 'nocheck'
     },
-    function(err, httpResponse, body) {
-        if (err) {
-            return console.error('Upload failed:', err);
-        }
-        console.log('Upload successful:', body);
-    });
+    multipartFormData: {
+      file: [data, { filename: 'some.png' }]
+    }
+  },
+  function(err, httpResponse, body) {
+    if (err) {
+      return console.error('Upload failed:', err);
+    }
+    console.log('Upload successful:', body);
+  });
 });
 ```
 
@@ -513,11 +512,6 @@ You'll get this error if Jira or Confluence can't access `http://localhost:3000/
 One way to debug this is to see what the command `hostname` returns.
 
 If it returns `localhost`, change it. On a OS X, you'll need to set a proper "Computer Name" in System Preferences > Sharing.
-
-### Problems starting up in Heroku: "TypeError: Cannot read property 'forEach' of undefined"
-
-Specify a node version of 5.12.0 in your package.json to work around
-[this issue](https://github.com/jugglingdb/postgres-adapter/issues/56#issuecomment-264286085).
 
 ### Debugging HTTP Traffic
 
