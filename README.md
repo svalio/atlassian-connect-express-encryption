@@ -245,14 +245,14 @@ so that a transformer is included in the `config`. The `descriptorTransformer` p
 function and passes in `descriptor` as an object, and the `app.config` object.
 
 ```javascript
-    var addon = ac(app, { config: {
-        descriptorTransformer: function(descriptor, config) {
-          if (config.environment() === "production") {
-              descriptor.key = "production-key";
-          }
-          return descriptor;
-      }
-    }});
+var addon = ac(app, { config: {
+  descriptorTransformer: function(descriptor, config) {
+    if (config.environment() === "production") {
+      descriptor.key = "production-key";
+    }
+    return descriptor;
+  }
+}});
 ```
 
 ## Sample Add-ons
@@ -321,15 +321,16 @@ ACE middleware to your route:
 
 ```javascript
 module.exports = function(app, addon) {
-    app.get('/protected-resource',
+  app.get(
+    '/protected-resource',
 
-        // Protect this resource with JWT
-        addon.authenticate(),
+    // Protect this resource with JWT
+    addon.authenticate(),
 
-        function(req, res) {
-          res.render('protected');
-        }
-    );
+    function(req, res) {
+      res.render('protected');
+    }
+  );
 };
 ```
 
@@ -347,15 +348,16 @@ using the `addon.checkValidToken()` middleware:
 
 ```javascript
 module.exports = function(app, addon) {
-    app.get('/protected-resource',
+  app.get(
+    '/protected-resource',
 
-        // Require a valid token to access this resource
-        addon.checkValidToken(),
+    // Require a valid token to access this resource
+    addon.checkValidToken(),
 
-        function(req, res) {
-          res.render('protected');
-        }
-    );
+    function(req, res) {
+      res.render('protected');
+    }
+  );
 };
 ```
 
@@ -370,7 +372,7 @@ The second option is to use the Authorization HTTP header, e.g. for AJAX request
 
 ```javascript
 beforeSend: function(request) {
-    request.setRequestHeader("Authorization", "JWT {{token}}");
+  request.setRequestHeader("Authorization", "JWT {{token}}");
 }
 ```
 
@@ -427,21 +429,21 @@ You can also set custom headers or send a form data. Take, for example this requ
 ```javascript
 var filePath = path.join(__dirname, 'some.png');
 fs.readFile(filePath, function(err, data) {
-    httpClient.post({
-        url: '/rest/api/2/issue/' + issueKey + '/attachments',
-        headers: {
-            'X-Atlassian-Token': 'nocheck'
-        },
-        multipartFormData: {
-            file: [data, { filename: 'some.png' }]
-        }
+  httpClient.post({
+    url: '/rest/api/2/issue/' + issueKey + '/attachments',
+    headers: {
+      'X-Atlassian-Token': 'nocheck'
     },
-    function(err, httpResponse, body) {
-        if (err) {
-            return console.error('Upload failed:', err);
-        }
-        console.log('Upload successful:', body);
-    });
+    multipartFormData: {
+      file: [data, { filename: 'some.png' }]
+    }
+  },
+  function(err, httpResponse, body) {
+    if (err) {
+      return console.error('Upload failed:', err);
+    }
+    console.log('Upload successful:', body);
+  });
 });
 ```
 
