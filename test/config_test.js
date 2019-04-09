@@ -186,4 +186,34 @@ describe('Configuration', function () {
         }
     });
 
+    describe('userAgent', function() {
+        it('should default to package version', function(done) {
+            const version = require('../package.json').version;
+            const defaultConfig = createConfig({}, 'development', {});
+            defaultConfig.userAgent().should.equal('atlassian-connect-express/' + version);
+            done();
+        });
+
+        it('should allow you to override it globally', function(done) {
+            const userAgent = 'my-cool-app';
+            const defaultConfig = createConfig({
+                userAgent
+            }, 'development', {});
+
+            defaultConfig.userAgent().should.equal(userAgent);
+            done();
+        });
+
+        it('should allow you to override it in production', function(done) {
+            const defaultConfig = createConfig({
+                userAgent: 'dev-my-cool-app'
+            }, 'production', {
+                userAgent: 'prod-my-cool-app',
+            });
+
+            defaultConfig.userAgent().should.equal('prod-my-cool-app');
+            done();
+        });
+    });
+
 });
