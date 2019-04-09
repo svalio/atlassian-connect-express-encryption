@@ -74,7 +74,7 @@ for a free Jira or Confluence Cloud host.
 In your project directory, run:
 
 ```bash
-node app.js
+npm start
 ```
 
 This will boot up your Express server on the default port of 3000.
@@ -96,7 +96,7 @@ To get this functionality, you will need to:
 * Create a file called `credentials.json`,
 * Copy and paste the contents of [this file](https://bitbucket.org/atlassian/atlassian-connect-express-template/src/master/credentials.json.sample),
 * Add `credentials.json` to the `.gitignore` file, and
-* Change the contents of the file to contain the link to your development environment, admin authentication, and product.
+* Change the contents of the file to contain the link to your development environment, e-mail as the username, [API token](https://confluence.atlassian.com/cloud/api-tokens-938839638.html) as password and product name.
 
 ACE will now read this file and automatically create an ngrok tunnel, and register your add-on on your development host.
 
