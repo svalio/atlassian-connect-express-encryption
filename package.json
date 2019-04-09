@@ -22,7 +22,7 @@
   "main": "index.js",
   "dependencies": {
     "atlassian-jwt": "^1.0.2",
-    "atlassian-oauth2": "bitbucket:davidtbernal/atlassian-oauth2-js#master",
+    "atlassian-oauth2": "^0.4.1",
     "colors": "^1.3.3",
     "inquirer": "^6.2.2",
     "lodash": "^4.17.11",
