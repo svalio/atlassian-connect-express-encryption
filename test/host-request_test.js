@@ -132,6 +132,18 @@ describe('Host Request', function () {
             });
         });
 
+        it('get request has custom user-agent', function (done) {
+            const userAgent = 'my-fun-app';
+            const opts = {
+                addonConfig: {
+                    userAgent,
+                }
+            };
+            interceptRequest(done, function (uri, requestBody) {
+                this.req.headers['user-agent'].should.equal(userAgent);
+            }, opts);
+        });
+
         it('post request preserves custom header', function (done) {
             var interceptor = nock(clientSettings.baseUrl)
                                 .post('/some/path')
