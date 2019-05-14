@@ -201,16 +201,16 @@ stores.forEach(function (store) {
 
                 it('should work with a custom store', function (done) {
                     var promises = [
-                        addon.settings.set('custom key', {customKey: 'custom value'}),
-                        addon.settings.get('custom key'),
-                        addon.settings.del('custom key')
+                        addon.settings.set('custom key', {customKey: 'custom value'}, helper.installedPayload.clientKey),
+                        addon.settings.get('custom key', helper.installedPayload.clientKey),
+                        addon.settings.del('custom key', helper.installedPayload.clientKey)
                     ];
                     RSVP.all(promises).then(function () {
                         storeSetSpy.callCount.should.be.above(0);
                         storeGetSpy.callCount.should.be.above(0);
                         storeDelSpy.callCount.should.be.above(0);
                         done();
-                    }, function (err) {
+                    }).catch(function (err) {
                         should.fail(err);
                     });
                 });
