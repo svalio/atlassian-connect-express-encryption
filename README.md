@@ -536,9 +536,20 @@ If you want to report a problem, please raise a support request in Atlassian Eco
 
 ## Contributing
 
-Even though this is just an exploratory project at this point, it's also open source
-[Apache 2.0](https://bitbucket.org/atlassian/atlassian-connect-express/src/master/LICENSE.txt). So, please feel free
-to fork and send us pull requests.
+Pull requests, issues, and comments are welcome! It's also open source [Apache 2.0](https://bitbucket.org/atlassian/atlassian-connect-express/src/master/LICENSE.txt). So, please feel free to fork and send us pull requests.
+
+For pull requests:
+
+* Add tests for new features and bug fixes.
+* Follow the existing style.
+* Separate unrelated changes into multiple pull requests.
+See the existing issues for things to start contributing.
+
+For bigger changes, make sure you start a discussion first by creating an issue and explaining the intended change.
+
+## Pull Requests
+We take the 'trust' approach when it comes to pull requests. This means that reviewers should feel comfortable approving a PR with outstanding items due to trust in knowing that the PR owner will address the actions as necessary. Use actions for PR items that are particularly important since these require the PR owner to explicitly acknowledge them before merging
+
 
 ## Unit tests
 
