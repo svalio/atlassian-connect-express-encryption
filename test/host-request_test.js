@@ -9,6 +9,7 @@ var RSVP = require('rsvp');
 var moment = require('moment');
 var jwt = require('atlassian-jwt');
 var extend = require('extend');
+var _ = require('lodash');
 
 describe('Host Request', function () {
     var clientSettings = {
@@ -69,10 +70,17 @@ describe('Host Request', function () {
         if (!opts.requestPath) {
             opts.requestPath = opts.path;
         }
+        if (!opts.uri) {
+            opts.uri = opts.requestPath;
+        }
 
         var interceptor = nock(opts.baseUrl)
-                            [opts.method](opts.path)
-                            .reply(replyCallback);
+                            [opts.method](opts.path);
+
+        if (opts.qs) {
+            interceptor = interceptor.query(opts.qs);
+        }
+        interceptor = interceptor.reply(replyCallback);
 
         var httpClient = getHttpClient(opts.addonConfig, opts.httpClientContext);
 
@@ -80,7 +88,14 @@ describe('Host Request', function () {
             httpClient = opts.httpClientWrapper(httpClient);
         }
 
-        httpClient[opts.method](opts.requestPath, function() {
+        var httpClientOpts = _.cloneDeep(opts);
+        delete httpClientOpts.baseUrl;
+        delete httpClientOpts.method;
+        delete httpClientOpts.path;
+        delete httpClientOpts.requestPath;
+        delete httpClientOpts.httpClientContext;
+
+        httpClient[opts.method](httpClientOpts, function() {
             interceptor.done(); // will throw assertion if endpoint is not intercepted
             testCallback();
         });
@@ -133,10 +148,10 @@ describe('Host Request', function () {
         });
 
         it('get request has custom user-agent', function (done) {
-            const userAgent = 'my-fun-app';
-            const opts = {
+            var userAgent = 'my-fun-app';
+            var opts = {
                 addonConfig: {
-                    userAgent,
+                    userAgent: userAgent
                 }
             };
             interceptRequest(done, function (uri, requestBody) {
@@ -202,6 +217,20 @@ describe('Host Request', function () {
             }, { path: '/some/path/on/host?q=~%20text'});
         });
 
+        it('get request has correct JWT qsh for encoded parameter passed via qs field', function (done) {
+            var query = { 'q' : '~ text'};
+            interceptRequest(done, function (uri, requestBody) {
+                var jwtToken = this.req.headers.authorization.slice(4);
+                var decoded = jwt.decode(jwtToken, clientSettings.clientKey, true);
+                var expectedQsh = jwt.createQueryStringHash(jwt.fromExpressRequest({
+                  'method': 'GET',
+                  'path'  : '/some/path/on/host',
+                  'query' : query
+                }), false, helper.productBaseUrl);
+                decoded.qsh.should.eql(expectedQsh);
+            }, { path: '/some/path/on/host', qs: query });
+        });
+
         it('get request for absolute url on host has Authorization header', function (done) {
             interceptRequest(done, function (uri, requestBody) {
                 this.req.headers.authorization.should.startWith('JWT ');
@@ -237,7 +266,7 @@ describe('Host Request', function () {
             interceptRequestAsUserByAccountId(done, function (uri, requestBody) {
                 authServiceMock.done();
                 this.req.headers.authorization.should.startWith('Bearer');
-            }, { userAccountId: '048abaf9-04ea-44d1-acb9-b37de6cc5d2f' });     
+            }, { userAccountId: '048abaf9-04ea-44d1-acb9-b37de6cc5d2f' });
         });
     });
 
