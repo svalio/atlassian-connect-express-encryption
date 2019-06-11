@@ -312,6 +312,25 @@ that links elsewhere in the host:
 <a href="{{hostBaseUrl}}/browse/JRA">Jira</a>
 ```
 
+### Events emitted
+#### All products
+* `host_settings_saved`: after `/installed` lifecycle, ACE tries to save the client information (baseUrl, clientKey, app key, puglinsVersion, productType, publicKey, serverVersion, sharedSecret) in storage. If successfuly saved, this event is emitted
+* `host_settings_not_saved`: after `/installed` lifecycle, ACE tries to save the client information in storage. If there's any error or problem, this event is emitted
+* `addon_registered`: after an ngrok tunnel is created, ACE will try to register or install the app in a Jira or Confluence product
+* `webhook_auth_verification_triggered`: ACE automatically registers webhooks and corresponding paths in the descriptor file, once it tries to authenticate this event is emitted
+* `webhook_auth_verification_successful`: ACE automatically registers webhooks and corresponding paths in the descriptor file, once it tries to authenticate and is successful, this event is emitted
+
+#### Jira/Confluence
+* `localtunnel_started`: event emitted after ACE successfully creates an ngrok tunnel
+* `addon_deregistered`: when ACE receives a `SIGTERM`, `SIGINT`, and `SIGUSR2` signals, it will deregister the app and this event is emitted
+
+To listen to an event:
+```
+addon.on(event, function() {
+                    //add something here
+            });
+```
+
 ## Recipes
 
 ### How to secure a route with JWT
