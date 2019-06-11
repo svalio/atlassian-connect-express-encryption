@@ -324,6 +324,13 @@ that links elsewhere in the host:
 * `localtunnel_started`: event emitted after ACE successfully creates an ngrok tunnel
 * `addon_deregistered`: when ACE receives a `SIGTERM`, `SIGINT`, and `SIGUSR2` signals, it will deregister the app and this event is emitted
 
+To listen to an event:
+```
+addon.on(event, function() {
+                    //add something here
+            });
+```
+
 ## Recipes
 
 ### How to secure a route with JWT
