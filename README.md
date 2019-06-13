@@ -160,8 +160,8 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
     //   "store": {
     //     "adapter": "sequelize",
     //     "dialect": "postgres",
-    //     "url": "postgres://localhost/my_addon_database"
-    //     "logging": function //optional - function that gets executed every time Sequelize would log something.
+    //     "url": "postgres://localhost/my_addon_database",
+    //     "logging": function, //optional - function that gets executed every time Sequelize would log something.
     //     "pool": {}           //optional - pool options you have that you may pass to sequelize adapter
     //   },
     //
