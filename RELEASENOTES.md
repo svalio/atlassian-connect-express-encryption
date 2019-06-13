@@ -1,5 +1,10 @@
 # Atlassian Connect for Express.js Release Notes
 
+## 3.4.2
+* Allow passing of Sequelize pool options
+* Alignment of Jira, Conf, and Bitbucket SDK
+* Documented events
+
 ## 3.4.0
 
 * Updates dependency libraries to fix `npm audit` warnings
