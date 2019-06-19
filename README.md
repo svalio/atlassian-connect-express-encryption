@@ -127,6 +127,10 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
   "development": {
     // This is the port your Express server will listen on
     "port": 3000,
+    
+    // To enable validation of descriptor on startup and every change of it,
+    // add the optional config validateDescriptor to true
+    "validateDescriptor": true,
 
     // atlassian-connect-express currently integrates with Sequelize for
     // persistence to store the host client information (i.e., client key,
@@ -178,6 +182,8 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
     // run the following command to add the proper support:
     //
     //   $ npm install --save pg
+    //
+    
   },
 
   // This is the production add-on configuration, which is enabled by setting

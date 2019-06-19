@@ -75,7 +75,7 @@ describe('Auto registration (UPM)', function () {
         return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
     }
 
-    function createAddon(hosts) {
+    function createAddon(hosts, opts) {
         addon = ac(app, {
             config: {
                 "development": {
@@ -83,7 +83,8 @@ describe('Auto registration (UPM)', function () {
                         adapter: 'teststore',
                         type: "memory"
                     },
-                    hosts
+                    hosts,
+                    opts
                 }
             }
         }, logger);
@@ -138,18 +139,46 @@ describe('Auto registration (UPM)', function () {
         });
     }).timeout(1000);
 
-    it('registration fails with remote host when ngrok unavailable', function (done) {
-        stubNgrokUnavailable();
+    it('validator works with an invalid connect descriptor', function (done) {
+        createAddon([helper.productBaseUrl]);
+        addon.descriptor = {
+            key: 'my-test-app-key',
+            name: 'My Test App Name',
+            description: 'My test app description.',
+            apiMigrtios: {gdpr: true}
+        }
 
-        createAddon(['http://admin:admin@example.atlassian.net/wiki']);
+        addon.validateDescriptor().then(function(results) {
+            assert(results.length > 0, 'should invalidate app descriptor');
+            done();
+        });
+    }).timeout(60000);
 
-        addon.register().then(
-            function onSuccess() {
-                done(new Error('Registration should have failed'));
-            },
-            function onError(err) {
-                assert(err.code === 'MODULE_NOT_FOUND');
-                done();
-            });
-    }).timeout(1000);
+    it('validator works with a valid connect descriptor', function (done) {
+        createAddon([helper.productBaseUrl]);
+        addon.descriptor = {
+            key: 'my-test-app-key',
+            name: 'My Test App Name',
+            description: 'My test app description.',
+            baseUrl: 'https://ngrok.io',
+            authentication: {type: 'jwt'},
+            modules: {
+                generalPages: [
+                    {
+                        key: 'hello-world-page-jira',
+                        location: 'system.top.navigation.bar',
+                        name: {
+                            value: 'Hello World'
+                        },
+                        url: '/hello-world'
+                    }
+                ]
+            }
+        }
+
+        addon.validateDescriptor().then(function(results) {
+            assert.strictEqual(results.length, 0);
+            done();
+        });
+    }).timeout(60000);
 });
