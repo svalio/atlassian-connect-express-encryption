@@ -11,7 +11,8 @@ var moment = require('moment');
 var sinon = require('sinon');
 var RSVP = require('rsvp');
 var requireOptional = require('../lib/internal/require-optional');
-var jiraGlobalSchema = require('./jira-global-schema')
+var jiraGlobalSchema = require('./jira-global-schema');
+var nock = require('nock');
 
 describe('Auto registration (UPM)', function () {
     var requireOptionalStub;
@@ -22,7 +23,6 @@ describe('Auto registration (UPM)', function () {
 
     beforeEach(function () {
         requireOptionalStub = sinon.stub(requireOptional, 'requireOptional');
-
         app = express();
         addon = {};
 
@@ -118,10 +118,6 @@ describe('Auto registration (UPM)', function () {
         requireOptionalStub.returns(RSVP.reject(error));
     }
 
-    function stubGlobalSchema() {
-        requireOptionalStub.returns(RSVP.resolve(jiraGlobalSchema));
-    }
-
     it('registration works with local host and does not involve ngrok', function (done) {
         createAddon([helper.productBaseUrl]);
         startServer(function () {
@@ -145,7 +141,6 @@ describe('Auto registration (UPM)', function () {
     }).timeout(1000);
 
     it('validator works with an invalid connect descriptor', function (done) {
-        stubGlobalSchema();
         createAddon([helper.productBaseUrl]);
         addon.descriptor = {
             key: 'my-test-app-key',
@@ -154,6 +149,10 @@ describe('Auto registration (UPM)', function () {
             apiMigrtios: {gdpr: true}
         }
 
+        nock('https://developer.atlassian.com')
+            .get('/static/connect/docs/latest/schema/jira-global-schema.json')
+            .reply(200, jiraGlobalSchema);
+
         addon.validateDescriptor().then(function(results) {
             assert(results.length > 0, 'should invalidate app descriptor');
             done();
@@ -161,7 +160,6 @@ describe('Auto registration (UPM)', function () {
     }).timeout(1000);
 
     it('validator works with a valid connect descriptor', function (done) {
-        stubGlobalSchema();
         createAddon([helper.productBaseUrl]);
         addon.descriptor = {
             key: 'my-test-app-key',
@@ -182,6 +180,10 @@ describe('Auto registration (UPM)', function () {
                 ]
             }
         }
+
+        nock('https://developer.atlassian.com')
+            .get('/static/connect/docs/latest/schema/jira-global-schema.json')
+            .reply(200, jiraGlobalSchema);
 
         addon.validateDescriptor().then(function(results) {
             assert.strictEqual(results.length, 0);
