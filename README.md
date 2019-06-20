@@ -128,7 +128,7 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
     // This is the port your Express server will listen on
     "port": 3000,
     
-    // To enable validation of descriptor on startup and every change of it,
+    // To enable validation of descriptor on startup and every time it changes,
     // add the optional config validateDescriptor to true
     "validateDescriptor": true,
 
