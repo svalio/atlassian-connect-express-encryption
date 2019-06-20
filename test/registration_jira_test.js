@@ -80,7 +80,7 @@ describe('Auto registration (UPM)', function () {
         return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
     }
 
-    function createAddon(hosts, opts) {
+    function createAddon(hosts) {
         addon = ac(app, {
             config: {
                 "development": {
@@ -88,8 +88,7 @@ describe('Auto registration (UPM)', function () {
                         adapter: 'teststore',
                         type: "memory"
                     },
-                    hosts,
-                    opts
+                    hosts
                 }
             }
         }, logger);
