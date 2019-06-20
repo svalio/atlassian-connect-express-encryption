@@ -56,6 +56,10 @@ describe('Auto registration (UPM)', function () {
         ac.store.register("teststore", function (logger, opts) {
             return require("../lib/store/sequelize")(logger, opts);
         });
+
+        nock('https://developer.atlassian.com')
+            .get('/static/connect/docs/latest/schema/jira-global-schema.json')
+            .reply(200, jiraGlobalSchema);
     });
 
     afterEach(function (done) {
@@ -149,10 +153,6 @@ describe('Auto registration (UPM)', function () {
             apiMigrtios: {gdpr: true}
         }
 
-        nock('https://developer.atlassian.com')
-            .get('/static/connect/docs/latest/schema/jira-global-schema.json')
-            .reply(200, jiraGlobalSchema);
-
         addon.validateDescriptor().then(function(results) {
             assert(results.length > 0, 'should invalidate app descriptor');
             done();
@@ -180,10 +180,6 @@ describe('Auto registration (UPM)', function () {
                 ]
             }
         }
-
-        nock('https://developer.atlassian.com')
-            .get('/static/connect/docs/latest/schema/jira-global-schema.json')
-            .reply(200, jiraGlobalSchema);
 
         addon.validateDescriptor().then(function(results) {
             assert.strictEqual(results.length, 0);
