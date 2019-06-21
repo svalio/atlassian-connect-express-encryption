@@ -1,6 +1,6 @@
 {
   "name": "atlassian-connect-express",
-  "version": "3.4.2",
+  "version": "3.4.3",
   "description": "Library for building Atlassian Add-ons on top of Express",
   "author": "Atlassian",
   "license": "Apache-2.0",
@@ -37,6 +37,7 @@
     "urijs": "^1.19.1"
   },
   "devDependencies": {
+    "atlassian-connect-validator": "0.0.9",
     "body-parser": "^1.19.0",
     "express": "^4.16.4",
     "extend": "^3.0.2",

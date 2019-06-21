@@ -11,6 +11,8 @@ var moment = require('moment');
 var sinon = require('sinon');
 var RSVP = require('rsvp');
 var requireOptional = require('../lib/internal/require-optional');
+var jiraGlobalSchema = require('./jira-global-schema');
+var nock = require('nock');
 
 describe('Auto registration (UPM)', function () {
     var requireOptionalStub;
@@ -21,7 +23,6 @@ describe('Auto registration (UPM)', function () {
 
     beforeEach(function () {
         requireOptionalStub = sinon.stub(requireOptional, 'requireOptional');
-
         app = express();
         addon = {};
 
@@ -55,6 +56,10 @@ describe('Auto registration (UPM)', function () {
         ac.store.register("teststore", function (logger, opts) {
             return require("../lib/store/sequelize")(logger, opts);
         });
+
+        nock('https://developer.atlassian.com')
+            .get('/static/connect/docs/latest/schema/jira-global-schema.json')
+            .reply(200, jiraGlobalSchema);
     });
 
     afterEach(function (done) {
@@ -138,18 +143,46 @@ describe('Auto registration (UPM)', function () {
         });
     }).timeout(1000);
 
-    it('registration fails with remote host when ngrok unavailable', function (done) {
-        stubNgrokUnavailable();
+    it('validator works with an invalid connect descriptor', function (done) {
+        createAddon([helper.productBaseUrl]);
+        addon.descriptor = {
+            key: 'my-test-app-key',
+            name: 'My Test App Name',
+            description: 'My test app description.',
+            apiMigrtios: {gdpr: true}
+        }
 
-        createAddon(['http://admin:admin@example.atlassian.net/wiki']);
+        addon.validateDescriptor().then(function(results) {
+            assert(results.length > 0, 'should invalidate app descriptor');
+            done();
+        });
+    }).timeout(1000);
 
-        addon.register().then(
-            function onSuccess() {
-                done(new Error('Registration should have failed'));
-            },
-            function onError(err) {
-                assert(err.code === 'MODULE_NOT_FOUND');
-                done();
-            });
+    it('validator works with a valid connect descriptor', function (done) {
+        createAddon([helper.productBaseUrl]);
+        addon.descriptor = {
+            key: 'my-test-app-key',
+            name: 'My Test App Name',
+            description: 'My test app description.',
+            baseUrl: 'https://ngrok.io',
+            authentication: {type: 'jwt'},
+            modules: {
+                generalPages: [
+                    {
+                        key: 'hello-world-page-jira',
+                        location: 'system.top.navigation.bar',
+                        name: {
+                            value: 'Hello World'
+                        },
+                        url: '/hello-world'
+                    }
+                ]
+            }
+        }
+
+        addon.validateDescriptor().then(function(results) {
+            assert.strictEqual(results.length, 0);
+            done();
+        });
     }).timeout(1000);
 });

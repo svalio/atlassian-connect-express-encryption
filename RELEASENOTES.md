@@ -1,4 +1,6 @@
 # Atlassian Connect for Express.js Release Notes
+## 3.4.3
+* Add descriptor validator - app developer should add a 'validateDescriptor' in config file to enable this in development mode
 
 ## 3.4.2
 * Allow passing of Sequelize pool options
