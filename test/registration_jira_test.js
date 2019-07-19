@@ -109,8 +109,8 @@ describe('Auto registration (UPM)', function () {
 
     function stubNgrokWorking() {
         requireOptionalStub.returns(RSVP.resolve({
-            connect: function (port, cb) {
-                cb(null, 'https://test.ngrok.io');
+            connect: function (port) {
+                return('https://test.ngrok.io');
             }
         }));
     }
