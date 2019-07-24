@@ -107,10 +107,18 @@ describe('Auto registration (UPM)', function () {
         }));
     }
 
-    function stubNgrokWorking() {
+    function stubNgrokV2() {
         requireOptionalStub.returns(RSVP.resolve({
             connect: function (port, cb) {
-                cb(null, 'https://test.ngrok.io');
+                return undefined;
+            }
+        }));
+    }
+
+    function stubNgrokWorking() {
+        requireOptionalStub.returns(RSVP.resolve({
+            connect: function (port) {
+                return RSVP.resolve('https://test.ngrok.io');
             }
         }));
     }
@@ -138,6 +146,21 @@ describe('Auto registration (UPM)', function () {
         createAddon(['http://admin:admin@example.atlassian.net/wiki']);
 
         addon.register().then(function () {
+            assert(requireOptionalStub.called, 'ngrok should be called');
+            done();
+        });
+    }).timeout(1000);
+
+    it('registration does not work with ngrok 2.x (error will print to console)', function (done) {
+        stubNgrokV2();
+        stubInstalledPluginsResponse('my-test-app-key')
+
+        createAddon(['http://admin:admin@example.atlassian.net/wiki']);
+
+        addon.register().then(function () {
+            fail('ngrok should not have succeeded');
+            done();
+        }).catch(function() {
             assert(requireOptionalStub.called, 'ngrok should be called');
             done();
         });

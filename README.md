@@ -92,7 +92,7 @@ Jira or Confluence host, re-register on changes to the descriptor, and de-regist
 
 To get this functionality, you will need to:
 
-* Install [ngrok](https://ngrok.com/): `npm install --save-dev ngrok@2`,
+* Install [ngrok](https://ngrok.com/): `npm install --save-dev ngrok`,
 * Create a file called `credentials.json`,
 * Copy and paste the contents of [this file](https://bitbucket.org/atlassian/atlassian-connect-express-template/src/master/credentials.json.sample),
 * Add `credentials.json` to the `.gitignore` file, and
