@@ -14,6 +14,11 @@ var requireOptional = require('../lib/internal/require-optional');
 var jiraGlobalSchema = require('./jira-global-schema');
 var nock = require('nock');
 
+// Helps failures be reported to the test framework
+RSVP.on('error', function(err) {
+    throw err;
+});
+
 describe('Auto registration (UPM)', function () {
     var requireOptionalStub;
     var requestGetStub;
@@ -158,7 +163,7 @@ describe('Auto registration (UPM)', function () {
         createAddon(['http://admin:admin@example.atlassian.net/wiki']);
 
         addon.register().then(function () {
-            fail('ngrok should not have succeeded');
+            assert.fail('ngrok should not have succeeded');
             done();
         }).catch(function() {
             assert(requireOptionalStub.called, 'ngrok should be called');
