@@ -11,6 +11,13 @@ var moment = require('moment');
 var sinon = require('sinon');
 var RSVP = require('rsvp');
 var requireOptional = require('../lib/internal/require-optional');
+var jiraGlobalSchema = require('./jira-global-schema');
+var nock = require('nock');
+
+// Helps failures be reported to the test framework
+RSVP.on('error', function(err) {
+    throw err;
+});
 
 describe('Auto registration (UPM)', function () {
     var requireOptionalStub;
@@ -21,7 +28,6 @@ describe('Auto registration (UPM)', function () {
 
     beforeEach(function () {
         requireOptionalStub = sinon.stub(requireOptional, 'requireOptional');
-
         app = express();
         addon = {};
 
@@ -55,6 +61,10 @@ describe('Auto registration (UPM)', function () {
         ac.store.register("teststore", function (logger, opts) {
             return require("../lib/store/sequelize")(logger, opts);
         });
+
+        nock('https://developer.atlassian.com')
+            .get('/static/connect/docs/latest/schema/jira-global-schema.json')
+            .reply(200, jiraGlobalSchema);
     });
 
     afterEach(function (done) {
@@ -102,10 +112,18 @@ describe('Auto registration (UPM)', function () {
         }));
     }
 
-    function stubNgrokWorking() {
+    function stubNgrokV2() {
         requireOptionalStub.returns(RSVP.resolve({
             connect: function (port, cb) {
-                cb(null, 'https://test.ngrok.io');
+                return undefined;
+            }
+        }));
+    }
+
+    function stubNgrokWorking() {
+        requireOptionalStub.returns(RSVP.resolve({
+            connect: function (port) {
+                return RSVP.resolve('https://test.ngrok.io');
             }
         }));
     }
@@ -138,18 +156,61 @@ describe('Auto registration (UPM)', function () {
         });
     }).timeout(1000);
 
-    it('registration fails with remote host when ngrok unavailable', function (done) {
-        stubNgrokUnavailable();
+    it('registration does not work with ngrok 2.x (error will print to console)', function (done) {
+        stubNgrokV2();
+        stubInstalledPluginsResponse('my-test-app-key')
 
         createAddon(['http://admin:admin@example.atlassian.net/wiki']);
 
-        addon.register().then(
-            function onSuccess() {
-                done(new Error('Registration should have failed'));
-            },
-            function onError(err) {
-                assert(err.code === 'MODULE_NOT_FOUND');
-                done();
-            });
+        addon.register().then(function () {
+            assert.fail('ngrok should not have succeeded');
+            done();
+        }).catch(function() {
+            assert(requireOptionalStub.called, 'ngrok should be called');
+            done();
+        });
+    }).timeout(1000);
+
+    it('validator works with an invalid connect descriptor', function (done) {
+        createAddon([helper.productBaseUrl]);
+        addon.descriptor = {
+            key: 'my-test-app-key',
+            name: 'My Test App Name',
+            description: 'My test app description.',
+            apiMigrtios: {gdpr: true}
+        }
+
+        addon.validateDescriptor().then(function(results) {
+            assert(results.length > 0, 'should invalidate app descriptor');
+            done();
+        });
+    }).timeout(1000);
+
+    it('validator works with a valid connect descriptor', function (done) {
+        createAddon([helper.productBaseUrl]);
+        addon.descriptor = {
+            key: 'my-test-app-key',
+            name: 'My Test App Name',
+            description: 'My test app description.',
+            baseUrl: 'https://ngrok.io',
+            authentication: {type: 'jwt'},
+            modules: {
+                generalPages: [
+                    {
+                        key: 'hello-world-page-jira',
+                        location: 'system.top.navigation.bar',
+                        name: {
+                            value: 'Hello World'
+                        },
+                        url: '/hello-world'
+                    }
+                ]
+            }
+        }
+
+        addon.validateDescriptor().then(function(results) {
+            assert.strictEqual(results.length, 0);
+            done();
+        });
     }).timeout(1000);
 });

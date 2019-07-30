@@ -1,4 +1,14 @@
 # Atlassian Connect for Express.js Release Notes
+## 3.5.0
+* Fixes dependency on ngrok 3, and drops support for ngrok 2
+
+## 3.4.3
+* Add descriptor validator - app developer should add a 'validateDescriptor' in config file to enable this in development mode
+
+## 3.4.2
+* Allow passing of Sequelize pool options
+* Alignment of Jira, Conf, and Bitbucket SDK
+* Documented events
 
 ## 3.4.0
 

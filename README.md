@@ -92,7 +92,7 @@ Jira or Confluence host, re-register on changes to the descriptor, and de-regist
 
 To get this functionality, you will need to:
 
-* Install [ngrok](https://ngrok.com/): `npm install --save-dev ngrok@2`,
+* Install [ngrok](https://ngrok.com/): `npm install --save-dev ngrok`,
 * Create a file called `credentials.json`,
 * Copy and paste the contents of [this file](https://bitbucket.org/atlassian/atlassian-connect-express-template/src/master/credentials.json.sample),
 * Add `credentials.json` to the `.gitignore` file, and
@@ -127,6 +127,10 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
   "development": {
     // This is the port your Express server will listen on
     "port": 3000,
+    
+    // To enable validation of descriptor on startup and every time it changes,
+    // add the optional config validateDescriptor to true
+    "validateDescriptor": true,
 
     // atlassian-connect-express currently integrates with Sequelize for
     // persistence to store the host client information (i.e., client key,
@@ -160,7 +164,9 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
     //   "store": {
     //     "adapter": "sequelize",
     //     "dialect": "postgres",
-    //     "url": "postgres://localhost/my_addon_database"
+    //     "url": "postgres://localhost/my_addon_database",
+    //     "logging": function, //optional - function that gets executed every time Sequelize would log something.
+    //     "pool": {}           //optional - pool options you have that you may pass to sequelize adapter
     //   },
     //
     // For MongoDB, use the following:
@@ -176,6 +182,8 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
     // run the following command to add the proper support:
     //
     //   $ npm install --save pg
+    //
+    
   },
 
   // This is the production add-on configuration, which is enabled by setting
@@ -310,6 +318,25 @@ that links elsewhere in the host:
 
 ```html
 <a href="{{hostBaseUrl}}/browse/JRA">Jira</a>
+```
+
+### Events emitted
+#### All products
+* `host_settings_saved`: after `/installed` lifecycle, ACE tries to save the client information (baseUrl, clientKey, app key, puglinsVersion, productType, publicKey, serverVersion, sharedSecret) in storage. If successfuly saved, this event is emitted
+* `host_settings_not_saved`: after `/installed` lifecycle, ACE tries to save the client information in storage. If there's any error or problem, this event is emitted
+* `addon_registered`: after an ngrok tunnel is created, ACE will try to register or install the app in a Jira or Confluence product
+* `webhook_auth_verification_triggered`: ACE automatically registers webhooks and corresponding paths in the descriptor file, once it tries to authenticate this event is emitted
+* `webhook_auth_verification_successful`: ACE automatically registers webhooks and corresponding paths in the descriptor file, once it tries to authenticate and is successful, this event is emitted
+
+#### Jira/Confluence
+* `localtunnel_started`: event emitted after ACE successfully creates an ngrok tunnel
+* `addon_deregistered`: when ACE receives a `SIGTERM`, `SIGINT`, and `SIGUSR2` signals, it will deregister the app and this event is emitted
+
+To listen to an event:
+```
+addon.on(event, function() {
+                    //add something here
+            });
 ```
 
 ## Recipes
