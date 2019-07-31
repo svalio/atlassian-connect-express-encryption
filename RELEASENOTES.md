@@ -1,5 +1,5 @@
 # Atlassian Connect for Express.js Release Notes
-#3.5.1
+## 3.5.1
 Security fixes
 
 ## 3.5.0
