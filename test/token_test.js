@@ -17,6 +17,7 @@ var USER_ID = 'admin';
 var USER_ACCOUNT_ID = "048abaf9-04ea-44d1-acb9-b37de6cc5d2f";
 var JWT_AUTH_RESPONDER_PATH = '/jwt_auth_responder';
 var CHECK_TOKEN_RESPONDER_PATH = '/check_token_responder';
+var ACJS_CDN = 'https://connect-cdn.atl-paas.net/all.js';
 
 describe('Token verification', function () {
     var server;
@@ -433,7 +434,7 @@ describe('Token verification', function () {
                 assert.equal(payload.clientKey, helper.installedPayload.clientKey);
                 assert.equal(payload.hostBaseUrl, helper.productBaseUrl);
                 assert.equal(payload.hostStylesheetUrl, hostResourceUrl(app, helper.productBaseUrl, 'css'));
-                assert.equal(payload.hostScriptUrl, hostResourceUrl(app, helper.productBaseUrl, 'js'));
+                assert.equal(payload.hostScriptUrl, ACJS_CDN);
                 assert.equal(payload.userAccountId, USER_ACCOUNT_ID);
                 assert.equal(payload.userId, USER_ID);
                 jwt.decode(payload.token, helper.installedPayload.sharedSecret);
@@ -479,7 +480,7 @@ describe('Token verification', function () {
                 assert.strictEqual(payload.clientKey, helper.installedPayload.clientKey);
                 assert.strictEqual(payload.hostBaseUrl, helper.productBaseUrl);
                 assert.strictEqual(payload.hostStylesheetUrl, hostResourceUrl(app, helper.productBaseUrl, 'css'));
-                assert.strictEqual(payload.hostScriptUrl, hostResourceUrl(app, helper.productBaseUrl, 'js'));
+                assert.strictEqual(payload.hostScriptUrl, ACJS_CDN);
                 assert.strictEqual(payload.userAccountId, USER_ACCOUNT_ID);
                 assert.deepStrictEqual(payload.context, context);
                 jwt.decode(payload.token, helper.installedPayload.sharedSecret);
