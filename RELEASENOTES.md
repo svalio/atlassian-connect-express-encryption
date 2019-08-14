@@ -1,4 +1,11 @@
 # Atlassian Connect for Express.js Release Notes
+
+## 3.5.2
+Security fixes - updated Bitbucket
+
+## 3.5.1
+Security fixes
+
 ## 3.5.0
 * Fixes dependency on ngrok 3, and drops support for ngrok 2
 
