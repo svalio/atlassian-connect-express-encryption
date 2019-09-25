@@ -1,5 +1,8 @@
 # Atlassian Connect for Express.js Release Notes
 
+## 4.0.1
+* Moved ngrok dependency back to dev
+
 ## 4.0.0
 * Corrected version and incrementing major version due to drop of ngrok 2 in support of 3 from ACE version 3.5.0 (breaking change)
 * Support for the qs parameter
