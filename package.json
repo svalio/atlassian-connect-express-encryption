@@ -1,6 +1,6 @@
 {
   "name": "atlassian-connect-express",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Library for building Atlassian Add-ons on top of Express",
   "author": "Atlassian",
   "license": "Apache-2.0",
@@ -30,7 +30,6 @@
     "md5": "^2.2.1",
     "moment": "^2.24.0",
     "mongodb": "^3.2.7",
-    "ngrok": "^3.2.4",
     "node-json-minify": "^1.0.0",
     "request": "^2.88.0",
     "rsvp": "^4.8.5",
@@ -43,6 +42,7 @@
     "express": "^4.17.1",
     "extend": "^3.0.2",
     "mocha": "^6.2.0",
+    "ngrok": "^3.2.4",
     "mongodb-memory-server": "^5.1.9",
     "nock": "^10.0.6",
     "should": "^13.2.3",
