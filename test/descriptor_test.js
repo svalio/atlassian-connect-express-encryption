@@ -19,7 +19,9 @@ describe('Descriptor', function () {
             vendorUrl: 'http://example.com',
             permissions: ['create_oauth_link'],
             documentationUrl: 'http://example.com',
-            development: {}
+            development: {
+                appKey: 'my-test-app-key'
+            }
         }
     };
 
