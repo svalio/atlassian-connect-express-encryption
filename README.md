@@ -154,7 +154,7 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
     //
     //   "store": {
     //     "adapter": "sequelize",
-    //     "dialect": "sqlite3",
+    //     "dialect": "sqlite",
     //     "storage": ":memory:"
     //   },
     //
