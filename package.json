@@ -35,7 +35,7 @@
     "rsvp": "^4.8.5",
     "sequelize": "^5.12.1",
     "uglify-js": "^2.8.29",
-    "urijs": "^1.19.1"
+    "urijs": "1.19.1"
   },
   "devDependencies": {
     "body-parser": "^1.19.0",
