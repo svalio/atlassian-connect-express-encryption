@@ -33,7 +33,7 @@
     "node-json-minify": "^1.0.0",
     "request": "^2.88.0",
     "rsvp": "^4.8.5",
-    "sequelize": "^5.12.1",
+    "sequelize": "^5.15.1",
     "uglify-js": "^2.8.29",
     "urijs": "1.19.1"
   },
