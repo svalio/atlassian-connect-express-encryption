@@ -2,8 +2,9 @@
 
 `atlassian-connect-express` (ACE) is a toolkit for creating
 [Atlassian Connect](https://developer.atlassian.com/display/AC/Atlassian+Connect) based Add-ons with
-[Node.js](http://nodejs.org/). Atlassian Connect is a distributed component model for creating Atlassian add-ons.
-Add-ons built with Atlassian Connect extend Atlassian applications over standard web protocols and APIs.
+[Node.js](http://nodejs.org/). Atlassian Connect is a distributed component model for creating add-ons.
+Add-ons built with Atlassian Connect extend Atlassian cloud-based applications over standard web protocols and APIs.
+To build add-ons for Atlassian's server (on-premises) products, refer to the [server developer documentation](https://developer.atlassian.com/server/). 
 
 ACE is the **officially supported** Node.js framework for Atlassian Connect. Please read our documentation to see the other
 supported and community provided
@@ -551,15 +552,13 @@ Several tools exist to help snoop the HTTP traffic between your add-on and the h
 
 ## Getting help
 
-If you need help using Express, see the [API reference](https://expressjs.com/en/4x/api.html) or developer's guide.
+If you need help using Express.js, see the [API reference](https://expressjs.com/en/4x/api.html) or developer's guide.
 
 If you need help developing against Atlassian products, see the [Atlassian Developer](https://developer.atlassian.com/) site.
 
-If you need help using functionality provided by ACE, please ask in the
-[Atlassian Developer Community](https://community.developer.atlassian.com/).
+If you need help using functionality provided by ACE, or would like to report a problem with the toolkit, please post in the 
+[Atlassian Developer Community](https://community.developer.atlassian.com/c/atlassian-developer-tools).
 
-If you want to report a problem, please raise a support request in Atlassian Ecosystem's
-[Developer Service Desk](http://go.atlassian.com/ecosystem-developer-support).
 
 ## Contributing
 
