@@ -1,29 +1,27 @@
-var helper = require('./test_helper');
-var should = require('should');
-var http = require('http');
-var express = require('express');
-var app = express();
-var ac = require('../index');
 var config = require('../lib/internal/config');
-var logger = require('./logger');
 
 describe('Configuration', function () {
 
     var createConfig = function (baseConfig, mode, overrides) {
+        // eslint-disable-next-line mocha/no-setup-in-describe
         if (arguments.length === 0) {
             baseConfig = {};
             mode = "development";
             overrides = {};
+            // eslint-disable-next-line mocha/no-setup-in-describe
         } else if (arguments.length === 1) {
             overrides = baseConfig;
             mode = "development";
             baseConfig = {};
+            // eslint-disable-next-line mocha/no-setup-in-describe
         } else if (arguments.length === 2) {
             overrides = mode;
             mode = "development";
         }
         var opts = {};
+        // eslint-disable-next-line mocha/no-setup-in-describe
         opts[mode] = overrides;
+        // eslint-disable-next-line mocha/no-setup-in-describe
         return config(baseConfig, mode, opts);
     };
 

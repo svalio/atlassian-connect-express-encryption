@@ -138,6 +138,7 @@ describe('Webhook', function () {
         waitForRegistrationThenFireWebhook();
     }
 
+    // eslint-disable-next-line no-unused-vars
     function assertCorrectWebhookResult(err, res, body) {
         assert.equal(err, null);
         assert.equal(res.statusCode, 204, res.body);
@@ -160,6 +161,7 @@ describe('Webhook', function () {
         var successful = sinon.spy();
         addon.once('webhook_auth_verification_successful', successful);
 
+        // eslint-disable-next-line no-unused-vars
         addon.once('plugin_test_hook', function (key, body, req) {
             assert(triggered.called);
             assert(successful.called);
@@ -177,6 +179,7 @@ describe('Webhook', function () {
         addon.once('webhook_auth_verification_successful', successful);
         addon.once('webhook_auth_verification_failed', failed);
 
+        // eslint-disable-next-line no-unused-vars
         addon.once('plugin_test_hook', function (key, body, req) {
             assert(triggered.called);
             assert(!successful.called);

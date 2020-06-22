@@ -1,11 +1,8 @@
-var helper = require('./test_helper');
 var assert = require('assert');
-var http = require('http');
 var app = require('express')();
 var ac = require('../index');
 var logger = require('./logger');
 var _ = require('lodash');
-var addon = {};
 
 describe('Descriptor', function () {
     var addon;

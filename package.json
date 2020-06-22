@@ -39,11 +39,13 @@
   },
   "devDependencies": {
     "body-parser": "^1.19.0",
+    "eslint": "^7.3.0",
+    "eslint-plugin-mocha": "^7.0.1",
     "express": "^4.17.1",
     "extend": "^3.0.2",
     "mocha": "^6.2.0",
-    "ngrok": "^3.2.4",
     "mongodb-memory-server": "^5.1.9",
+    "ngrok": "^3.2.4",
     "nock": "^10.0.6",
     "should": "^13.2.3",
     "should-http": "^0.1.1",
@@ -56,6 +58,7 @@
   "scripts": {
     "preversion": "npm test",
     "postversion": "git push && git push --tags",
-    "test": "mocha"
+    "test": "mocha",
+    "lint": "eslint lib/**/**/*.js test/**/*.js"
   }
 }

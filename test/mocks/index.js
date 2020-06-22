@@ -19,6 +19,7 @@ module.exports = (function () {
             ACCESS_TOKEN: OAUTH_ACCESS_TOKEN
         },
 
+        // eslint-disable-next-line no-unused-vars
         store: function (clientSettings, clientKey) {
             var _store = {};
             _store[clientSettings.clientKey] = {
