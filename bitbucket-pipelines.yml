@@ -8,3 +8,4 @@ pipelines:
           - npm --version
           - npm install
           - npm test
+          - npm run lint

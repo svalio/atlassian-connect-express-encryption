@@ -103,6 +103,7 @@ describe('Auto registration (UPM)', function () {
         server = http.createServer(app).listen(helper.addonPort, cb);
     }
 
+    // eslint-disable-next-line no-unused-vars
     function stubInstalledPluginsResponse(key) {
         requestGetStub = sinon.stub(request, 'get');
         requestGetStub.callsArgWith(1, null, null, JSON.stringify({
@@ -114,6 +115,7 @@ describe('Auto registration (UPM)', function () {
 
     function stubNgrokV2() {
         requireOptionalStub.returns(RSVP.resolve({
+            // eslint-disable-next-line no-unused-vars
             connect: function (port, cb) {
                 return undefined;
             }
@@ -122,12 +124,14 @@ describe('Auto registration (UPM)', function () {
 
     function stubNgrokWorking() {
         requireOptionalStub.returns(RSVP.resolve({
+            // eslint-disable-next-line no-unused-vars
             connect: function (port) {
                 return RSVP.resolve('https://test.ngrok.io');
             }
         }));
     }
 
+    // eslint-disable-next-line no-unused-vars
     function stubNgrokUnavailable() {
         const error = new Error("Cannot find module 'ngrok' (no worries, this error is thrown on purpose by stubNgrokUnavailable in test)");
         error.code = 'MODULE_NOT_FOUND';

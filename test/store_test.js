@@ -19,6 +19,7 @@ stores.forEach(function (store) {
 
     describe('Store ' + store, function () {
         var server = {}, dbServer = null;
+        // eslint-disable-next-line mocha/no-setup-in-describe
         var oldACOpts = process.env.AC_OPTS;
 
         var storeGetSpy;
@@ -226,7 +227,6 @@ stores.forEach(function (store) {
                     });
                 });
                 it('should not allow deleting a non-string key', function (done) {
-                    var value = 'barf';
                     addon.settings.del(42, helper.installedPayload.clientKey).then(function () {
                         done(new Error('Expected non-string key deletion to be disallowed'));
                     }).catch(function () {
@@ -241,8 +241,7 @@ stores.forEach(function (store) {
                         done();
                     });
                 });
-                it('should not allow deleting a non-string key', function (done) {
-                    var value = 'barf';
+                it('should not allow deleting a non-string clientKey', function (done) {
                     addon.settings.del('additionalSetting4', 42).then(function () {
                         done(new Error('Expected non-string clientKey deletion to be disallowed'));
                     }).catch(function () {

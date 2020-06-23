@@ -1,7 +1,5 @@
 var OAuth2 = require('../lib/internal/oauth2');
 var mocks = require('./mocks');
-var RSVP = require('rsvp');
-var md5 = require('md5');
 var moment = require('moment');
 var should = require('should');
 var _ = require('lodash');
@@ -19,7 +17,9 @@ describe('OAuth2', function () {
             descriptor: {
                 scopes: ['READ', 'WRITE']
             },
+            // eslint-disable-next-line mocha/no-setup-in-describe
             logger: require('./logger'),
+            // eslint-disable-next-line mocha/no-setup-in-describe
             settings: mocks.store(clientSettings, clientSettings.clientKey)
         }
     };
@@ -65,6 +65,7 @@ describe('OAuth2', function () {
 
             var addon = mockAddon();
             var oauth2 = new OAuth2(addon);
+            // eslint-disable-next-line no-unused-vars
             oauth2.getUserBearerToken('BruceWayne', addon.descriptor.scopes, clientSettings).then(function (token) {
                 authServiceMock.done();
 
@@ -113,6 +114,7 @@ describe('OAuth2', function () {
         });
 
         it('bypasses token cache if expired', function (done) {
+            // eslint-disable-next-line no-unused-vars
             var authServiceMock = mocks.oauth2.service();
 
             var addon = mockAddon();
