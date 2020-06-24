@@ -122,7 +122,7 @@ describe("Webhook", function() {
   function fireTestWebhook(route, body, assertWebhookResult, createJwtToken) {
     const url = helper.addonBaseUrl + route;
 
-    var waitForRegistrationThenFireWebhook = function() {
+    const waitForRegistrationThenFireWebhook = function() {
       if (addonRegistered) {
         fireWebhook();
       } else {
@@ -138,7 +138,7 @@ describe("Webhook", function() {
       }
     };
 
-    var fireWebhook = function() {
+    const fireWebhook = function() {
       request.post(
         {
           url: url,
