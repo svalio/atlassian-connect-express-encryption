@@ -1,21 +1,21 @@
-var helper = require("./test_helper");
-var assert = require("assert");
-var http = require("http");
-var express = require("express");
-var bodyParser = require("body-parser");
-var app = express();
-var ac = require("../index");
-var request = require("request");
-var logger = require("./logger");
-var jwt = require("atlassian-jwt");
-var sinon = require("sinon");
-var moment = require("moment");
-var addon = {};
+const helper = require("./test_helper");
+const assert = require("assert");
+const http = require("http");
+const express = require("express");
+const bodyParser = require("body-parser");
+const app = express();
+const ac = require("../index");
+const request = require("request");
+const logger = require("./logger");
+const jwt = require("atlassian-jwt");
+const sinon = require("sinon");
+const moment = require("moment");
+let addon = {};
 
 describe("Webhook", function() {
-  var server;
-  var hostServer;
-  var addonRegistered = false;
+  let server;
+  let hostServer;
+  let addonRegistered = false;
 
   before(function(done) {
     ac.store.register("teststore", function(logger, opts) {
@@ -26,7 +26,7 @@ describe("Webhook", function() {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
 
-    var installedPayload = helper.installedPayload;
+    const installedPayload = helper.installedPayload;
     installedPayload.baseUrl = "http://admin:admin@localhost:3003";
 
     addon = ac(
@@ -45,7 +45,7 @@ describe("Webhook", function() {
       logger
     );
 
-    var host = express();
+    const host = express();
     // mock host
     host.get("/rest/plugins/1.0/", function(req, res) {
       res.setHeader("upm-token", "123");
@@ -81,7 +81,7 @@ describe("Webhook", function() {
   });
 
   function createValidJwtToken(req) {
-    var jwtPayload = {
+    const jwtPayload = {
       iss: helper.installedPayload.clientKey,
       iat: moment()
         .utc()
@@ -100,7 +100,7 @@ describe("Webhook", function() {
   }
 
   function createExpiredJwtToken(req) {
-    var jwtPayload = {
+    const jwtPayload = {
       iss: helper.installedPayload.clientKey,
       iat: moment()
         .utc()
@@ -120,7 +120,7 @@ describe("Webhook", function() {
   }
 
   function fireTestWebhook(route, body, assertWebhookResult, createJwtToken) {
-    var url = helper.addonBaseUrl + route;
+    const url = helper.addonBaseUrl + route;
 
     var waitForRegistrationThenFireWebhook = function() {
       if (addonRegistered) {
@@ -130,7 +130,7 @@ describe("Webhook", function() {
       }
     };
 
-    var requestMock = {
+    const requestMock = {
       method: "post",
       path: route,
       query: {
@@ -175,9 +175,9 @@ describe("Webhook", function() {
   });
 
   it("should perform auth verification for webhooks", function(done) {
-    var triggered = sinon.spy();
+    const triggered = sinon.spy();
     addon.once("webhook_auth_verification_triggered", triggered);
-    var successful = sinon.spy();
+    const successful = sinon.spy();
     addon.once("webhook_auth_verification_successful", successful);
 
     // eslint-disable-next-line no-unused-vars
@@ -191,9 +191,9 @@ describe("Webhook", function() {
   });
 
   it("webhook with expired JWT claim should not be processed", function(done) {
-    var triggered = sinon.spy();
-    var successful = sinon.spy();
-    var failed = sinon.spy();
+    const triggered = sinon.spy();
+    const successful = sinon.spy();
+    const failed = sinon.spy();
     addon.once("webhook_auth_verification_triggered", triggered);
     addon.once("webhook_auth_verification_successful", successful);
     addon.once("webhook_auth_verification_failed", failed);

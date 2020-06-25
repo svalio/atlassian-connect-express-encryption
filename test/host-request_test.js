@@ -1,22 +1,22 @@
-var helper = require("./test_helper");
-var mocks = require("./mocks");
-var config = require("../lib/internal/config");
-var HostRequest = require("../lib/internal/host-request");
-var nock = require("nock");
-var should = require("should");
-var jwt = require("atlassian-jwt");
-var extend = require("extend");
-var _ = require("lodash");
+const helper = require("./test_helper");
+const mocks = require("./mocks");
+const config = require("../lib/internal/config");
+const HostRequest = require("../lib/internal/host-request");
+const nock = require("nock");
+const should = require("should");
+const jwt = require("atlassian-jwt");
+const extend = require("extend");
+const _ = require("lodash");
 
 describe("Host Request", function() {
-  var clientSettings = {
+  const clientSettings = {
     clientKey: "test-client-key",
     oauthClientId: "oauth-client-id",
     sharedSecret: "shared-secret",
     baseUrl: "https://test.atlassian.net"
   };
 
-  var createAddonConfig = function(opts) {
+  const createAddonConfig = function(opts) {
     // eslint-disable-next-line mocha/no-setup-in-describe
     opts = extend(
       {
@@ -33,7 +33,7 @@ describe("Host Request", function() {
     });
   };
 
-  var mockAddon = function(addonConfig) {
+  const mockAddon = function(addonConfig) {
     if (!addonConfig) {
       addonConfig = {};
     }
@@ -60,12 +60,12 @@ describe("Host Request", function() {
       addonConfig = {};
     }
 
-    var a = mockAddon(addonConfig);
+    const a = mockAddon(addonConfig);
     return new HostRequest(a, context, clientSettings.clientKey);
   }
 
   function interceptRequest(testCallback, replyCallback, options) {
-    var opts = extend(
+    const opts = extend(
       {
         baseUrl: clientSettings.baseUrl,
         method: "get",
@@ -82,20 +82,20 @@ describe("Host Request", function() {
       opts.uri = opts.requestPath;
     }
 
-    var interceptor = nock(opts.baseUrl)[opts.method](opts.path);
+    let interceptor = nock(opts.baseUrl)[opts.method](opts.path);
 
     if (opts.qs) {
       interceptor = interceptor.query(opts.qs);
     }
     interceptor = interceptor.reply(replyCallback);
 
-    var httpClient = getHttpClient(opts.addonConfig, opts.httpClientContext);
+    let httpClient = getHttpClient(opts.addonConfig, opts.httpClientContext);
 
     if (opts.httpClientWrapper) {
       httpClient = opts.httpClientWrapper(httpClient);
     }
 
-    var httpClientOpts = _.cloneDeep(opts);
+    const httpClientOpts = _.cloneDeep(opts);
     delete httpClientOpts.baseUrl;
     delete httpClientOpts.method;
     delete httpClientOpts.path;
@@ -109,9 +109,9 @@ describe("Host Request", function() {
   }
 
   function interceptRequestAsUser(testCallback, replyCallback, options) {
-    var userKey = options.userKey;
+    const userKey = options.userKey;
     delete options.userKey;
-    var opts = extend({}, options, {
+    const opts = extend({}, options, {
       httpClientWrapper: function(httpClient) {
         return httpClient.asUser(userKey);
       }
@@ -124,9 +124,9 @@ describe("Host Request", function() {
     replyCallback,
     options
   ) {
-    var userAccountId = options.userAccountId;
+    const userAccountId = options.userAccountId;
     delete options.userAccountId;
-    var opts = extend({}, options, {
+    const opts = extend({}, options, {
       httpClientWrapper: function(httpClient) {
         return httpClient.asUserByAccountId(userAccountId);
       }
@@ -156,7 +156,7 @@ describe("Host Request", function() {
     });
 
     it("get request has user-agent version set to package version", function(done) {
-      var aceVersion = require("../package.json").version;
+      const aceVersion = require("../package.json").version;
       // eslint-disable-next-line no-unused-vars
       interceptRequest(done, function(uri, requestBody) {
         this.req.headers["user-agent"].should.startWith(
@@ -166,8 +166,8 @@ describe("Host Request", function() {
     });
 
     it("get request has custom user-agent", function(done) {
-      var userAgent = "my-fun-app";
-      var opts = {
+      const userAgent = "my-fun-app";
+      const opts = {
         addonConfig: {
           userAgent: userAgent
         }
@@ -184,7 +184,7 @@ describe("Host Request", function() {
     });
 
     it("post request preserves custom header", function(done) {
-      var interceptor = nock(clientSettings.baseUrl)
+      const interceptor = nock(clientSettings.baseUrl)
         .post("/some/path")
         // eslint-disable-next-line no-unused-vars
         .reply(function(uri, requestBody) {
@@ -220,9 +220,9 @@ describe("Host Request", function() {
       interceptRequest(
         done,
         function() {
-          var jwtToken = this.req.headers.authorization.slice(4);
-          var clientKey = clientSettings.clientKey;
-          var decoded = jwt.decode(jwtToken, clientKey, true);
+          const jwtToken = this.req.headers.authorization.slice(4);
+          const clientKey = clientSettings.clientKey;
+          const decoded = jwt.decode(jwtToken, clientKey, true);
           decoded.sub.should.eql(clientKey);
         },
         {
@@ -245,9 +245,9 @@ describe("Host Request", function() {
       interceptRequest(
         done,
         function() {
-          var jwtToken = this.req.headers.authorization.slice(4);
-          var decoded = jwt.decode(jwtToken, clientSettings.clientKey, true);
-          var expectedQsh = jwt.createQueryStringHash(
+          const jwtToken = this.req.headers.authorization.slice(4);
+          const decoded = jwt.decode(jwtToken, clientSettings.clientKey, true);
+          const expectedQsh = jwt.createQueryStringHash(
             jwt.fromExpressRequest({
               method: "GET",
               path: "/some/path/on/host",
@@ -263,14 +263,14 @@ describe("Host Request", function() {
     });
 
     it("get request has correct JWT qsh for encoded parameter passed via qs field", function(done) {
-      var query = { q: "~ text" };
+      const query = { q: "~ text" };
       // eslint-disable-next-line no-unused-vars
       interceptRequest(
         done,
         function() {
-          var jwtToken = this.req.headers.authorization.slice(4);
-          var decoded = jwt.decode(jwtToken, clientSettings.clientKey, true);
-          var expectedQsh = jwt.createQueryStringHash(
+          const jwtToken = this.req.headers.authorization.slice(4);
+          const decoded = jwt.decode(jwtToken, clientSettings.clientKey, true);
+          const expectedQsh = jwt.createQueryStringHash(
             jwt.fromExpressRequest({
               method: "GET",
               path: "/some/path/on/host",
@@ -310,7 +310,7 @@ describe("Host Request", function() {
 
   describe("User impersonation requests", function() {
     it("Request as user does not add JWT authorization header", function(done) {
-      var authServiceMock = mocks.oauth2.service();
+      const authServiceMock = mocks.oauth2.service();
       // eslint-disable-next-line no-unused-vars
       interceptRequestAsUser(
         done,
@@ -323,7 +323,7 @@ describe("Host Request", function() {
     });
 
     it("Request as user adds a Bearer authorization header", function(done) {
-      var authServiceMock = mocks.oauth2.service();
+      const authServiceMock = mocks.oauth2.service();
       // eslint-disable-next-line no-unused-vars
       interceptRequestAsUser(
         done,
@@ -336,7 +336,7 @@ describe("Host Request", function() {
     });
 
     it("Request as user adds a Bearer authorization header when using account id", function(done) {
-      var authServiceMock = mocks.oauth2.service();
+      const authServiceMock = mocks.oauth2.service();
       // eslint-disable-next-line no-unused-vars
       interceptRequestAsUserByAccountId(
         done,
@@ -352,7 +352,7 @@ describe("Host Request", function() {
   describe("Form requests", function() {
     it("post request with form sets form data", function(done) {
       // eslint-disable-next-line no-unused-vars
-      var interceptor = nock(clientSettings.baseUrl)
+      const interceptor = nock(clientSettings.baseUrl)
         .post("/some/path")
         .reply(200);
 
@@ -378,11 +378,11 @@ describe("Host Request", function() {
 
     it("post requests using multipartFormData have the right format", function(done) {
       // eslint-disable-next-line no-unused-vars
-      var interceptor = nock(clientSettings.baseUrl)
+      const interceptor = nock(clientSettings.baseUrl)
         .post("/some/path")
         .reply(200);
 
-      var someData = "some data";
+      const someData = "some data";
       getHttpClient()
         .post({
           url: "/some/path",
@@ -399,11 +399,11 @@ describe("Host Request", function() {
 
     it("post requests using the deprecated form parameter still have the right format", function(done) {
       // eslint-disable-next-line no-unused-vars
-      var interceptor = nock(clientSettings.baseUrl)
+      const interceptor = nock(clientSettings.baseUrl)
         .post("/some/path")
         .reply(200);
 
-      var someData = "some data";
+      const someData = "some data";
       getHttpClient()
         .post({
           url: "/some/path",
@@ -425,7 +425,7 @@ describe("Host Request", function() {
 
     it("post requests using urlEncodedFormData have the right format", function(done) {
       // eslint-disable-next-line no-unused-vars
-      var interceptor = nock(clientSettings.baseUrl)
+      const interceptor = nock(clientSettings.baseUrl)
         .post("/some/path")
         .reply(200);
 
@@ -444,7 +444,7 @@ describe("Host Request", function() {
 
     it("post request with undefined clientKey returns promise reject", function(done) {
       // eslint-disable-next-line no-unused-vars
-      var interceptor = nock(clientSettings.baseUrl)
+      const interceptor = nock(clientSettings.baseUrl)
         .post("/some/path")
         .reply(200);
 

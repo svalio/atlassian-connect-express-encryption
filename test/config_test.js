@@ -1,7 +1,7 @@
-var config = require("../lib/internal/config");
+const config = require("../lib/internal/config");
 
 describe("Configuration", function() {
-  var createConfig = function(baseConfig, mode, overrides) {
+  const createConfig = function(baseConfig, mode, overrides) {
     // eslint-disable-next-line mocha/no-setup-in-describe
     if (arguments.length === 0) {
       baseConfig = {};
@@ -17,7 +17,7 @@ describe("Configuration", function() {
       overrides = mode;
       mode = "development";
     }
-    var opts = {};
+    const opts = {};
     // eslint-disable-next-line mocha/no-setup-in-describe
     opts[mode] = overrides;
     // eslint-disable-next-line mocha/no-setup-in-describe
@@ -25,7 +25,7 @@ describe("Configuration", function() {
   };
 
   it("should allow you to disable re-registration on atlassian-connect.json change", function(done) {
-    var config = createConfig({
+    const config = createConfig({
       watch: false
     });
     config.watch().should.be.false();
@@ -33,7 +33,7 @@ describe("Configuration", function() {
   });
 
   it("should allow prefer env values over globals", function(done) {
-    var config = createConfig(
+    const config = createConfig(
       {
         customShadowed: "global"
       },
@@ -46,7 +46,7 @@ describe("Configuration", function() {
   });
 
   it("should allow access to custom global values", function(done) {
-    var config = createConfig(
+    const config = createConfig(
       {
         customGlobal: "global"
       },
@@ -57,7 +57,7 @@ describe("Configuration", function() {
   });
 
   it("should allow access to custom env-specific values", function(done) {
-    var config = createConfig({
+    const config = createConfig({
       customEnv: "bar"
     });
     config.customEnv().should.be.eql("bar");
@@ -66,13 +66,13 @@ describe("Configuration", function() {
 
   describe("Product", function() {
     it("should default to jira", function(done) {
-      var config = createConfig();
+      const config = createConfig();
       config.product().id.should.be.eql("jira");
       done();
     });
 
     it("should read type jira from config", function(done) {
-      var config = createConfig({
+      const config = createConfig({
         product: "jira"
       });
       config.product().id.should.be.eql("jira");
@@ -83,7 +83,7 @@ describe("Configuration", function() {
     });
 
     it("should read type confluence from config", function(done) {
-      var config = createConfig({
+      const config = createConfig({
         product: "confluence"
       });
       config.product().id.should.be.eql("confluence");
@@ -95,7 +95,7 @@ describe("Configuration", function() {
     });
 
     it("should read type confluence from global config", function(done) {
-      var config = createConfig(
+      const config = createConfig(
         {
           product: "confluence"
         },
@@ -113,7 +113,7 @@ describe("Configuration", function() {
     });
 
     it("should read type bitbucket from config", function(done) {
-      var config = createConfig({
+      const config = createConfig({
         product: "bitbucket"
       });
       config.product().id.should.be.eql("bitbucket");
@@ -125,7 +125,7 @@ describe("Configuration", function() {
     });
 
     it("should not allow type hipchat from config", function(done) {
-      var config = createConfig({
+      const config = createConfig({
         product: "hipchat"
       });
       config.product.should.throw();
@@ -133,7 +133,7 @@ describe("Configuration", function() {
     });
 
     it("should not allow unknown type from config", function(done) {
-      var config = createConfig({
+      const config = createConfig({
         product: "chatty"
       });
       config.product.should.throw();
@@ -153,25 +153,25 @@ describe("Configuration", function() {
     });
 
     it("should accept fully qualified domain names", function(done) {
-      var cfg = createWhiteListConfig("*.atlassian.net");
+      const cfg = createWhiteListConfig("*.atlassian.net");
       matches(cfg, "connect.atlassian.net").should.be.true();
       done();
     });
 
     it("should not accept partial domain name matches", function(done) {
-      var cfg = createWhiteListConfig("*.jira.com");
+      const cfg = createWhiteListConfig("*.jira.com");
       matches(cfg, "test.jira.com.hh.ht").should.be.false();
       done();
     });
 
     it("should not accept subdomains", function(done) {
-      var cfg = createWhiteListConfig("*.jira.com");
+      const cfg = createWhiteListConfig("*.jira.com");
       matches(cfg, "foo.test.jira.com").should.be.false();
       done();
     });
 
     it("should accept multiple comma separated patterns", function(done) {
-      var cfg = createWhiteListConfig("*.jira.com, *.atlassian.net");
+      const cfg = createWhiteListConfig("*.jira.com, *.atlassian.net");
       matches(cfg, "connect.jira.com").should.be.true();
       matches(cfg, "connect.atlassian.net").should.be.true();
       matches(cfg, "connect.jira-dev.com").should.be.false();
@@ -179,7 +179,7 @@ describe("Configuration", function() {
     });
 
     it("should default to ['*.atlassian.net'] in production", function(done) {
-      var defaultProdCfg = createConfig({}, "production", {});
+      const defaultProdCfg = createConfig({}, "production", {});
       defaultProdCfg.whitelist().should.deepEqual(["*.atlassian.net"]);
       done();
     });

@@ -1,34 +1,34 @@
-var helper = require("./test_helper");
-var should = require("should");
-var http = require("http");
-var express = require("express");
-var bodyParser = require("body-parser");
-var request = require("request");
-var RSVP = require("rsvp");
-var Sequelize = require("sequelize");
-var logger = require("./logger");
-var sinon = require("sinon");
-var MongodbMemoryServer = require("mongodb-memory-server").default;
+const helper = require("./test_helper");
+const should = require("should");
+const http = require("http");
+const express = require("express");
+const bodyParser = require("body-parser");
+const request = require("request");
+const RSVP = require("rsvp");
+const Sequelize = require("sequelize");
+const logger = require("./logger");
+const sinon = require("sinon");
+const MongodbMemoryServer = require("mongodb-memory-server").default;
 
-var stores = ["sequelize", "mongodb"];
+const stores = ["sequelize", "mongodb"];
 
 stores.forEach(function(store) {
-  var app = express();
-  var ac = require("../index");
-  var addon = {};
+  const app = express();
+  const ac = require("../index");
+  let addon = {};
 
   describe("Store " + store, function() {
-    var server = {},
+    let server = {},
       dbServer = null;
     // eslint-disable-next-line mocha/no-setup-in-describe
-    var oldACOpts = process.env.AC_OPTS;
+    const oldACOpts = process.env.AC_OPTS;
 
-    var storeGetSpy;
-    var storeSetSpy;
-    var storeDelSpy;
+    let storeGetSpy;
+    let storeSetSpy;
+    let storeDelSpy;
 
     before(function(done) {
-      var self = this;
+      const self = this;
       this.sandbox = sinon.createSandbox();
       process.env.AC_OPTS = "no-auth";
       app.set("env", "development");
@@ -52,14 +52,14 @@ stores.forEach(function(store) {
       });
 
       ac.store.register("teststore", function(logger, opts) {
-        var Store = require("../lib/store/" + store)();
+        const Store = require("../lib/store/" + store)();
         storeGetSpy = self.sandbox.spy(Store.prototype, "get");
         storeSetSpy = self.sandbox.spy(Store.prototype, "set");
         storeDelSpy = self.sandbox.spy(Store.prototype, "del");
         return new Store(logger, opts);
       });
 
-      var storeOptsPromise;
+      let storeOptsPromise;
       switch (store) {
         case "sequelize":
           storeOptsPromise = RSVP.resolve({
@@ -146,8 +146,8 @@ stores.forEach(function(store) {
                 .getAllClientInfos()
                 .then(function(clientInfos) {
                   clientInfos.should.have.length(initialClientInfos.length + 1);
-                  var latestClientInfo = clientInfos[clientInfos.length - 1];
-                  var correctPayload = latestClientInfo["correctPayload"];
+                  const latestClientInfo = clientInfos[clientInfos.length - 1];
+                  const correctPayload = latestClientInfo["correctPayload"];
                   correctPayload.should.be.true();
                   done();
                 });
@@ -160,7 +160,7 @@ stores.forEach(function(store) {
     });
 
     it("should allow storing arbitrary key/values as a JSON string", function(done) {
-      var value = '{"someKey": "someValue"}';
+      const value = '{"someKey": "someValue"}';
       addon.settings
         .set("arbitrarySetting", value, helper.installedPayload.clientKey)
         .then(
@@ -193,7 +193,7 @@ stores.forEach(function(store) {
     });
 
     it("should allow storing arbitrary key/values", function(done) {
-      var value = "barf";
+      const value = "barf";
       addon.settings
         .set("arbitrarySetting3", value, helper.installedPayload.clientKey)
         .then(
@@ -212,7 +212,7 @@ stores.forEach(function(store) {
         it("should allow storage of arbitrary models [" + store + "]", function(
           done
         ) {
-          var User = addon.schema.define("User", {
+          const User = addon.schema.define("User", {
             id: {
               type: Sequelize.INTEGER,
               autoIncrement: true,
@@ -247,7 +247,7 @@ stores.forEach(function(store) {
         });
 
         it("should work with a custom store", function(done) {
-          var promises = [
+          const promises = [
             addon.settings.set(
               "custom key",
               { customKey: "custom value" },
@@ -271,7 +271,7 @@ stores.forEach(function(store) {
       }
       case "mongodb": {
         it("should not allow storing a non-string key", function(done) {
-          var value = "barf";
+          const value = "barf";
           addon.settings
             .set(42, value, helper.installedPayload.clientKey)
             .then(function() {
@@ -296,7 +296,7 @@ stores.forEach(function(store) {
             });
         });
         it("should not allow storing a non-string clientKey", function(done) {
-          var value = "barf";
+          const value = "barf";
           addon.settings
             .set("additionalSetting4", value, 42)
             .then(function() {
