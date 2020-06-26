@@ -1,12 +1,12 @@
-var assert = require("assert");
-var app = require("express")();
-var ac = require("../index");
-var logger = require("./logger");
-var _ = require("lodash");
+const assert = require("assert");
+const app = require("express")();
+const ac = require("../index");
+const logger = require("./logger");
+const _ = require("lodash");
 
 describe("Descriptor", function() {
-  var addon;
-  var options = {
+  let addon;
+  const options = {
     config: {
       key: "my-test-app-key",
       name: "My Test App Name",
@@ -35,34 +35,34 @@ describe("Descriptor", function() {
     });
 
     it("should have variables replaced from the addon config", function(done) {
-      var key = addon.descriptor.key;
+      const key = addon.descriptor.key;
       assert.equal(typeof key, "string");
       assert.equal(key, "my-test-app-key");
-      var name = addon.descriptor.name;
+      const name = addon.descriptor.name;
       assert.equal(typeof name, "string");
       assert.equal(name, "My Test App Name");
-      var description = addon.descriptor.description;
+      const description = addon.descriptor.description;
       assert.equal(typeof description, "string");
       assert.equal(description, "My test app description.");
-      var version = addon.descriptor.version;
+      const version = addon.descriptor.version;
       assert.equal(typeof version, "string");
       assert.equal(version, "1");
-      var vendorName = addon.descriptor.vendor.name;
+      const vendorName = addon.descriptor.vendor.name;
       assert.equal(typeof vendorName, "string");
       assert.equal(vendorName, "My Company");
-      var vendorUrl = addon.descriptor.vendor.url;
+      const vendorUrl = addon.descriptor.vendor.url;
       assert.equal(typeof vendorUrl, "string");
       assert.equal(vendorUrl, "http://example.com");
       done();
     });
 
     it("should list webhooks", function(done) {
-      var webhooks = addon.descriptor.modules.webhooks;
+      let webhooks = addon.descriptor.modules.webhooks;
       assert.equal(webhooks.length, 2);
-      var enabled = webhooks[0];
+      const enabled = webhooks[0];
       assert.equal(enabled.event, "issue_created");
       assert.equal(enabled.url, "/issueCreated");
-      var testHook = webhooks[1];
+      const testHook = webhooks[1];
       assert.equal(testHook.event, "plugin_test_hook");
       assert.equal(testHook.url, "/test-hook");
       webhooks = _.filter(addon.descriptor.modules.webhooks, {
@@ -74,12 +74,12 @@ describe("Descriptor", function() {
   });
 
   describe("With a configured descriptorTransformer", function() {
-    var targetKey = "new-key";
+    const targetKey = "new-key";
 
     // eslint-disable-next-line mocha/no-hooks-for-single-case
     before(function(done) {
       app.set("env", "development");
-      var opts = options;
+      const opts = options;
       opts.config.descriptorTransformer = function(descriptor) {
         descriptor.key = targetKey;
         return descriptor;

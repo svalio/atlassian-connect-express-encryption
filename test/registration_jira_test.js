@@ -1,18 +1,18 @@
-var helper = require("./test_helper");
-var assert = require("assert");
-var http = require("http");
-var express = require("express");
-var bodyParser = require("body-parser");
-var ac = require("../index");
-var request = require("request");
-var jwt = require("atlassian-jwt");
-var logger = require("./logger");
-var moment = require("moment");
-var sinon = require("sinon");
-var RSVP = require("rsvp");
-var requireOptional = require("../lib/internal/require-optional");
-var jiraGlobalSchema = require("./jira-global-schema");
-var nock = require("nock");
+const helper = require("./test_helper");
+const assert = require("assert");
+const http = require("http");
+const express = require("express");
+const bodyParser = require("body-parser");
+const ac = require("../index");
+const request = require("request");
+const jwt = require("atlassian-jwt");
+const logger = require("./logger");
+const moment = require("moment");
+const sinon = require("sinon");
+const RSVP = require("rsvp");
+const requireOptional = require("../lib/internal/require-optional");
+const jiraGlobalSchema = require("./jira-global-schema");
+const nock = require("nock");
 
 // Helps failures be reported to the test framework
 RSVP.on("error", function(err) {
@@ -20,11 +20,11 @@ RSVP.on("error", function(err) {
 });
 
 describe("Auto registration (UPM)", function() {
-  var requireOptionalStub;
-  var requestGetStub;
-  var server;
-  var app;
-  var addon;
+  let requireOptionalStub;
+  let requestGetStub;
+  let server;
+  let app;
+  let addon;
 
   beforeEach(function() {
     requireOptionalStub = sinon.stub(requireOptional, "requireOptional");
@@ -80,7 +80,7 @@ describe("Auto registration (UPM)", function() {
   });
 
   function createJwtToken() {
-    var jwtPayload = {
+    const jwtPayload = {
       iss: helper.installedPayload.clientKey,
       iat: moment()
         .utc()
