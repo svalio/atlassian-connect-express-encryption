@@ -23,7 +23,7 @@
   "dependencies": {
     "atlassian-connect-validator": "0.0.9",
     "atlassian-jwt": "^1.0.2",
-    "atlassian-oauth2": "^0.4.1",
+    "atlassian-oauth2": "^0.4.2",
     "colors": "^1.3.3",
     "inquirer": "^6.5.0",
     "lodash": "^4.17.15",
