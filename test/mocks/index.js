@@ -11,7 +11,9 @@ module.exports = (function() {
   return {
     oauth2: {
       service: function(accessToken, url) {
-        return nock(url || "https://auth.atlassian.io")
+        return nock(
+          url || "https://oauth-2-authorization-server.services.atlassian.com"
+        )
           .post("/oauth2/token")
           .reply(200, accessToken == null ? OAUTH_ACCESS_TOKEN : accessToken);
       },
