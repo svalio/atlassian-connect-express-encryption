@@ -1,5 +1,17 @@
 # Atlassian Connect for Express.js Release Notes
 
+## 4.1.0
+* Use {{appKey}} variable in atlassian-connect.json
+* Use the correct sqlite dialect string. 
+* Set urijs to static version because of recent bug in library
+* Add retryWrites=false and correct option order 
+* Bumping Sequilize to fix the vulnerability
+* Handle errors thrown by store adapter during installation verification
+* Add eslint support / Add some more eslint rules
+* bump atlassian-oauth2 for new oauth-2-authorisation-server service URL
+* Add back colors import 
+* Allow the import of dialectOptions via config
+
 ## 4.0.1
 * Moved ngrok dependency back to dev
 
