@@ -59,10 +59,10 @@ describe("OAuth2", function() {
         });
     });
 
-    it("calls dev OAuth service for jira-dev instances", function(done) {
+    it("calls staging OAuth service for jira-dev instances", function(done) {
       const authServiceMock = mocks.oauth2.service(
         null,
-        "https://auth.dev.atlassian.io"
+        "https://oauth-2-authorization-server.stg.services.atlassian.com"
       );
       const addon = mockAddon();
 
