@@ -1,5 +1,14 @@
 # Atlassian Connect for Express.js Release Notes
 
+## 4.3.0
+
+* Bump minor and patch dependencies to pick up security fixes
+* Refactor auth class
+
+## 4.2.0
+
+* (Atlassian internal only) Use staging oauth 2 authorization server when performing user impersonation against dev jira or confluence sites 
+
 ## 4.1.0
 * Use {{appKey}} variable in atlassian-connect.json
 * Use the correct sqlite dialect string. 
