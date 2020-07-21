@@ -6,7 +6,6 @@ const request = require("request");
 const moment = require("moment");
 const nock = require("nock");
 const RSVP = require("rsvp");
-const sinon = require("sinon");
 const logger = require("./logger");
 const requireOptional = require("../lib/internal/require-optional");
 const jiraGlobalSchema = require("./jira-global-schema");
@@ -70,7 +69,7 @@ describe("Auto registration (UPM)", () => {
     delete process.env.AC_LOCAL_BASE_URL;
     requireOptionalStub.mockRestore();
     if (requestGetStub) {
-      requestGetStub.restore();
+      requestGetStub.mockRestore();
     }
     if (server) {
       server.close();
@@ -116,19 +115,20 @@ describe("Auto registration (UPM)", () => {
 
   // eslint-disable-next-line no-unused-vars
   function stubInstalledPluginsResponse(key) {
-    requestGetStub = sinon.stub(request, "get");
-    requestGetStub.callsArgWith(
-      1,
-      null,
-      null,
-      JSON.stringify({
-        plugins: [
-          {
-            key: "my-test-app-key"
-          }
-        ]
-      })
-    );
+    requestGetStub = jest.spyOn(request, "get");
+    requestGetStub.mockImplementation((reqObject, callback) => {
+      callback(
+        null,
+        null,
+        JSON.stringify({
+          plugins: [
+            {
+              key: "my-test-app-key"
+            }
+          ]
+        })
+      );
+    });
   }
 
   function stubNgrokV2() {
