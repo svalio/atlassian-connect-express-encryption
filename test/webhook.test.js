@@ -3,7 +3,6 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const http = require("http");
 const moment = require("moment");
-const sinon = require("sinon");
 const helper = require("./test_helper");
 const ac = require("../index");
 const request = require("request");
@@ -181,15 +180,15 @@ describe("Webhook", () => {
   });
 
   it("should perform auth verification for webhooks", () => {
-    const triggered = sinon.spy();
+    const triggered = jest.fn();
     addon.once("webhook_auth_verification_triggered", triggered);
-    const successful = sinon.spy();
+    const successful = jest.fn();
     addon.once("webhook_auth_verification_successful", successful);
 
     const first = new Promise(resolve => {
       addon.once("plugin_test_hook", function() {
-        expect(triggered.called).toEqual(true);
-        expect(successful.called).toEqual(true);
+        expect(triggered).toHaveBeenCalled();
+        expect(successful).toHaveBeenCalled();
         resolve();
       });
     });
@@ -205,9 +204,9 @@ describe("Webhook", () => {
   });
 
   it("webhook with expired JWT claim should not be processed", () => {
-    const triggered = sinon.spy();
-    const successful = sinon.spy();
-    const failed = sinon.spy();
+    const triggered = jest.fn();
+    const successful = jest.fn();
+    const failed = jest.fn();
     addon.once("webhook_auth_verification_triggered", triggered);
     addon.once("webhook_auth_verification_successful", successful);
     addon.once("webhook_auth_verification_failed", failed);
@@ -216,9 +215,9 @@ describe("Webhook", () => {
       // TODO: BUG: this event is never triggered.
       // Remove outer resolve when attempting to fix this code
       // addon.once("plugin_test_hook", function() {
-      //   expect(triggered.called).toEqual(true);
-      //   expect(successful.called).toEqual(false);
-      //   expect(failed.called).toEqual(true);
+      //   expect(triggered).toHaveBeenCalled();
+      //   expect(successful).not.toHaveBeenCalled();
+      //   expect(failed.called).toHaveBeenCalled();
       //   resolve();
       // });
       resolve();
