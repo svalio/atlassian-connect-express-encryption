@@ -6,15 +6,12 @@ const request = require("request");
 const RSVP = require("rsvp");
 const Sequelize = require("sequelize");
 const logger = require("./logger");
-const sinon = require("sinon");
 const MongodbMemoryServer = require("mongodb-memory-server").default;
 
 describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
   const app = express();
   const ac = require("../index");
   let addon = {};
-
-  const testContext = {};
 
   let server = {},
     dbServer = null;
@@ -25,7 +22,6 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
   let storeDelSpy;
 
   beforeAll(done => {
-    testContext.sandbox = sinon.createSandbox();
     process.env.AC_OPTS = "no-auth";
     app.set("env", "development");
     app.use(bodyParser.urlencoded({ extended: false }));
@@ -49,9 +45,9 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
 
     ac.store.register("teststore", function(logger, opts) {
       const Store = require("../lib/store/" + store)();
-      storeGetSpy = testContext.sandbox.spy(Store.prototype, "get");
-      storeSetSpy = testContext.sandbox.spy(Store.prototype, "set");
-      storeDelSpy = testContext.sandbox.spy(Store.prototype, "del");
+      storeGetSpy = jest.spyOn(Store.prototype, "get");
+      storeSetSpy = jest.spyOn(Store.prototype, "set");
+      storeDelSpy = jest.spyOn(Store.prototype, "del");
       return new Store(logger, opts);
     });
 
@@ -105,7 +101,10 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
   });
 
   afterAll(done => {
-    testContext.sandbox.restore();
+    storeGetSpy.mockRestore();
+    storeSetSpy.mockRestore();
+    storeDelSpy.mockRestore();
+
     process.env.AC_OPTS = oldACOpts;
     server.close();
     if (dbServer) {
@@ -209,9 +208,9 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
           addon.settings.del("custom key", helper.installedPayload.clientKey)
         ];
         await RSVP.all(promises);
-        expect(storeSetSpy.callCount).toBeGreaterThan(0);
-        expect(storeGetSpy.callCount).toBeGreaterThan(0);
-        expect(storeDelSpy.callCount).toBeGreaterThan(0);
+        expect(storeSetSpy).toHaveBeenCalled();
+        expect(storeGetSpy).toHaveBeenCalled();
+        expect(storeDelSpy).toHaveBeenCalled();
       });
       break;
     }
