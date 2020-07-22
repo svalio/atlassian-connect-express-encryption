@@ -60,5 +60,15 @@
     "postversion": "git push && git push --tags",
     "test": "jest --runInBand --collectCoverage",
     "lint": "eslint lib/**/**/*.js test/**/*.js"
+  },
+  "jest": {
+    "coverageThreshold": {
+      "global": {
+        "statements": 80,
+        "branches": 65,
+        "functions": 80,
+        "lines": 80
+      }
+    }
   }
 }
