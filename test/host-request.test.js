@@ -148,9 +148,11 @@ describe("Host Request", () => {
       return new Promise(done => {
         // eslint-disable-next-line no-unused-vars
         interceptRequest(done, function(uri, requestBody) {
-          expect(this.req.headers["user-agent"]).toContain(
-            "atlassian-connect-express/"
-          );
+          expect(
+            this.req.headers["user-agent"].startsWith(
+              "atlassian-connect-express/"
+            )
+          ).toBe(true);
         });
       });
     });
@@ -160,9 +162,11 @@ describe("Host Request", () => {
         const aceVersion = require("../package.json").version;
         // eslint-disable-next-line no-unused-vars
         interceptRequest(done, function(uri, requestBody) {
-          expect(this.req.headers["user-agent"]).toContain(
-            "atlassian-connect-express/" + aceVersion
-          );
+          expect(
+            this.req.headers["user-agent"].startsWith(
+              `atlassian-connect-express/${aceVersion}`
+            )
+          ).toBe(true);
         });
       });
     });
@@ -175,7 +179,6 @@ describe("Host Request", () => {
             userAgent: userAgent
           }
         };
-        // eslint-disable-next-line no-unused-vars
         interceptRequest(
           done,
           // eslint-disable-next-line no-unused-vars
@@ -247,7 +250,7 @@ describe("Host Request", () => {
       return new Promise(done => {
         // eslint-disable-next-line no-unused-vars
         interceptRequest(done, function(uri, requestBody) {
-          expect(this.req.headers.authorization).toContain("JWT ");
+          expect(this.req.headers.authorization.startsWith("JWT ")).toBe(true);
         });
       });
     });
@@ -315,7 +318,9 @@ describe("Host Request", () => {
         interceptRequest(
           done,
           function() {
-            expect(this.req.headers.authorization).toContain("JWT ");
+            expect(this.req.headers.authorization.startsWith("JWT ")).toBe(
+              true
+            );
           },
           { requestPath: "https://test.atlassian.net/some/path/on/host" }
         );
@@ -328,7 +333,9 @@ describe("Host Request", () => {
         interceptRequest(
           done,
           function() {
-            expect(this.req.headers.authorization).toContain("JWT ");
+            expect(this.req.headers.authorization.startsWith("JWT ")).toBe(
+              true
+            );
           },
           { method: "post" }
         );
@@ -345,7 +352,9 @@ describe("Host Request", () => {
           done,
           function() {
             authServiceMock.done();
-            expect(this.req.headers.authorization).not.toContain("JWT");
+            expect(this.req.headers.authorization.startsWith("JWT")).toBe(
+              false
+            );
           },
           { userKey: "sruiz" }
         );
@@ -360,7 +369,9 @@ describe("Host Request", () => {
           done,
           function() {
             authServiceMock.done();
-            expect(this.req.headers.authorization).toContain("Bearer");
+            expect(this.req.headers.authorization.startsWith("Bearer")).toBe(
+              true
+            );
           },
           { userKey: "sruiz" }
         );
@@ -375,7 +386,9 @@ describe("Host Request", () => {
           done,
           function() {
             authServiceMock.done();
-            expect(this.req.headers.authorization).toContain("Bearer");
+            expect(this.req.headers.authorization.startsWith("Bearer")).toBe(
+              true
+            );
           },
           { userAccountId: "048abaf9-04ea-44d1-acb9-b37de6cc5d2f" }
         );
