@@ -205,7 +205,6 @@ describe("Host Request", () => {
             headers: {
               custom_header: "arbitrary value"
             }
-            // eslint-disable-next-line no-unused-vars
           },
           function() {
             interceptor.done();
