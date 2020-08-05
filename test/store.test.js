@@ -20,6 +20,9 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
   let storeSetSpy;
   let storeDelSpy;
 
+  // we set a timeout of 60 seconds for mongodb so that during the very first
+  // test run it has time to download the binaries, otherwise the test will always
+  // fail.
   const timeout = store === "mongodb" ? 60000 : 5000;
 
   beforeAll(async () => {
