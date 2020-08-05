@@ -206,24 +206,10 @@ describe("Webhook", () => {
   it("webhook with expired JWT claim should not be processed", () => {
     const triggered = jest.fn();
     const successful = jest.fn();
-    const failed = jest.fn();
     addon.once("webhook_auth_verification_triggered", triggered);
     addon.once("webhook_auth_verification_successful", successful);
-    addon.once("webhook_auth_verification_failed", failed);
 
-    const first = new Promise(resolve => {
-      // TODO: BUG: this event is never triggered.
-      // Remove outer resolve when attempting to fix this code
-      // addon.once("plugin_test_hook", function() {
-      //   expect(triggered).toHaveBeenCalled();
-      //   expect(successful).not.toHaveBeenCalled();
-      //   expect(failed.called).toHaveBeenCalled();
-      //   resolve();
-      // });
-      resolve();
-    });
-
-    const second = new Promise(resolve => {
+    return new Promise(resolve => {
       fireTestWebhook(
         "/test-hook",
         { foo: "bar" },
@@ -233,12 +219,12 @@ describe("Webhook", () => {
           expect(body.message).toEqual(
             "Authentication request has expired. Try reloading the page."
           );
+          expect(triggered).toHaveBeenCalled();
+          expect(successful).not.toHaveBeenCalled();
           resolve();
         },
         createExpiredJwtToken
       );
     });
-
-    return Promise.all([first, second]);
   });
 });

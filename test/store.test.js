@@ -11,30 +11,31 @@ const MongodbMemoryServer = require("mongodb-memory-server").default;
 describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
   const app = express();
   const ac = require("../index");
-  let addon = {};
-
-  let server = {},
-    dbServer = null;
+  let addon;
+  let server = {};
+  let dbServer = null;
   const oldACOpts = process.env.AC_OPTS;
 
   let storeGetSpy;
   let storeSetSpy;
   let storeDelSpy;
 
-  beforeAll(done => {
+  const timeout = store === "mongodb" ? 60000 : 5000;
+
+  beforeAll(async () => {
     process.env.AC_OPTS = "no-auth";
     app.set("env", "development");
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
 
-    app.get("/confluence/rest/plugins/1.0/", function(req, res) {
+    app.get("/confluence/rest/plugins/1.0/", (req, res) => {
       res.setHeader("upm-token", "123");
       res.json({ plugins: [] });
       res.status(200).end();
     });
 
     // Post request to UPM installer
-    app.post("/confluence/rest/plugins/1.0/", function(req, res) {
+    app.post("/confluence/rest/plugins/1.0/", (req, res) => {
       request({
         url: helper.addonBaseUrl + "/installed",
         method: "POST",
@@ -43,7 +44,7 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
       res.status(200).end();
     });
 
-    ac.store.register("teststore", function(logger, opts) {
+    ac.store.register("teststore", (logger, opts) => {
       const Store = require("../lib/store/" + store)();
       storeGetSpy = jest.spyOn(Store.prototype, "get");
       storeSetSpy = jest.spyOn(Store.prototype, "set");
@@ -67,17 +68,13 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
             version: "3.6.9"
           }
         });
-        storeOptsPromise = dbServer
-          .getConnectionString()
-          .then(function(connectionString) {
-            return {
-              adapter: "teststore",
-              url: connectionString
-            };
-          });
+        storeOptsPromise = dbServer.getUri().then(connectionString => ({
+          adapter: "teststore",
+          url: connectionString
+        }));
         break;
     }
-    storeOptsPromise.then(function(storeOpts) {
+    return storeOptsPromise.then(storeOpts => {
       addon = ac(
         app,
         {
@@ -91,14 +88,11 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
         logger
       );
 
-      server = http
-        .createServer(app)
-        .listen(helper.addonPort, async function() {
-          await addon.register();
-          done();
-        });
+      server = http.createServer(app).listen(helper.addonPort, async () => {
+        await addon.register();
+      });
     });
-  });
+  }, timeout);
 
   afterAll(done => {
     storeGetSpy.mockRestore();
@@ -115,7 +109,7 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
 
   it("should store client info", async () => {
     return new Promise(resolve => {
-      addon.on("host_settings_saved", async function() {
+      addon.on("host_settings_saved", async () => {
         const settings = await addon.settings.get(
           "clientInfo",
           helper.installedPayload.clientKey
