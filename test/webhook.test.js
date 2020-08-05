@@ -52,7 +52,7 @@ describe("Webhook", () => {
 
     host.post("/rest/plugins/1.0/", function(req, res) {
       request({
-        url: helper.addonBaseUrl + "/installed",
+        url: `${helper.addonBaseUrl}/installed`,
         qs: {
           jwt: createValidJwtToken()
         },

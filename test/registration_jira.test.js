@@ -42,7 +42,7 @@ describe("Auto registration (UPM)", () => {
     // Post request to UPM installer
     app.post("/confluence/rest/plugins/1.0/", function(req, res) {
       request({
-        url: helper.addonBaseUrl + "/installed",
+        url: `${helper.addonBaseUrl}/installed`,
         qs: {
           jwt: createJwtToken()
         },

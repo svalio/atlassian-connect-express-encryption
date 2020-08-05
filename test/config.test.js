@@ -176,7 +176,7 @@ describe("Configuration", () => {
       const version = require("../package.json").version;
       const defaultConfig = createConfig({}, "development", {});
       expect(defaultConfig.userAgent()).toBe(
-        "atlassian-connect-express/" + version
+        `atlassian-connect-express/${version}`
       );
     });
 

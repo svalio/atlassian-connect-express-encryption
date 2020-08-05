@@ -62,7 +62,7 @@ describe("Token verification", () => {
       function() {
         request(
           {
-            url: helper.addonBaseUrl + "/installed",
+            url: `${helper.addonBaseUrl}/installed`,
             method: "POST",
             json: helper.installedPayload
           },
@@ -228,7 +228,7 @@ describe("Token verification", () => {
       res.send(!res.locals.token ? "no token" : res.locals.token);
     });
 
-    const requestUrl = helper.addonBaseUrl + "/unprotected";
+    const requestUrl = `${helper.addonBaseUrl}/unprotected`;
     const requestOpts = {
       qs: {
         xdm_e: helper.productBaseUrl,
@@ -252,7 +252,7 @@ describe("Token verification", () => {
       res.send(!res.locals.token ? "no token" : res.locals.token);
     });
 
-    const requestUrl = helper.addonBaseUrl + "/unprotected";
+    const requestUrl = `${helper.addonBaseUrl}/unprotected`;
     const requestOpts = {
       method: "POST",
       form: {
@@ -365,7 +365,7 @@ describe("Token verification", () => {
       res.send(res.locals.hostBaseUrl);
     });
 
-    const requestUrl = helper.addonBaseUrl + "/return-host";
+    const requestUrl = `${helper.addonBaseUrl}/return-host`;
     const requestOpts = {
       method: "POST",
       form: {
@@ -384,8 +384,8 @@ describe("Token verification", () => {
   });
 
   it("should reject requests with token appeared in both query and body", () => {
-    const requestUrl =
-      helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH + "?jwt=token_in_query";
+    const requestUrl = `${helper.addonBaseUrl +
+      JWT_AUTH_RESPONDER_PATH}?jwt=token_in_query`;
     const requestOpts = {
       method: "POST",
       form: {
@@ -404,8 +404,8 @@ describe("Token verification", () => {
   });
 
   it("should use token from query parameter if appears both in body and header", () => {
-    const requestUrl =
-      helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH + "?jwt=token_in_query";
+    const requestUrl = `${helper.addonBaseUrl +
+      JWT_AUTH_RESPONDER_PATH}?jwt=token_in_query`;
     const requestOpts = {
       headers: {
         Authorization: "JWT token_in_header"
@@ -477,7 +477,7 @@ describe("Token verification", () => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(200);
 
-        const tokenUrl = helper.addonBaseUrl + "/protected_resource";
+        const tokenUrl = `${helper.addonBaseUrl}/protected_resource`;
         const tokenRequestOpts = createTokenRequestOptions(theToken);
 
         request(tokenUrl, tokenRequestOpts, function(err, res, body) {
@@ -526,7 +526,7 @@ describe("Token verification", () => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(200);
 
-        const tokenUrl = helper.addonBaseUrl + "/protected_context_resource";
+        const tokenUrl = `${helper.addonBaseUrl}/protected_context_resource`;
         const tokenRequestOpts = createTokenRequestOptions(theToken);
 
         request(tokenUrl, tokenRequestOpts, function(err, res, body) {
@@ -552,7 +552,7 @@ describe("Token verification", () => {
     return new Promise(resolve => {
       request(
         {
-          url: helper.addonBaseUrl + "/installed",
+          url: `${helper.addonBaseUrl}/installed`,
           method: "POST",
           json: helper.installedPayload
         },
@@ -568,16 +568,14 @@ describe("Token verification", () => {
     return new Promise(resolve => {
       request(
         {
-          url: helper.addonBaseUrl + "/installed",
+          url: `${helper.addonBaseUrl}/installed`,
           method: "POST",
           json: _.extend({}, helper.installedPayload),
           headers: {
-            Authorization:
-              "JWT " +
-              createJwtToken({
-                method: "POST",
-                path: "/installed"
-              })
+            Authorization: `JWT ${createJwtToken({
+              method: "POST",
+              path: "/installed"
+            })}`
           }
         },
         function(err, res) {
@@ -595,21 +593,19 @@ describe("Token verification", () => {
     return new Promise(resolve => {
       request(
         {
-          url: helper.addonBaseUrl + "/installed",
+          url: `${helper.addonBaseUrl}/installed`,
           method: "POST",
           json: _.extend({}, helper.installedPayload, {
             sharedSecret: newSecret
           }),
           headers: {
-            Authorization:
-              "JWT " +
-              createJwtToken(
-                {
-                  method: "POST",
-                  path: "/installed"
-                },
-                newSecret
-              )
+            Authorization: `JWT ${createJwtToken(
+              {
+                method: "POST",
+                path: "/installed"
+              },
+              newSecret
+            )}`
           }
         },
         function(err, res) {
@@ -628,7 +624,7 @@ describe("Token verification", () => {
       clientKey: "crafty-client"
     });
     request({
-      url: helper.addonBaseUrl + "/installed",
+      url: `${helper.addonBaseUrl}/installed`,
       method: "POST",
       json: maliciousClient
     });
@@ -636,22 +632,20 @@ describe("Token verification", () => {
     return new Promise(resolve => {
       request(
         {
-          url: helper.addonBaseUrl + "/installed",
+          url: `${helper.addonBaseUrl}/installed`,
           method: "POST",
           json: _.extend({}, helper.installedPayload, {
             sharedSecret: "newSharedSecret"
           }),
           headers: {
-            Authorization:
-              "JWT " +
-              createJwtToken(
-                {
-                  method: "POST",
-                  path: "/installed"
-                },
-                maliciousSecret,
-                maliciousClient.clientKey
-              )
+            Authorization: `JWT ${createJwtToken(
+              {
+                method: "POST",
+                path: "/installed"
+              },
+              maliciousSecret,
+              maliciousClient.clientKey
+            )}`
           }
         },
         function(err, res) {
@@ -665,6 +659,6 @@ describe("Token verification", () => {
 
   function hostResourceUrl(app, baseUrl, type) {
     const suffix = app.get("env") === "development" ? "-debug" : "";
-    return baseUrl + "/atlassian-connect/all" + suffix + "." + type;
+    return `${baseUrl}/atlassian-connect/all${suffix}.${type}`;
   }
 });

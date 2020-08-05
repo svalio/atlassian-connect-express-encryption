@@ -40,7 +40,7 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
     // Post request to UPM installer
     app.post("/confluence/rest/plugins/1.0/", (req, res) => {
       request({
-        url: helper.addonBaseUrl + "/installed",
+        url: `${helper.addonBaseUrl}/installed`,
         method: "POST",
         json: helper.installedPayload
       });
@@ -48,7 +48,7 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
     });
 
     ac.store.register("teststore", (logger, opts) => {
-      const Store = require("../lib/store/" + store)();
+      const Store = require(`../lib/store/${store}`)();
       storeGetSpy = jest.spyOn(Store.prototype, "get");
       storeSetSpy = jest.spyOn(Store.prototype, "set");
       storeDelSpy = jest.spyOn(Store.prototype, "del");
