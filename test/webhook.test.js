@@ -138,7 +138,7 @@ describe("Webhook", () => {
     const fireWebhook = function() {
       request.post(
         {
-          url: url,
+          url,
           qs: {
             user_id: "admin",
             jwt: createJwtToken

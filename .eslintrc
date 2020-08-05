@@ -20,6 +20,7 @@
     "no-return-await": "error",
     "no-unused-vars": "error",
     "prefer-const": "error",
+    "object-shorthand": "error",
     "prefer-template": "error"
   }
 }

@@ -135,7 +135,7 @@ describe("Auto registration (UPM)", () => {
     requireOptionalStub.mockReturnValue(
       RSVP.resolve({
         // eslint-disable-next-line no-unused-vars
-        connect: function(port, cb) {
+        connect(port, cb) {
           return undefined;
         }
       })
@@ -146,7 +146,7 @@ describe("Auto registration (UPM)", () => {
     requireOptionalStub.mockReturnValue(
       RSVP.resolve({
         // eslint-disable-next-line no-unused-vars
-        connect: function(port) {
+        connect(port) {
           return RSVP.resolve("https://test.ngrok.io");
         }
       })

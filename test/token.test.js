@@ -154,8 +154,8 @@ describe("Token verification", () => {
         jwt ||
         createJwtToken({
           // mock the request
-          method: method,
-          path: path,
+          method,
+          path,
           query: {
             xdm_e: helper.productBaseUrl
           }
@@ -163,7 +163,7 @@ describe("Token verification", () => {
     };
 
     const option = {
-      method: method,
+      method,
       jar: false
     };
 

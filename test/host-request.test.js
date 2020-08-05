@@ -106,7 +106,7 @@ describe("Host Request", () => {
     const userKey = options.userKey;
     delete options.userKey;
     const opts = extend({}, options, {
-      httpClientWrapper: function(httpClient) {
+      httpClientWrapper(httpClient) {
         return httpClient.asUser(userKey);
       }
     });
@@ -121,7 +121,7 @@ describe("Host Request", () => {
     const userAccountId = options.userAccountId;
     delete options.userAccountId;
     const opts = extend({}, options, {
-      httpClientWrapper: function(httpClient) {
+      httpClientWrapper(httpClient) {
         return httpClient.asUserByAccountId(userAccountId);
       }
     });
@@ -176,7 +176,7 @@ describe("Host Request", () => {
         const userAgent = "my-fun-app";
         const opts = {
           addonConfig: {
-            userAgent: userAgent
+            userAgent
           }
         };
         interceptRequest(
@@ -299,7 +299,7 @@ describe("Host Request", () => {
               jwt.fromExpressRequest({
                 method: "GET",
                 path: "/some/path/on/host",
-                query: query
+                query
               }),
               false,
               helper.productBaseUrl
