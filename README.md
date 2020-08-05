@@ -579,4 +579,4 @@ We take the 'trust' approach when it comes to pull requests. This means that rev
 
 ## Unit tests
 
-Run `mocha test`.
+Run `npm run test`.

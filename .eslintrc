@@ -1,12 +1,13 @@
 {
   "env": {
-    "mocha": true,
     "es6": true,
+    "jest": true,
+    "jest/globals": true,
     "node": true
   },
   "extends": [
     "eslint:recommended",
-    "plugin:mocha/recommended",
+    "plugin:jest/recommended",
     "plugin:prettier/recommended"
   ],
   "parserOptions": {

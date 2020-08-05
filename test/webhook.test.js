@@ -1,23 +1,21 @@
-const helper = require("./test_helper");
-const assert = require("assert");
-const http = require("http");
-const express = require("express");
+const jwt = require("atlassian-jwt");
 const bodyParser = require("body-parser");
-const app = express();
+const express = require("express");
+const http = require("http");
+const moment = require("moment");
+const helper = require("./test_helper");
 const ac = require("../index");
 const request = require("request");
 const logger = require("./logger");
-const jwt = require("atlassian-jwt");
-const sinon = require("sinon");
-const moment = require("moment");
-let addon = {};
 
-describe("Webhook", function() {
+describe("Webhook", () => {
+  const app = express();
+  let addon = {};
   let server;
   let hostServer;
   let addonRegistered = false;
 
-  before(function(done) {
+  beforeAll(done => {
     ac.store.register("teststore", function(logger, opts) {
       return require("../lib/store/sequelize")(logger, opts);
     });
@@ -74,10 +72,9 @@ describe("Webhook", function() {
     });
   });
 
-  after(function(done) {
+  afterAll(() => {
     server.close();
     hostServer.close();
-    done();
   });
 
   function createValidJwtToken(req) {
@@ -157,72 +154,77 @@ describe("Webhook", function() {
     waitForRegistrationThenFireWebhook();
   }
 
-  // eslint-disable-next-line no-unused-vars
-  function assertCorrectWebhookResult(err, res, body) {
-    assert.equal(err, null);
-    assert.equal(res.statusCode, 204, res.body);
+  function assertCorrectWebhookResult(err, res) {
+    expect(err).toBeNull();
+    expect(res.statusCode).toEqual(204);
   }
 
-  it("should fire an add-on event", function(done) {
-    addon.once("plugin_test_hook", function(event, body, req) {
-      assert(event === "plugin_test_hook");
-      assert(body != null && body.foo === "bar");
-      assert(req && req.query["user_id"] === "admin");
-      done();
+  it("should fire an add-on event", () => {
+    const first = new Promise(resolve => {
+      addon.once("plugin_test_hook", function(event, body, req) {
+        expect(event).toEqual("plugin_test_hook");
+        expect(body.foo).toEqual("bar");
+        expect(req.query["user_id"]).toEqual("admin");
+        resolve();
+      });
     });
 
-    fireTestWebhook("/test-hook", { foo: "bar" }, assertCorrectWebhookResult);
+    const second = new Promise(resolve => {
+      fireTestWebhook("/test-hook", { foo: "bar" }, (err, res) => {
+        assertCorrectWebhookResult(err, res);
+        resolve();
+      });
+    });
+
+    return Promise.all([first, second]);
   });
 
-  it("should perform auth verification for webhooks", function(done) {
-    const triggered = sinon.spy();
+  it("should perform auth verification for webhooks", () => {
+    const triggered = jest.fn();
     addon.once("webhook_auth_verification_triggered", triggered);
-    const successful = sinon.spy();
+    const successful = jest.fn();
     addon.once("webhook_auth_verification_successful", successful);
 
-    // eslint-disable-next-line no-unused-vars
-    addon.once("plugin_test_hook", function(key, body, req) {
-      assert(triggered.called);
-      assert(successful.called);
-      done();
+    const first = new Promise(resolve => {
+      addon.once("plugin_test_hook", function() {
+        expect(triggered).toHaveBeenCalled();
+        expect(successful).toHaveBeenCalled();
+        resolve();
+      });
     });
 
-    fireTestWebhook("/test-hook", { foo: "bar" }, assertCorrectWebhookResult);
+    const second = new Promise(resolve => {
+      fireTestWebhook("/test-hook", { foo: "bar" }, (err, res) => {
+        assertCorrectWebhookResult(err, res);
+        resolve();
+      });
+    });
+
+    return Promise.all([first, second]);
   });
 
-  it("webhook with expired JWT claim should not be processed", function(done) {
-    const triggered = sinon.spy();
-    const successful = sinon.spy();
-    const failed = sinon.spy();
+  it("webhook with expired JWT claim should not be processed", () => {
+    const triggered = jest.fn();
+    const successful = jest.fn();
     addon.once("webhook_auth_verification_triggered", triggered);
     addon.once("webhook_auth_verification_successful", successful);
-    addon.once("webhook_auth_verification_failed", failed);
 
-    // eslint-disable-next-line no-unused-vars
-    addon.once("plugin_test_hook", function(key, body, req) {
-      assert(triggered.called);
-      assert(!successful.called);
-      assert(failed.called);
+    return new Promise(resolve => {
+      fireTestWebhook(
+        "/test-hook",
+        { foo: "bar" },
+        function assertCorrectWebhookResult(err, res, body) {
+          expect(err).toBeNull();
+          expect(res.statusCode).toEqual(401);
+          expect(body.message).toEqual(
+            "Authentication request has expired. Try reloading the page."
+          );
+          expect(triggered).toHaveBeenCalled();
+          expect(successful).not.toHaveBeenCalled();
+          resolve();
+        },
+        createExpiredJwtToken
+      );
     });
-
-    fireTestWebhook(
-      "/test-hook",
-      { foo: "bar" },
-      function assertCorrectWebhookResult(err, res, body) {
-        assert.equal(err, null);
-        assert.equal(
-          res.statusCode,
-          401,
-          "Status code for invalid token should be 401"
-        );
-        assert.equal(
-          body.message,
-          "Authentication request has expired. Try reloading the page.",
-          "Authentication expired error should be returned"
-        );
-        done();
-      },
-      createExpiredJwtToken
-    );
   });
 });

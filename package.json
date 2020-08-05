@@ -26,7 +26,7 @@
     "atlassian-oauth2": "^0.4.2",
     "colors": "^1.4.0",
     "inquirer": "^6.5.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "md5": "^2.2.1",
     "moment": "^2.27.0",
     "mongodb": "^3.5.9",
@@ -41,18 +41,15 @@
     "body-parser": "^1.19.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-mocha": "^6.3.0",
+    "eslint-plugin-jest": "^23.18.0",
     "eslint-plugin-prettier": "^3.1.4",
     "express": "^4.17.1",
     "extend": "^3.0.2",
-    "mocha": "^6.2.0",
-    "mongodb-memory-server": "^5.1.9",
+    "jest": "^25.5.4",
+    "mongodb-memory-server": "^6.6.1",
     "ngrok": "^3.2.7",
     "nock": "^10.0.6",
     "prettier": "^1.19.0",
-    "should": "^13.2.3",
-    "should-http": "^0.1.1",
-    "sinon": "^7.3.2",
     "sqlite3": "^4.0.9"
   },
   "peerDependencies": {
@@ -61,7 +58,17 @@
   "scripts": {
     "preversion": "npm test",
     "postversion": "git push && git push --tags",
-    "test": "mocha",
+    "test": "jest --runInBand --collectCoverage",
     "lint": "eslint lib/**/**/*.js test/**/*.js"
+  },
+  "jest": {
+    "coverageThreshold": {
+      "global": {
+        "statements": 80,
+        "branches": 65,
+        "functions": 80,
+        "lines": 80
+      }
+    }
   }
 }

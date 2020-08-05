@@ -1,33 +1,31 @@
-const helper = require("./test_helper");
-const assert = require("assert");
-const http = require("http");
-const express = require("express");
-const bodyParser = require("body-parser");
-const ac = require("../index");
-const request = require("request");
 const jwt = require("atlassian-jwt");
-const logger = require("./logger");
+const bodyParser = require("body-parser");
+const express = require("express");
+const http = require("http");
+const request = require("request");
 const moment = require("moment");
-const sinon = require("sinon");
+const nock = require("nock");
 const RSVP = require("rsvp");
+const logger = require("./logger");
 const requireOptional = require("../lib/internal/require-optional");
 const jiraGlobalSchema = require("./jira-global-schema");
-const nock = require("nock");
+const helper = require("./test_helper");
+const ac = require("../index");
 
 // Helps failures be reported to the test framework
 RSVP.on("error", function(err) {
   throw err;
 });
 
-describe("Auto registration (UPM)", function() {
+describe("Auto registration (UPM)", () => {
   let requireOptionalStub;
   let requestGetStub;
   let server;
   let app;
   let addon;
 
-  beforeEach(function() {
-    requireOptionalStub = sinon.stub(requireOptional, "requireOptional");
+  beforeEach(() => {
+    requireOptionalStub = jest.spyOn(requireOptional, "requireOptional");
     app = express();
     addon = {};
 
@@ -67,16 +65,15 @@ describe("Auto registration (UPM)", function() {
       .reply(200, jiraGlobalSchema);
   });
 
-  afterEach(function(done) {
+  afterEach(() => {
     delete process.env.AC_LOCAL_BASE_URL;
-    requireOptionalStub.restore();
+    requireOptionalStub.mockRestore();
     if (requestGetStub) {
-      requestGetStub.restore();
+      requestGetStub.mockRestore();
     }
     if (server) {
       server.close();
     }
-    done();
   });
 
   function createJwtToken() {
@@ -118,23 +115,24 @@ describe("Auto registration (UPM)", function() {
 
   // eslint-disable-next-line no-unused-vars
   function stubInstalledPluginsResponse(key) {
-    requestGetStub = sinon.stub(request, "get");
-    requestGetStub.callsArgWith(
-      1,
-      null,
-      null,
-      JSON.stringify({
-        plugins: [
-          {
-            key: "my-test-app-key"
-          }
-        ]
-      })
-    );
+    requestGetStub = jest.spyOn(request, "get");
+    requestGetStub.mockImplementation((reqObject, callback) => {
+      callback(
+        null,
+        null,
+        JSON.stringify({
+          plugins: [
+            {
+              key: "my-test-app-key"
+            }
+          ]
+        })
+      );
+    });
   }
 
   function stubNgrokV2() {
-    requireOptionalStub.returns(
+    requireOptionalStub.mockReturnValue(
       RSVP.resolve({
         // eslint-disable-next-line no-unused-vars
         connect: function(port, cb) {
@@ -145,7 +143,7 @@ describe("Auto registration (UPM)", function() {
   }
 
   function stubNgrokWorking() {
-    requireOptionalStub.returns(
+    requireOptionalStub.mockReturnValue(
       RSVP.resolve({
         // eslint-disable-next-line no-unused-vars
         connect: function(port) {
@@ -164,47 +162,40 @@ describe("Auto registration (UPM)", function() {
     requireOptionalStub.returns(RSVP.reject(error));
   }
 
-  it("registration works with local host and does not involve ngrok", function(done) {
+  it("registration works with local host and does not involve ngrok", async () => {
     createAddon([helper.productBaseUrl]);
-    startServer(function() {
-      addon.register().then(function() {
-        assert(requireOptionalStub.notCalled, "ngrok should not be called");
-        done();
-      }, done);
+    return new Promise(resolve => {
+      startServer(async () => {
+        await addon.register();
+        expect(requireOptionalStub).not.toHaveBeenCalled();
+        resolve();
+      });
     });
-  }).timeout(1000);
+  });
 
-  it("registration works with remote host via ngrok", function(done) {
+  it("registration works with remote host via ngrok", async () => {
     stubNgrokWorking();
     stubInstalledPluginsResponse("my-test-app-key");
 
     createAddon(["http://admin:admin@example.atlassian.net/wiki"]);
 
-    addon.register().then(function() {
-      assert(requireOptionalStub.called, "ngrok should be called");
-      done();
-    });
-  }).timeout(1000);
+    await addon.register();
+    expect(requireOptionalStub).toHaveBeenCalled();
+  });
 
-  it("registration does not work with ngrok 2.x (error will print to console)", function(done) {
+  it("registration does not work with ngrok 2.x (error will print to console)", async () => {
     stubNgrokV2();
     stubInstalledPluginsResponse("my-test-app-key");
 
     createAddon(["http://admin:admin@example.atlassian.net/wiki"]);
 
-    addon
-      .register()
-      .then(function() {
-        assert.fail("ngrok should not have succeeded");
-        done();
-      })
-      .catch(function() {
-        assert(requireOptionalStub.called, "ngrok should be called");
-        done();
-      });
-  }).timeout(1000);
+    await expect(async () => {
+      await addon.register();
+    }).rejects.toThrow();
+    expect(requireOptionalStub).toHaveBeenCalled();
+  });
 
-  it("validator works with an invalid connect descriptor", function(done) {
+  it("validator works with an invalid connect descriptor", async () => {
     createAddon([helper.productBaseUrl]);
     addon.descriptor = {
       key: "my-test-app-key",
@@ -213,13 +204,11 @@ describe("Auto registration (UPM)", function() {
       apiMigrtios: { gdpr: true }
     };
 
-    addon.validateDescriptor().then(function(results) {
-      assert(results.length > 0, "should invalidate app descriptor");
-      done();
-    });
-  }).timeout(1000);
+    const results = await addon.validateDescriptor();
+    expect(results.length).toBeGreaterThan(0);
+  });
 
-  it("validator works with a valid connect descriptor", function(done) {
+  it("validator works with a valid connect descriptor", async () => {
     createAddon([helper.productBaseUrl]);
     addon.descriptor = {
       key: "my-test-app-key",
@@ -241,9 +230,7 @@ describe("Auto registration (UPM)", function() {
       }
     };
 
-    addon.validateDescriptor().then(function(results) {
-      assert.strictEqual(results.length, 0);
-      done();
-    });
-  }).timeout(1000);
+    const results = await addon.validateDescriptor();
+    expect(results.length).toEqual(0);
+  });
 });
