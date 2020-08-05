@@ -13,7 +13,7 @@ const helper = require("./test_helper");
 const ac = require("../index");
 
 // Helps failures be reported to the test framework
-RSVP.on("error", function(err) {
+RSVP.on("error", err => {
   throw err;
 });
 
@@ -33,14 +33,14 @@ describe("Auto registration (UPM)", () => {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
 
-    app.get("/rest/plugins/1.0/", function(req, res) {
+    app.get("/rest/plugins/1.0/", (req, res) => {
       res.setHeader("upm-token", "123");
       res.json({ plugins: [] });
       res.status(200).end();
     });
 
     // Post request to UPM installer
-    app.post("/confluence/rest/plugins/1.0/", function(req, res) {
+    app.post("/confluence/rest/plugins/1.0/", (req, res) => {
       request({
         url: `${helper.addonBaseUrl}/installed`,
         qs: {
@@ -52,11 +52,11 @@ describe("Auto registration (UPM)", () => {
       res.status(200).end();
     });
 
-    app.delete(/plugins\/1.0\/(.*?)-key/, function(req, res) {
+    app.delete(/plugins\/1.0\/(.*?)-key/, (req, res) => {
       res.status(200).end();
     });
 
-    ac.store.register("teststore", function(logger, opts) {
+    ac.store.register("teststore", (logger, opts) => {
       return require("../lib/store/sequelize")(logger, opts);
     });
 

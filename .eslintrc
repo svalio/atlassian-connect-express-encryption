@@ -21,6 +21,7 @@
     "no-unused-vars": "error",
     "prefer-const": "error",
     "object-shorthand": "error",
+    "prefer-arrow-callback": "error",
     "prefer-template": "error"
   }
 }

@@ -40,7 +40,7 @@ describe("Token verification", () => {
     app.use(conditionalUseBodyParser(bodyParser.json()));
 
     // configure test store
-    ac.store.register("teststore", function(logger, opts) {
+    ac.store.register("teststore", (logger, opts) => {
       return require("../lib/store/sequelize")(logger, opts);
     });
 
@@ -59,14 +59,14 @@ describe("Token verification", () => {
         }
       },
       logger,
-      function() {
+      () => {
         request(
           {
             url: `${helper.addonBaseUrl}/installed`,
             method: "POST",
             json: helper.installedPayload
           },
-          function(err, res) {
+          (err, res) => {
             if (res.statusCode !== 204) {
               throw new Error("Install hook failed");
             }
@@ -91,10 +91,7 @@ describe("Token verification", () => {
     app.get.apply(app, routeArgs);
     app.post.apply(app, routeArgs);
 
-    app.get(CHECK_TOKEN_RESPONDER_PATH, addon.checkValidToken(), function(
-      req,
-      res
-    ) {
+    app.get(CHECK_TOKEN_RESPONDER_PATH, addon.checkValidToken(), (req, res) => {
       const token = res.locals.token;
       res.send(token);
     });
@@ -194,7 +191,7 @@ describe("Token verification", () => {
     const requestOpts = createRequestOptions(JWT_AUTH_RESPONDER_PATH);
 
     return new Promise(resolve => {
-      request(requestUrl, requestOpts, function(err, res, body) {
+      request(requestUrl, requestOpts, (err, res, body) => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(200);
         expect(isBase64EncodedJson(body)).toEqual(true);
@@ -213,7 +210,7 @@ describe("Token verification", () => {
     );
 
     return new Promise(resolve => {
-      request(requestUrl, requestOpts, function(err, res, body) {
+      request(requestUrl, requestOpts, (err, res, body) => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(200);
         expect(isBase64EncodedJson(body)).toEqual(true);
@@ -224,7 +221,7 @@ describe("Token verification", () => {
   });
 
   it("should not create tokens for unauthenticated GET requests", () => {
-    app.get("/unprotected", function(req, res) {
+    app.get("/unprotected", (req, res) => {
       res.send(!res.locals.token ? "no token" : res.locals.token);
     });
 
@@ -238,7 +235,7 @@ describe("Token verification", () => {
     };
 
     return new Promise(resolve => {
-      request(requestUrl, requestOpts, function(err, res, body) {
+      request(requestUrl, requestOpts, (err, res, body) => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(200);
         expect(body).toEqual("no token");
@@ -248,7 +245,7 @@ describe("Token verification", () => {
   });
 
   it("should not create tokens for unauthenticated POST requests", () => {
-    app.post("/unprotected", function(req, res) {
+    app.post("/unprotected", (req, res) => {
       res.send(!res.locals.token ? "no token" : res.locals.token);
     });
 
@@ -262,7 +259,7 @@ describe("Token verification", () => {
       jar: false
     };
     return new Promise(resolve => {
-      request(requestUrl, requestOpts, function(err, res, body) {
+      request(requestUrl, requestOpts, (err, res, body) => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(200);
         expect(body).toEqual("no token");
@@ -276,7 +273,7 @@ describe("Token verification", () => {
     const requestOpts = createRequestOptions(JWT_AUTH_RESPONDER_PATH);
 
     return new Promise(resolve => {
-      request(requestUrl, requestOpts, function(err, res, theToken) {
+      request(requestUrl, requestOpts, (err, res, theToken) => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(200);
 
@@ -296,14 +293,14 @@ describe("Token verification", () => {
     const requestOpts = createRequestOptions(JWT_AUTH_RESPONDER_PATH);
 
     return new Promise(resolve => {
-      request(requestUrl, requestOpts, function(err, res, theToken) {
+      request(requestUrl, requestOpts, (err, res, theToken) => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(200);
 
         const tokenUrl = helper.addonBaseUrl + CHECK_TOKEN_RESPONDER_PATH;
         const tokenRequestOpts = createTokenRequestOptions(theToken);
 
-        request(tokenUrl, tokenRequestOpts, function(err, res) {
+        request(tokenUrl, tokenRequestOpts, (err, res) => {
           expect(err).toBeNull();
           expect(res.statusCode).toEqual(200);
           resolve();
@@ -317,7 +314,7 @@ describe("Token verification", () => {
     const requestOpts = createRequestOptions(JWT_AUTH_RESPONDER_PATH);
 
     return new Promise(resolve => {
-      request(requestUrl, requestOpts, function(err, res, theToken) {
+      request(requestUrl, requestOpts, (err, res, theToken) => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(200);
 
@@ -327,7 +324,7 @@ describe("Token verification", () => {
           theToken
         );
 
-        request(tokenUrl, tokenRequestOpts, function(err, res) {
+        request(tokenUrl, tokenRequestOpts, (err, res) => {
           expect(err).toBeNull();
           expect(res.statusCode).toEqual(200);
           resolve();
@@ -339,7 +336,7 @@ describe("Token verification", () => {
   it("should reject requests with no token", () => {
     const requestUrl = helper.addonBaseUrl + CHECK_TOKEN_RESPONDER_PATH;
     return new Promise(resolve => {
-      request(requestUrl, { jar: false }, function(err, res) {
+      request(requestUrl, { jar: false }, (err, res) => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(401);
         resolve();
@@ -351,7 +348,7 @@ describe("Token verification", () => {
     useBodyParser = false;
     const requestUrl = helper.addonBaseUrl + CHECK_TOKEN_RESPONDER_PATH;
     return new Promise(resolve => {
-      request(requestUrl, { jar: false }, function(err, res) {
+      request(requestUrl, { jar: false }, (err, res) => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(401);
         resolve();
@@ -361,7 +358,7 @@ describe("Token verification", () => {
 
   it("should not throw exception if request body is undefined", () => {
     useBodyParser = false;
-    app.post("/return-host", function(req, res) {
+    app.post("/return-host", (req, res) => {
       res.send(res.locals.hostBaseUrl);
     });
 
@@ -375,7 +372,7 @@ describe("Token verification", () => {
     };
 
     return new Promise(resolve => {
-      request(requestUrl, requestOpts, function(err, res) {
+      request(requestUrl, requestOpts, (err, res) => {
         expect(err).toBeNull();
         expect(res.body).toEqual("");
         resolve();
@@ -395,7 +392,7 @@ describe("Token verification", () => {
     };
 
     return new Promise(resolve => {
-      request(requestUrl, requestOpts, function(err, res) {
+      request(requestUrl, requestOpts, (err, res) => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(401);
         resolve();
@@ -414,7 +411,7 @@ describe("Token verification", () => {
     };
 
     return new Promise(resolve => {
-      request(requestUrl, requestOpts, function(err, res) {
+      request(requestUrl, requestOpts, (err, res) => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(401);
         resolve();
@@ -436,7 +433,7 @@ describe("Token verification", () => {
     };
 
     return new Promise(resolve => {
-      request(requestUrl, requestOpts, function(err, res) {
+      request(requestUrl, requestOpts, (err, res) => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(401);
         resolve();
@@ -448,7 +445,7 @@ describe("Token verification", () => {
     const requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
     const requestOpts = createTokenRequestOptions("invalid");
     return new Promise(resolve => {
-      request(requestUrl, requestOpts, function(err, res) {
+      request(requestUrl, requestOpts, (err, res) => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(401);
         resolve();
@@ -457,7 +454,7 @@ describe("Token verification", () => {
   });
 
   it("should rehydrate response local variables from the token", () => {
-    app.get("/protected_resource", addon.checkValidToken(), function(req, res) {
+    app.get("/protected_resource", addon.checkValidToken(), (req, res) => {
       res.send({
         clientKey: res.locals.clientKey,
         token: res.locals.token,
@@ -473,14 +470,14 @@ describe("Token verification", () => {
     const requestOpts = createRequestOptions(JWT_AUTH_RESPONDER_PATH);
 
     return new Promise(resolve => {
-      request(requestUrl, requestOpts, function(err, res, theToken) {
+      request(requestUrl, requestOpts, (err, res, theToken) => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(200);
 
         const tokenUrl = `${helper.addonBaseUrl}/protected_resource`;
         const tokenRequestOpts = createTokenRequestOptions(theToken);
 
-        request(tokenUrl, tokenRequestOpts, function(err, res, body) {
+        request(tokenUrl, tokenRequestOpts, (err, res, body) => {
           const payload = JSON.parse(body);
           expect(err).toBeNull();
           expect(res.statusCode).toEqual(200);
@@ -500,21 +497,22 @@ describe("Token verification", () => {
   });
 
   it("should rehydrate response local variables from context JWT", () => {
-    app.get("/protected_context_resource", addon.checkValidToken(), function(
-      req,
-      res
-    ) {
-      res.send({
-        clientKey: res.locals.clientKey,
-        token: res.locals.token,
-        userId: res.locals.userId,
-        userAccountId: res.locals.userAccountId,
-        hostBaseUrl: res.locals.hostBaseUrl,
-        hostStylesheetUrl: res.locals.hostStylesheetUrl,
-        hostScriptUrl: res.locals.hostScriptUrl,
-        context: res.locals.context
-      });
-    });
+    app.get(
+      "/protected_context_resource",
+      addon.checkValidToken(),
+      (req, res) => {
+        res.send({
+          clientKey: res.locals.clientKey,
+          token: res.locals.token,
+          userId: res.locals.userId,
+          userAccountId: res.locals.userAccountId,
+          hostBaseUrl: res.locals.hostBaseUrl,
+          hostStylesheetUrl: res.locals.hostStylesheetUrl,
+          hostScriptUrl: res.locals.hostScriptUrl,
+          context: res.locals.context
+        });
+      }
+    );
 
     const requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
     const context = { issue: { key: "ABC-123" } };
@@ -522,14 +520,14 @@ describe("Token verification", () => {
     const requestOpts = createRequestOptions(JWT_AUTH_RESPONDER_PATH, token);
 
     return new Promise(resolve => {
-      request(requestUrl, requestOpts, function(err, res, theToken) {
+      request(requestUrl, requestOpts, (err, res, theToken) => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(200);
 
         const tokenUrl = `${helper.addonBaseUrl}/protected_context_resource`;
         const tokenRequestOpts = createTokenRequestOptions(theToken);
 
-        request(tokenUrl, tokenRequestOpts, function(err, res, body) {
+        request(tokenUrl, tokenRequestOpts, (err, res, body) => {
           const payload = JSON.parse(body);
           expect(err).toBeNull();
           expect(res.statusCode).toEqual(200);
@@ -556,7 +554,7 @@ describe("Token verification", () => {
           method: "POST",
           json: helper.installedPayload
         },
-        function(err, res) {
+        (err, res) => {
           expect(res.statusCode).toEqual(401);
           resolve();
         }
@@ -578,7 +576,7 @@ describe("Token verification", () => {
             })}`
           }
         },
-        function(err, res) {
+        (err, res) => {
           expect(err).toBeNull();
           expect(res.statusCode).toEqual(204);
           resolve();
@@ -608,7 +606,7 @@ describe("Token verification", () => {
             )}`
           }
         },
-        function(err, res) {
+        (err, res) => {
           expect(err).toBeNull();
           expect(res.statusCode).toEqual(400);
           resolve();
@@ -648,7 +646,7 @@ describe("Token verification", () => {
             )}`
           }
         },
-        function(err, res) {
+        (err, res) => {
           expect(err).toBeNull();
           expect(res.statusCode).toEqual(401);
           resolve();

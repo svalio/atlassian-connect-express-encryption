@@ -161,7 +161,7 @@ describe("Configuration", () => {
     });
 
     function matches(cfg, host) {
-      return cfg.whitelistRegexp().some(function(re) {
+      return cfg.whitelistRegexp().some(re => {
         return re.test(host);
       });
     }
