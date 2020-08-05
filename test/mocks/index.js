@@ -15,7 +15,7 @@ module.exports = (function() {
           url || "https://oauth-2-authorization-server.services.atlassian.com"
         )
           .post("/oauth2/token")
-          .reply(200, accessToken == null ? OAUTH_ACCESS_TOKEN : accessToken);
+          .reply(200, accessToken || OAUTH_ACCESS_TOKEN);
       },
       ACCESS_TOKEN: OAUTH_ACCESS_TOKEN
     },

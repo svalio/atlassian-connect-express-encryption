@@ -59,7 +59,7 @@
     "preversion": "npm test",
     "postversion": "git push && git push --tags",
     "test": "jest --runInBand --collectCoverage",
-    "lint": "eslint lib/**/**/*.js test/**/*.js"
+    "lint": "eslint lib/**/*.js test/**/*.js"
   },
   "jest": {
     "coverageThreshold": {

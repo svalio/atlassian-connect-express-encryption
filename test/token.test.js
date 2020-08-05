@@ -186,7 +186,7 @@ describe("Token verification", () => {
   }
 
   function isBase64EncodedJson(value) {
-    return value && value.indexOf("ey") == 0;
+    return value && value.indexOf("ey") === 0;
   }
 
   it("should generate a token for authenticated GET requests", async () => {
