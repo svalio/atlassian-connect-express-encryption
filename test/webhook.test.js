@@ -16,7 +16,7 @@ describe("Webhook", () => {
   let addonRegistered = false;
 
   beforeAll(done => {
-    ac.store.register("teststore", function(logger, opts) {
+    ac.store.register("teststore", (logger, opts) => {
       return require("../lib/store/sequelize")(logger, opts);
     });
 
@@ -45,14 +45,14 @@ describe("Webhook", () => {
 
     const host = express();
     // mock host
-    host.get("/rest/plugins/1.0/", function(req, res) {
+    host.get("/rest/plugins/1.0/", (req, res) => {
       res.setHeader("upm-token", "123");
       res.json({ plugins: [] });
     });
 
-    host.post("/rest/plugins/1.0/", function(req, res) {
+    host.post("/rest/plugins/1.0/", (req, res) => {
       request({
-        url: helper.addonBaseUrl + "/installed",
+        url: `${helper.addonBaseUrl}/installed`,
         qs: {
           jwt: createValidJwtToken()
         },
@@ -62,9 +62,9 @@ describe("Webhook", () => {
       res.status(200).end();
     });
 
-    hostServer = http.createServer(host).listen(3003, function() {
-      server = http.createServer(app).listen(helper.addonPort, function() {
-        addon.once("host_settings_saved", function() {
+    hostServer = http.createServer(host).listen(3003, () => {
+      server = http.createServer(app).listen(helper.addonPort, () => {
+        addon.once("host_settings_saved", () => {
           addonRegistered = true;
         });
         addon.register().then(done);
@@ -138,7 +138,7 @@ describe("Webhook", () => {
     const fireWebhook = function() {
       request.post(
         {
-          url: url,
+          url,
           qs: {
             user_id: "admin",
             jwt: createJwtToken
@@ -161,7 +161,7 @@ describe("Webhook", () => {
 
   it("should fire an add-on event", () => {
     const first = new Promise(resolve => {
-      addon.once("plugin_test_hook", function(event, body, req) {
+      addon.once("plugin_test_hook", (event, body, req) => {
         expect(event).toEqual("plugin_test_hook");
         expect(body.foo).toEqual("bar");
         expect(req.query["user_id"]).toEqual("admin");
@@ -186,7 +186,7 @@ describe("Webhook", () => {
     addon.once("webhook_auth_verification_successful", successful);
 
     const first = new Promise(resolve => {
-      addon.once("plugin_test_hook", function() {
+      addon.once("plugin_test_hook", () => {
         expect(triggered).toHaveBeenCalled();
         expect(successful).toHaveBeenCalled();
         resolve();
@@ -213,7 +213,7 @@ describe("Webhook", () => {
       fireTestWebhook(
         "/test-hook",
         { foo: "bar" },
-        function assertCorrectWebhookResult(err, res, body) {
+        (err, res, body) => {
           expect(err).toBeNull();
           expect(res.statusCode).toEqual(401);
           expect(body.message).toEqual(

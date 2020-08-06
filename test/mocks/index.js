@@ -10,30 +10,30 @@ module.exports = (function() {
 
   return {
     oauth2: {
-      service: function(accessToken, url) {
+      service(accessToken, url) {
         return nock(
           url || "https://oauth-2-authorization-server.services.atlassian.com"
         )
           .post("/oauth2/token")
-          .reply(200, accessToken == null ? OAUTH_ACCESS_TOKEN : accessToken);
+          .reply(200, accessToken || OAUTH_ACCESS_TOKEN);
       },
       ACCESS_TOKEN: OAUTH_ACCESS_TOKEN
     },
 
     // eslint-disable-next-line no-unused-vars
-    store: function(clientSettings, clientKey) {
+    store(clientSettings, clientKey) {
       const _store = {};
       _store[clientSettings.clientKey] = {
         clientInfo: clientSettings // init clientInfo
       };
 
       return {
-        get: function(key, clientKey) {
+        get(key, clientKey) {
           const clientInfo = _store[clientKey];
           const val = clientInfo ? clientInfo[key] : null;
           return RSVP.Promise.resolve(val);
         },
-        set: function(key, val, clientKey) {
+        set(key, val, clientKey) {
           const clientInfo = _store[clientKey] || {};
           clientInfo[key] = val;
           _store[clientKey] = clientInfo;

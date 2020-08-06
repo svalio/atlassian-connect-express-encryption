@@ -96,7 +96,7 @@ describe("Host Request", () => {
     delete httpClientOpts.requestPath;
     delete httpClientOpts.httpClientContext;
 
-    httpClient[opts.method](httpClientOpts, function() {
+    httpClient[opts.method](httpClientOpts, () => {
       interceptor.done(); // will throw assertion if endpoint is not intercepted
       testCallback();
     });
@@ -106,7 +106,7 @@ describe("Host Request", () => {
     const userKey = options.userKey;
     delete options.userKey;
     const opts = extend({}, options, {
-      httpClientWrapper: function(httpClient) {
+      httpClientWrapper(httpClient) {
         return httpClient.asUser(userKey);
       }
     });
@@ -121,7 +121,7 @@ describe("Host Request", () => {
     const userAccountId = options.userAccountId;
     delete options.userAccountId;
     const opts = extend({}, options, {
-      httpClientWrapper: function(httpClient) {
+      httpClientWrapper(httpClient) {
         return httpClient.asUserByAccountId(userAccountId);
       }
     });
@@ -176,7 +176,7 @@ describe("Host Request", () => {
         const userAgent = "my-fun-app";
         const opts = {
           addonConfig: {
-            userAgent: userAgent
+            userAgent
           }
         };
         interceptRequest(
@@ -206,7 +206,7 @@ describe("Host Request", () => {
               custom_header: "arbitrary value"
             }
           },
-          function() {
+          () => {
             interceptor.done();
             done();
           }
@@ -299,7 +299,7 @@ describe("Host Request", () => {
               jwt.fromExpressRequest({
                 method: "GET",
                 path: "/some/path/on/host",
-                query: query
+                query
               }),
               false,
               helper.productBaseUrl
@@ -414,7 +414,7 @@ describe("Host Request", () => {
               }
             ]
           })
-          .then(function(request) {
+          .then(request => {
             expect(request.file).toEqual([
               "file content",
               { filename: "filename", ContentType: "text/plain" }
@@ -439,7 +439,7 @@ describe("Host Request", () => {
               file: [someData, { filename: "myattachmentagain.png" }]
             }
           })
-          .then(function(request) {
+          .then(request => {
             expect(request._form._valueLength).toEqual(someData.length);
             done();
           });
@@ -462,11 +462,11 @@ describe("Host Request", () => {
             }
           })
           .then(
-            function(request) {
+            request => {
               expect(request._form._valueLength).toEqual(someData.length);
               done();
             },
-            function(err) {
+            err => {
               console.log(err);
             }
           );
@@ -487,7 +487,7 @@ describe("Host Request", () => {
               param1: "value1"
             }
           })
-          .then(function(request) {
+          .then(request => {
             expect(request.body.toString()).toBe("param1=value1");
             done();
           });
@@ -509,12 +509,12 @@ describe("Host Request", () => {
             }
           })
           .then(
-            function() {
+            () => {
               // Promise is resolved
               done(new Error("Promise should not be resolved"));
             },
             // eslint-disable-next-line no-unused-vars
-            function(reason) {
+            reason => {
               // Promise is rejected
               done();
             }

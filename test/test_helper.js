@@ -1,7 +1,7 @@
 exports.productBaseUrl = "http://admin:admin@localhost:3001/confluence";
 
 exports.addonPort = 3001;
-exports.addonBaseUrl = "http://localhost:" + exports.addonPort;
+exports.addonBaseUrl = `http://localhost:${exports.addonPort}`;
 
 exports.installedPayload = {
   baseUrl: this.productBaseUrl,

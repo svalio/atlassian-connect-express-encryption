@@ -14,7 +14,14 @@
     "ecmaVersion": 8
   },
   "rules": {
+    "curly": "error",
+    "eqeqeq": "error",
     "no-var": "error",
-    "prefer-const": "error"
+    "no-return-await": "error",
+    "no-unused-vars": "error",
+    "prefer-const": "error",
+    "object-shorthand": "error",
+    "prefer-arrow-callback": "error",
+    "prefer-template": "error"
   }
 }

@@ -161,7 +161,7 @@ describe("Configuration", () => {
     });
 
     function matches(cfg, host) {
-      return cfg.whitelistRegexp().some(function(re) {
+      return cfg.whitelistRegexp().some(re => {
         return re.test(host);
       });
     }
@@ -176,7 +176,7 @@ describe("Configuration", () => {
       const version = require("../package.json").version;
       const defaultConfig = createConfig({}, "development", {});
       expect(defaultConfig.userAgent()).toBe(
-        "atlassian-connect-express/" + version
+        `atlassian-connect-express/${version}`
       );
     });
 
