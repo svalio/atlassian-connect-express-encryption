@@ -1,7 +1,7 @@
 const nock = require("nock");
 const RSVP = require("rsvp");
 
-module.exports = (function() {
+module.exports = (function () {
   const OAUTH_ACCESS_TOKEN = {
     access_token: "{your access token}",
     expires_in: 900,

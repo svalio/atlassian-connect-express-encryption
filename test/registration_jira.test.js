@@ -79,13 +79,8 @@ describe("Auto registration (UPM)", () => {
   function createJwtToken() {
     const jwtPayload = {
       iss: helper.installedPayload.clientKey,
-      iat: moment()
-        .utc()
-        .unix(),
-      exp: moment()
-        .utc()
-        .add(10, "minutes")
-        .unix()
+      iat: moment().utc().unix(),
+      exp: moment().utc().add(10, "minutes").unix()
     };
 
     return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
@@ -200,6 +195,7 @@ describe("Auto registration (UPM)", () => {
     addon.descriptor = {
       key: "my-test-app-key",
       name: "My Test App Name",
+      baseUrl: "http://something",
       description: "My test app description.",
       apiMigrtios: { gdpr: true }
     };

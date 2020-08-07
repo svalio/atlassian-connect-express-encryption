@@ -1,7 +1,7 @@
 const config = require("../lib/internal/config");
 
 describe("Configuration", () => {
-  const createConfig = function(baseConfig, mode, overrides) {
+  const createConfig = function (baseConfig, mode, overrides) {
     if (arguments.length === 0) {
       baseConfig = {};
       mode = "development";

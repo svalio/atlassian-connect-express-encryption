@@ -80,13 +80,8 @@ describe("Webhook", () => {
   function createValidJwtToken(req) {
     const jwtPayload = {
       iss: helper.installedPayload.clientKey,
-      iat: moment()
-        .utc()
-        .unix(),
-      exp: moment()
-        .utc()
-        .add(10, "minutes")
-        .unix()
+      iat: moment().utc().unix(),
+      exp: moment().utc().add(10, "minutes").unix()
     };
 
     if (req) {
@@ -99,14 +94,8 @@ describe("Webhook", () => {
   function createExpiredJwtToken(req) {
     const jwtPayload = {
       iss: helper.installedPayload.clientKey,
-      iat: moment()
-        .utc()
-        .subtract(20, "minutes")
-        .unix(),
-      exp: moment()
-        .utc()
-        .subtract(10, "minutes")
-        .unix()
+      iat: moment().utc().subtract(20, "minutes").unix(),
+      exp: moment().utc().subtract(10, "minutes").unix()
     };
 
     if (req) {
@@ -119,7 +108,7 @@ describe("Webhook", () => {
   function fireTestWebhook(route, body, assertWebhookResult, createJwtToken) {
     const url = helper.addonBaseUrl + route;
 
-    const waitForRegistrationThenFireWebhook = function() {
+    const waitForRegistrationThenFireWebhook = function () {
       if (addonRegistered) {
         fireWebhook();
       } else {
@@ -135,7 +124,7 @@ describe("Webhook", () => {
       }
     };
 
-    const fireWebhook = function() {
+    const fireWebhook = function () {
       request.post(
         {
           url,

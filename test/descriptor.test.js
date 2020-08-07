@@ -75,7 +75,7 @@ describe("Descriptor", () => {
     beforeAll(() => {
       app.set("env", "development");
       const opts = options;
-      opts.config.descriptorTransformer = function(descriptor) {
+      opts.config.descriptorTransformer = function (descriptor) {
         descriptor.key = targetKey;
         return descriptor;
       };

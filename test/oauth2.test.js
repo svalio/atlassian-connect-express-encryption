@@ -10,7 +10,7 @@ describe("OAuth2", () => {
     baseUrl: "https://test.atlassian.net"
   };
 
-  const mockAddon = function() {
+  const mockAddon = function () {
     return {
       key: "test-addon-key",
       descriptor: {
@@ -97,9 +97,7 @@ describe("OAuth2", () => {
       const oauth2 = new OAuth2(addon);
 
       const cachedToken = {
-        expiresAt: moment()
-          .add(5, "minutes")
-          .unix(),
+        expiresAt: moment().add(5, "minutes").unix(),
         token: {
           access_token: "cached",
           expires_in: 500,
@@ -131,9 +129,7 @@ describe("OAuth2", () => {
       const oauth2 = new OAuth2(addon);
 
       const cachedToken = {
-        expiresAt: moment()
-          .subtract(5, "minutes")
-          .unix(),
+        expiresAt: moment().subtract(5, "minutes").unix(),
         token: {
           access_token: "cached",
           expires_in: 500,

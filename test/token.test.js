@@ -23,7 +23,7 @@ describe("Token verification", () => {
   let useBodyParser = true;
 
   function conditionalUseBodyParser(fn) {
-    return function(req, res, next) {
+    return function (req, res, next) {
       if (useBodyParser) {
         fn(req, res, next);
       } else {
@@ -83,7 +83,7 @@ describe("Token verification", () => {
     const routeArgs = [
       JWT_AUTH_RESPONDER_PATH,
       addon.authenticate(),
-      function(req, res) {
+      function (req, res) {
         const token = res.locals.token;
         res.send(token);
       }
@@ -113,13 +113,8 @@ describe("Token verification", () => {
     const jwtPayload = {
       sub: USER_ACCOUNT_ID,
       iss: iss || helper.installedPayload.clientKey,
-      iat: moment()
-        .utc()
-        .unix(),
-      exp: moment()
-        .utc()
-        .add(10, "minutes")
-        .unix()
+      iat: moment().utc().unix(),
+      exp: moment().utc().add(10, "minutes").unix()
     };
 
     jwtPayload.context = context
@@ -381,8 +376,9 @@ describe("Token verification", () => {
   });
 
   it("should reject requests with token appeared in both query and body", () => {
-    const requestUrl = `${helper.addonBaseUrl +
-      JWT_AUTH_RESPONDER_PATH}?jwt=token_in_query`;
+    const requestUrl = `${
+      helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH
+    }?jwt=token_in_query`;
     const requestOpts = {
       method: "POST",
       form: {
@@ -401,8 +397,9 @@ describe("Token verification", () => {
   });
 
   it("should use token from query parameter if appears both in body and header", () => {
-    const requestUrl = `${helper.addonBaseUrl +
-      JWT_AUTH_RESPONDER_PATH}?jwt=token_in_query`;
+    const requestUrl = `${
+      helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH
+    }?jwt=token_in_query`;
     const requestOpts = {
       headers: {
         Authorization: "JWT token_in_header"
