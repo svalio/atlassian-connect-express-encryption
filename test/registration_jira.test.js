@@ -13,7 +13,7 @@ const helper = require("./test_helper");
 const ac = require("../index");
 
 // Helps failures be reported to the test framework
-RSVP.on("error", function(err) {
+RSVP.on("error", err => {
   throw err;
 });
 
@@ -33,16 +33,16 @@ describe("Auto registration (UPM)", () => {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
 
-    app.get("/rest/plugins/1.0/", function(req, res) {
+    app.get("/rest/plugins/1.0/", (req, res) => {
       res.setHeader("upm-token", "123");
       res.json({ plugins: [] });
       res.status(200).end();
     });
 
     // Post request to UPM installer
-    app.post("/confluence/rest/plugins/1.0/", function(req, res) {
+    app.post("/confluence/rest/plugins/1.0/", (req, res) => {
       request({
-        url: helper.addonBaseUrl + "/installed",
+        url: `${helper.addonBaseUrl}/installed`,
         qs: {
           jwt: createJwtToken()
         },
@@ -52,11 +52,11 @@ describe("Auto registration (UPM)", () => {
       res.status(200).end();
     });
 
-    app.delete(/plugins\/1.0\/(.*?)-key/, function(req, res) {
+    app.delete(/plugins\/1.0\/(.*?)-key/, (req, res) => {
       res.status(200).end();
     });
 
-    ac.store.register("teststore", function(logger, opts) {
+    ac.store.register("teststore", (logger, opts) => {
       return require("../lib/store/sequelize")(logger, opts);
     });
 
@@ -79,13 +79,8 @@ describe("Auto registration (UPM)", () => {
   function createJwtToken() {
     const jwtPayload = {
       iss: helper.installedPayload.clientKey,
-      iat: moment()
-        .utc()
-        .unix(),
-      exp: moment()
-        .utc()
-        .add(10, "minutes")
-        .unix()
+      iat: moment().utc().unix(),
+      exp: moment().utc().add(10, "minutes").unix()
     };
 
     return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
@@ -135,7 +130,7 @@ describe("Auto registration (UPM)", () => {
     requireOptionalStub.mockReturnValue(
       RSVP.resolve({
         // eslint-disable-next-line no-unused-vars
-        connect: function(port, cb) {
+        connect(port, cb) {
           return undefined;
         }
       })
@@ -146,7 +141,7 @@ describe("Auto registration (UPM)", () => {
     requireOptionalStub.mockReturnValue(
       RSVP.resolve({
         // eslint-disable-next-line no-unused-vars
-        connect: function(port) {
+        connect(port) {
           return RSVP.resolve("https://test.ngrok.io");
         }
       })
@@ -200,6 +195,7 @@ describe("Auto registration (UPM)", () => {
     addon.descriptor = {
       key: "my-test-app-key",
       name: "My Test App Name",
+      baseUrl: "http://something",
       description: "My test app description.",
       apiMigrtios: { gdpr: true }
     };

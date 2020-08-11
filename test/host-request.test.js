@@ -15,7 +15,7 @@ describe("Host Request", () => {
     baseUrl: "https://test.atlassian.net"
   };
 
-  const createAddonConfig = function(opts) {
+  const createAddonConfig = function (opts) {
     opts = extend(
       {
         jwt: {
@@ -30,7 +30,7 @@ describe("Host Request", () => {
     });
   };
 
-  const mockAddon = function(addonConfig) {
+  const mockAddon = function (addonConfig) {
     if (!addonConfig) {
       addonConfig = {};
     }
@@ -96,7 +96,7 @@ describe("Host Request", () => {
     delete httpClientOpts.requestPath;
     delete httpClientOpts.httpClientContext;
 
-    httpClient[opts.method](httpClientOpts, function() {
+    httpClient[opts.method](httpClientOpts, () => {
       interceptor.done(); // will throw assertion if endpoint is not intercepted
       testCallback();
     });
@@ -106,7 +106,7 @@ describe("Host Request", () => {
     const userKey = options.userKey;
     delete options.userKey;
     const opts = extend({}, options, {
-      httpClientWrapper: function(httpClient) {
+      httpClientWrapper(httpClient) {
         return httpClient.asUser(userKey);
       }
     });
@@ -121,7 +121,7 @@ describe("Host Request", () => {
     const userAccountId = options.userAccountId;
     delete options.userAccountId;
     const opts = extend({}, options, {
-      httpClientWrapper: function(httpClient) {
+      httpClientWrapper(httpClient) {
         return httpClient.asUserByAccountId(userAccountId);
       }
     });
@@ -138,7 +138,7 @@ describe("Host Request", () => {
     it("get request has headers", () => {
       return new Promise(done => {
         // eslint-disable-next-line no-unused-vars
-        interceptRequest(done, function(uri, requestBody) {
+        interceptRequest(done, function (uri, requestBody) {
           expect(this.req.headers).toBeDefined();
         });
       });
@@ -147,7 +147,7 @@ describe("Host Request", () => {
     it("get request has user-agent header", () => {
       return new Promise(done => {
         // eslint-disable-next-line no-unused-vars
-        interceptRequest(done, function(uri, requestBody) {
+        interceptRequest(done, function (uri, requestBody) {
           expect(
             this.req.headers["user-agent"].startsWith(
               "atlassian-connect-express/"
@@ -161,7 +161,7 @@ describe("Host Request", () => {
       return new Promise(done => {
         const aceVersion = require("../package.json").version;
         // eslint-disable-next-line no-unused-vars
-        interceptRequest(done, function(uri, requestBody) {
+        interceptRequest(done, function (uri, requestBody) {
           expect(
             this.req.headers["user-agent"].startsWith(
               `atlassian-connect-express/${aceVersion}`
@@ -176,13 +176,13 @@ describe("Host Request", () => {
         const userAgent = "my-fun-app";
         const opts = {
           addonConfig: {
-            userAgent: userAgent
+            userAgent
           }
         };
         interceptRequest(
           done,
           // eslint-disable-next-line no-unused-vars
-          function(uri, requestBody) {
+          function (uri, requestBody) {
             expect(this.req.headers["user-agent"]).toBe(userAgent);
           },
           opts
@@ -195,7 +195,7 @@ describe("Host Request", () => {
         const interceptor = nock(clientSettings.baseUrl)
           .post("/some/path")
           // eslint-disable-next-line no-unused-vars
-          .reply(function(uri, requestBody) {
+          .reply(function (uri, requestBody) {
             expect(this.req.headers.custom_header).toBe("arbitrary value");
           });
 
@@ -206,7 +206,7 @@ describe("Host Request", () => {
               custom_header: "arbitrary value"
             }
           },
-          function() {
+          () => {
             interceptor.done();
             done();
           }
@@ -219,7 +219,7 @@ describe("Host Request", () => {
     it("get request has Authorization header", () => {
       return new Promise(done => {
         // eslint-disable-next-line no-unused-vars
-        interceptRequest(done, function(uri, requestBody) {
+        interceptRequest(done, function (uri, requestBody) {
           expect(this.req.headers.authorization).toBeDefined();
         });
       });
@@ -230,7 +230,7 @@ describe("Host Request", () => {
         // eslint-disable-next-line no-unused-vars
         interceptRequest(
           done,
-          function() {
+          function () {
             const jwtToken = this.req.headers.authorization.slice(4);
             const clientKey = clientSettings.clientKey;
             const decoded = jwt.decode(jwtToken, clientKey, true);
@@ -248,7 +248,7 @@ describe("Host Request", () => {
     it('get request has Authorization header starting with "JWT "', () => {
       return new Promise(done => {
         // eslint-disable-next-line no-unused-vars
-        interceptRequest(done, function(uri, requestBody) {
+        interceptRequest(done, function (uri, requestBody) {
           expect(this.req.headers.authorization.startsWith("JWT ")).toBe(true);
         });
       });
@@ -259,7 +259,7 @@ describe("Host Request", () => {
         // eslint-disable-next-line no-unused-vars
         interceptRequest(
           done,
-          function() {
+          function () {
             const jwtToken = this.req.headers.authorization.slice(4);
             const decoded = jwt.decode(
               jwtToken,
@@ -288,7 +288,7 @@ describe("Host Request", () => {
         // eslint-disable-next-line no-unused-vars
         interceptRequest(
           done,
-          function() {
+          function () {
             const jwtToken = this.req.headers.authorization.slice(4);
             const decoded = jwt.decode(
               jwtToken,
@@ -299,7 +299,7 @@ describe("Host Request", () => {
               jwt.fromExpressRequest({
                 method: "GET",
                 path: "/some/path/on/host",
-                query: query
+                query
               }),
               false,
               helper.productBaseUrl
@@ -316,12 +316,14 @@ describe("Host Request", () => {
         // eslint-disable-next-line no-unused-vars
         interceptRequest(
           done,
-          function() {
+          function () {
             expect(this.req.headers.authorization.startsWith("JWT ")).toBe(
               true
             );
           },
-          { requestPath: "https://test.atlassian.net/some/path/on/host" }
+          {
+            requestPath: "https://test.atlassian.net/some/path/on/host"
+          }
         );
       });
     });
@@ -331,7 +333,7 @@ describe("Host Request", () => {
         // eslint-disable-next-line no-unused-vars
         interceptRequest(
           done,
-          function() {
+          function () {
             expect(this.req.headers.authorization.startsWith("JWT ")).toBe(
               true
             );
@@ -349,7 +351,7 @@ describe("Host Request", () => {
         // eslint-disable-next-line no-unused-vars
         interceptRequestAsUser(
           done,
-          function() {
+          function () {
             authServiceMock.done();
             expect(this.req.headers.authorization.startsWith("JWT")).toBe(
               false
@@ -366,7 +368,7 @@ describe("Host Request", () => {
         // eslint-disable-next-line no-unused-vars
         interceptRequestAsUser(
           done,
-          function() {
+          function () {
             authServiceMock.done();
             expect(this.req.headers.authorization.startsWith("Bearer")).toBe(
               true
@@ -383,7 +385,7 @@ describe("Host Request", () => {
         // eslint-disable-next-line no-unused-vars
         interceptRequestAsUserByAccountId(
           done,
-          function() {
+          function () {
             authServiceMock.done();
             expect(this.req.headers.authorization.startsWith("Bearer")).toBe(
               true
@@ -414,7 +416,7 @@ describe("Host Request", () => {
               }
             ]
           })
-          .then(function(request) {
+          .then(request => {
             expect(request.file).toEqual([
               "file content",
               { filename: "filename", ContentType: "text/plain" }
@@ -439,7 +441,7 @@ describe("Host Request", () => {
               file: [someData, { filename: "myattachmentagain.png" }]
             }
           })
-          .then(function(request) {
+          .then(request => {
             expect(request._form._valueLength).toEqual(someData.length);
             done();
           });
@@ -462,11 +464,11 @@ describe("Host Request", () => {
             }
           })
           .then(
-            function(request) {
+            request => {
               expect(request._form._valueLength).toEqual(someData.length);
               done();
             },
-            function(err) {
+            err => {
               console.log(err);
             }
           );
@@ -487,7 +489,7 @@ describe("Host Request", () => {
               param1: "value1"
             }
           })
-          .then(function(request) {
+          .then(request => {
             expect(request.body.toString()).toBe("param1=value1");
             done();
           });
@@ -509,12 +511,12 @@ describe("Host Request", () => {
             }
           })
           .then(
-            function() {
+            () => {
               // Promise is resolved
               done(new Error("Promise should not be resolved"));
             },
             // eslint-disable-next-line no-unused-vars
-            function(reason) {
+            reason => {
               // Promise is rejected
               done();
             }
