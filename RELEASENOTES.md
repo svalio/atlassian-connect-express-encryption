@@ -1,5 +1,8 @@
 # Atlassian Connect for Express.js Release Notes
 
+## 4.4.1
+Refactoring and test library migration only.
+
 ## 4.4.0
 
 * Split out getVerifiedClaims as separate function
