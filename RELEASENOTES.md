@@ -1,5 +1,10 @@
 # Atlassian Connect for Express.js Release Notes
 
+## 5.0.0
+
+Update all package versions to latest.
+This is a major version bump because it raises the minimum node version for atlassian-connect-express from 8 to 10.
+
 ## 4.4.1
 Refactoring and test library migration only.
 
