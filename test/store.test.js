@@ -3,7 +3,6 @@ const http = require("http");
 const express = require("express");
 const bodyParser = require("body-parser");
 const request = require("request");
-const RSVP = require("rsvp");
 const Sequelize = require("sequelize");
 const logger = require("./logger");
 const MongodbMemoryServer = require("mongodb-memory-server").default;
@@ -58,7 +57,7 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
     let storeOptsPromise;
     switch (store) {
       case "sequelize":
-        storeOptsPromise = RSVP.resolve({
+        storeOptsPromise = Promise.resolve({
           adapter: "teststore",
           type: "memory"
         });
@@ -204,7 +203,7 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
           addon.settings.get("custom key", helper.installedPayload.clientKey),
           addon.settings.del("custom key", helper.installedPayload.clientKey)
         ];
-        await RSVP.all(promises);
+        await Promise.all(promises);
         expect(storeSetSpy).toHaveBeenCalled();
         expect(storeGetSpy).toHaveBeenCalled();
         expect(storeDelSpy).toHaveBeenCalled();

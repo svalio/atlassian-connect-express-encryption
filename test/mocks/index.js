@@ -1,5 +1,4 @@
 const nock = require("nock");
-const RSVP = require("rsvp");
 
 module.exports = (function () {
   const OAUTH_ACCESS_TOKEN = {
@@ -31,13 +30,13 @@ module.exports = (function () {
         get(key, clientKey) {
           const clientInfo = _store[clientKey];
           const val = clientInfo ? clientInfo[key] : null;
-          return RSVP.Promise.resolve(val);
+          return Promise.resolve(val);
         },
         set(key, val, clientKey) {
           const clientInfo = _store[clientKey] || {};
           clientInfo[key] = val;
           _store[clientKey] = clientInfo;
-          return RSVP.Promise.resolve(val);
+          return Promise.resolve(val);
         }
       };
     }

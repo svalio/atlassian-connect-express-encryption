@@ -5,7 +5,6 @@ const http = require("http");
 const request = require("request");
 const moment = require("moment");
 const nock = require("nock");
-const RSVP = require("rsvp");
 const logger = require("./logger");
 const requireOptional = require("../lib/internal/require-optional");
 const jiraGlobalSchema = require("./jira-global-schema");
@@ -13,7 +12,7 @@ const helper = require("./test_helper");
 const ac = require("../index");
 
 // Helps failures be reported to the test framework
-RSVP.on("error", err => {
+process.on("unhandledRejection", err => {
   throw err;
 });
 
@@ -128,7 +127,7 @@ describe("Auto registration (UPM)", () => {
 
   function stubNgrokV2() {
     requireOptionalStub.mockReturnValue(
-      RSVP.resolve({
+      Promise.resolve({
         // eslint-disable-next-line no-unused-vars
         connect(port, cb) {
           return undefined;
@@ -139,10 +138,10 @@ describe("Auto registration (UPM)", () => {
 
   function stubNgrokWorking() {
     requireOptionalStub.mockReturnValue(
-      RSVP.resolve({
+      Promise.resolve({
         // eslint-disable-next-line no-unused-vars
         connect(port) {
-          return RSVP.resolve("https://test.ngrok.io");
+          return Promise.resolve("https://test.ngrok.io");
         }
       })
     );
@@ -154,7 +153,7 @@ describe("Auto registration (UPM)", () => {
       "Cannot find module 'ngrok' (no worries, this error is thrown on purpose by stubNgrokUnavailable in test)"
     );
     error.code = "MODULE_NOT_FOUND";
-    requireOptionalStub.returns(RSVP.reject(error));
+    requireOptionalStub.returns(Promise.reject(error));
   }
 
   it("registration works with local host and does not involve ngrok", async () => {
