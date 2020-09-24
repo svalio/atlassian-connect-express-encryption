@@ -1,12 +1,18 @@
 # Atlassian Connect for Express.js Release Notes
 
+## 6.0.0
+
+* Update all package versions to latest.
+* A major version bump because it also removes `addon._` ([Lodash](https://lodash.com/) utilities).
+
 ## 5.0.0
 
-Update all package versions to latest.
-This is a major version bump because it raises the minimum node version for atlassian-connect-express from 8 to 10.
+* Update all package versions to latest.
+* A major version bump because it also raises the minimum node version for atlassian-connect-express from 8 to 10.
 
 ## 4.4.1
-Refactoring and test library migration only.
+
+* Refactor and test library migration only
 
 ## 4.4.0
 
@@ -19,40 +25,47 @@ Refactoring and test library migration only.
 
 ## 4.2.0
 
-* (Atlassian internal only) Use staging oauth 2 authorization server when performing user impersonation against dev jira or confluence sites 
+* (Atlassian internal only) Use staging oauth 2 authorization server when performing user impersonation against dev jira or confluence sites
 
 ## 4.1.0
 * Use {{appKey}} variable in atlassian-connect.json
-* Use the correct sqlite dialect string. 
+* Use the correct sqlite dialect string.
 * Set urijs to static version because of recent bug in library
-* Add retryWrites=false and correct option order 
+* Add retryWrites=false and correct option order
 * Bumping Sequilize to fix the vulnerability
 * Handle errors thrown by store adapter during installation verification
 * Add eslint support / Add some more eslint rules
 * bump atlassian-oauth2 for new oauth-2-authorisation-server service URL
-* Add back colors import 
+* Add back colors import
 * Allow the import of dialectOptions via config
 
 ## 4.0.1
+
 * Moved ngrok dependency back to dev
 
 ## 4.0.0
+
 * Corrected version and incrementing major version due to drop of ngrok 2 in support of 3 from ACE version 3.5.0 (breaking change)
 * Support for the qs parameter
 
 ## 3.5.2
+
 Security fixes - updated Bitbucket
 
 ## 3.5.1
+
 Security fixes
 
 ## 3.5.0
+
 * Fixes dependency on ngrok 3, and drops support for ngrok 2
 
 ## 3.4.3
+
 * Add descriptor validator - app developer should add a 'validateDescriptor' in config file to enable this in development mode
 
 ## 3.4.2
+
 * Allow passing of Sequelize pool options
 * Alignment of Jira, Conf, and Bitbucket SDK
 * Documented events
