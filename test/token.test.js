@@ -32,7 +32,7 @@ describe("Token verification", () => {
     };
   }
 
-  beforeAll(done => {
+  beforeAll(() => {
     app.set("env", "development");
     app.use(
       conditionalUseBodyParser(bodyParser.urlencoded({ extended: false }))
@@ -44,65 +44,70 @@ describe("Token verification", () => {
       return require("../lib/store/sequelize")(logger, opts);
     });
 
-    // configure add-on
-    addon = ac(
-      app,
-      {
-        config: {
-          development: {
-            store: {
-              adapter: "teststore",
-              type: "memory"
-            },
-            hosts: [helper.productBaseUrl]
-          }
-        }
-      },
-      logger,
-      () => {
-        request(
-          {
-            url: `${helper.addonBaseUrl}/installed`,
-            method: "POST",
-            json: helper.installedPayload
-          },
-          (err, res) => {
-            if (res.statusCode !== 204) {
-              throw new Error("Install hook failed");
+    return new Promise(resolve => {
+      // configure add-on
+      addon = ac(
+        app,
+        {
+          config: {
+            development: {
+              store: {
+                adapter: "teststore",
+                type: "memory"
+              },
+              hosts: [helper.productBaseUrl]
             }
-            done();
           }
-        );
-      }
-    );
+        },
+        logger,
+        () => {
+          request(
+            {
+              url: `${helper.addonBaseUrl}/installed`,
+              method: "POST",
+              json: helper.installedPayload
+            },
+            (err, res) => {
+              if (res.statusCode !== 204) {
+                throw new Error("Install hook failed");
+              }
+              resolve();
+            }
+          );
+        }
+      );
 
-    // Include the goodies
-    app.use(addon.middleware());
+      // Include the goodies
+      app.use(addon.middleware());
 
-    // default test routes
-    const routeArgs = [
-      JWT_AUTH_RESPONDER_PATH,
-      addon.authenticate(),
-      function (req, res) {
-        const token = res.locals.token;
-        res.send(token);
-      }
-    ];
-    app.get.apply(app, routeArgs);
-    app.post.apply(app, routeArgs);
+      // default test routes
+      const routeArgs = [
+        JWT_AUTH_RESPONDER_PATH,
+        addon.authenticate(),
+        function (req, res) {
+          const token = res.locals.token;
+          res.send(token);
+        }
+      ];
+      app.get.apply(app, routeArgs);
+      app.post.apply(app, routeArgs);
 
-    app.get(CHECK_TOKEN_RESPONDER_PATH, addon.checkValidToken(), (req, res) => {
-      const token = res.locals.token;
-      res.send(token);
+      app.get(
+        CHECK_TOKEN_RESPONDER_PATH,
+        addon.checkValidToken(),
+        (req, res) => {
+          const token = res.locals.token;
+          res.send(token);
+        }
+      );
+
+      // start server
+      server = http.createServer(app).listen(helper.addonPort);
     });
-
-    // start server
-    server = http.createServer(app).listen(helper.addonPort);
   });
 
-  afterAll(done => {
-    server.close();
-    done();
+  afterAll(() => {
+    return server.close();
   });
 
   afterEach(() => {

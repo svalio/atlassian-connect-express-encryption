@@ -96,7 +96,7 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
     });
   }, timeout);
 
-  afterAll(done => {
+  afterAll(() => {
     storeGetSpy.mockRestore();
     storeSetSpy.mockRestore();
     storeDelSpy.mockRestore();
@@ -106,7 +106,6 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
     if (dbServer) {
       dbServer.stop();
     }
-    done();
   });
 
   it("should store client info", async () => {

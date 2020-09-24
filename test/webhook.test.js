@@ -15,7 +15,7 @@ describe("Webhook", () => {
   let hostServer;
   let addonRegistered = false;
 
-  beforeAll(done => {
+  beforeAll(() => {
     ac.store.register("teststore", (logger, opts) => {
       return require("../lib/store/sequelize")(logger, opts);
     });
@@ -62,12 +62,15 @@ describe("Webhook", () => {
       res.status(200).end();
     });
 
-    hostServer = http.createServer(host).listen(3003, () => {
-      server = http.createServer(app).listen(helper.addonPort, () => {
-        addon.once("host_settings_saved", () => {
-          addonRegistered = true;
+    return new Promise(resolve => {
+      hostServer = http.createServer(host).listen(3003, () => {
+        server = http.createServer(app).listen(helper.addonPort, async () => {
+          addon.once("host_settings_saved", () => {
+            addonRegistered = true;
+          });
+          await addon.register();
+          resolve();
         });
-        addon.register().then(done);
       });
     });
   });
