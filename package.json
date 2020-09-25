@@ -1,6 +1,6 @@
 {
   "name": "atlassian-connect-express",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "description": "Library for building Atlassian Add-ons on top of Express",
   "author": "Atlassian",
   "license": "Apache-2.0",
@@ -9,6 +9,9 @@
     "url": "http://bitbucket.org/atlassian/atlassian-connect-express"
   },
   "homepage": "https://bitbucket.org/atlassian/atlassian-connect-express",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "keywords": [
     "atlassian",
     "plugins",

@@ -4,7 +4,7 @@
 [Atlassian Connect](https://developer.atlassian.com/display/AC/Atlassian+Connect) based Add-ons with
 [Node.js](http://nodejs.org/). Atlassian Connect is a distributed component model for creating add-ons.
 Add-ons built with Atlassian Connect extend Atlassian cloud-based applications over standard web protocols and APIs.
-To build add-ons for Atlassian's server (on-premises) products, refer to the [server developer documentation](https://developer.atlassian.com/server/). 
+To build add-ons for Atlassian's server (on-premises) products, refer to the [server developer documentation](https://developer.atlassian.com/server/).
 
 ACE is the **officially supported** Node.js framework for Atlassian Connect. Please read our documentation to see the other
 supported and community provided
@@ -128,7 +128,7 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
   "development": {
     // This is the port your Express server will listen on
     "port": 3000,
-    
+
     // To enable validation of descriptor on startup and every time it changes,
     // add the optional config validateDescriptor to true
     "validateDescriptor": true,
@@ -184,7 +184,7 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
     //
     //   $ npm install --save pg
     //
-    
+
   },
 
   // This is the production add-on configuration, which is enabled by setting
@@ -336,8 +336,8 @@ that links elsewhere in the host:
 To listen to an event:
 ```
 addon.on(event, function() {
-                    //add something here
-            });
+  // Add something here
+});
 ```
 
 ## Recipes
@@ -556,7 +556,7 @@ If you need help using Express.js, see the [API reference](https://expressjs.com
 
 If you need help developing against Atlassian products, see the [Atlassian Developer](https://developer.atlassian.com/) site.
 
-If you need help using functionality provided by ACE, or would like to report a problem with the toolkit, please post in the 
+If you need help using functionality provided by ACE, or would like to report a problem with the toolkit, please post in the
 [Atlassian Developer Community](https://community.developer.atlassian.com/c/atlassian-developer-tools).
 
 
