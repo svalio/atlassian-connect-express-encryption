@@ -3,7 +3,10 @@
 ## 6.0.0
 
 * Update all package versions to latest.
-* A major version bump because it also removes `addon._` ([Lodash](https://lodash.com/) utilities).
+  * [sequelize](https://www.npmjs.com/package/sequelize) is updated to v6 from v5,
+    see [breaking changes](https://github.com/sequelize/sequelize/blob/master/docs/manual/other-topics/upgrade-to-v6.md).
+  * [rsvp](https://www.npmjs.com/package/rsvp) promise library is removed.
+* A major version bump also because it removes `addon._` ([Lodash](https://lodash.com/) utilities).
 
 ## 5.0.0
 
