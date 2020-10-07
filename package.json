@@ -34,6 +34,7 @@
     "md5": "^2.3.0",
     "moment": "^2.29.0",
     "mongodb": "^3.6.2",
+    "redis": "^3.0.2",
     "request": "^2.88.2",
     "sequelize": "^6.3.5",
     "urijs": "^1.19.2"
@@ -51,6 +52,7 @@
     "ngrok": "^3.3.0",
     "nock": "^13.0.3",
     "prettier": "^2.1.2",
+    "redis-mock": "^0.52.0",
     "sqlite3": "^5.0.0"
   },
   "peerDependencies": {

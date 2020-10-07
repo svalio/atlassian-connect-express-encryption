@@ -5,9 +5,11 @@ const bodyParser = require("body-parser");
 const request = require("request");
 const Sequelize = require("sequelize");
 const logger = require("./logger");
+const redis = require("redis");
+const redisMock = require("redis-mock");
 const MongodbMemoryServer = require("mongodb-memory-server").default;
 
-describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
+describe.each([["sequelize"], ["mongodb"], ["redis"]])("Store %s", store => {
   const app = express();
   const ac = require("../index");
   let addon;
@@ -15,6 +17,7 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
   let dbServer = null;
   const oldACOpts = process.env.AC_OPTS;
 
+  let redisCreateClientSpy;
   let storeGetSpy;
   let storeSetSpy;
   let storeDelSpy;
@@ -25,6 +28,10 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
   const timeout = store === "mongodb" ? 60000 : 5000;
 
   beforeAll(async () => {
+    redisCreateClientSpy = jest
+      .spyOn(redis, "createClient")
+      .mockImplementation(redisMock.createClient);
+
     process.env.AC_OPTS = "no-auth";
     app.set("env", "development");
     app.use(bodyParser.urlencoded({ extended: false }));
@@ -75,6 +82,12 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
           url: connectionString
         }));
         break;
+      case "redis":
+        storeOptsPromise = Promise.resolve({
+          adapter: "teststore",
+          url: "redis://localhost:6379"
+        });
+        break;
     }
     return storeOptsPromise.then(storeOpts => {
       addon = ac(
@@ -97,6 +110,7 @@ describe.each([["sequelize"], ["mongodb"]])("Store %s", store => {
   }, timeout);
 
   afterAll(() => {
+    redisCreateClientSpy.mockRestore();
     storeGetSpy.mockRestore();
     storeSetSpy.mockRestore();
     storeDelSpy.mockRestore();

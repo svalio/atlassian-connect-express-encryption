@@ -178,6 +178,13 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
     //     "collection": "AddonSettings"
     //   },
     //
+    // For Redis, use the following:
+    //
+    //   "store": {
+    //     "adapter": "redis",
+    //     "url": "redis://localhost:6379",
+    //   },    
+    //
     // You will also need an appropriate Sequelize driver if you choose something
     // other than the default "diaclet".  In the PostgreSQL case you'd need to
     // run the following command to add the proper support:
