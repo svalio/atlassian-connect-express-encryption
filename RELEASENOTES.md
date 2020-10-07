@@ -1,5 +1,9 @@
 # Atlassian Connect for Express.js Release Notes
 
+## 6.1.0
+
+* Add Redis storage adapter.
+
 ## 6.0.0
 
 * Update all package versions to latest.
