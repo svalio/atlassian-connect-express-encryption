@@ -1,6 +1,6 @@
 # You can use a Docker image from Docker Hub or your own container
 # registry for your build environment.
-image: node:8
+image: node:10
 pipelines:
   default:
     - step:
@@ -8,3 +8,4 @@ pipelines:
           - npm --version
           - npm install
           - npm test
+          - npm run lint

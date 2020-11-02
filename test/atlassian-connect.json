@@ -1,5 +1,6 @@
+// This is an intentional comment to ensure we can load json with comments
 {
-    "key": "my-test-app-key",
+    "key": "{{appKey}}",
     "name": "My Test App Name",
     "version": "1",
     "description": "My test app description.",

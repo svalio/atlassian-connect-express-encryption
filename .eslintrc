@@ -1,0 +1,27 @@
+{
+  "env": {
+    "es6": true,
+    "jest": true,
+    "jest/globals": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:jest/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 8
+  },
+  "rules": {
+    "curly": "error",
+    "eqeqeq": "error",
+    "no-var": "error",
+    "no-return-await": "error",
+    "no-unused-vars": "error",
+    "prefer-const": "error",
+    "object-shorthand": "error",
+    "prefer-arrow-callback": "error",
+    "prefer-template": "error"
+  }
+}
