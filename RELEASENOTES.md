@@ -1,5 +1,9 @@
 # Atlassian Connect for Express.js Release Notes
 
+## 6.2.0
+
+* Allow custom table name with sequelize.
+
 ## 6.1.0
 
 * Add Redis storage adapter.
