@@ -1,5 +1,10 @@
 # Atlassian Connect for Express.js Release Notes
 
+## 6.2.1
+
+* Fix the bug that causes sequelize adapter to always insert a new record instead of updating the existing one; this breaks reinstallation:
+  https://community.developer.atlassian.com/t/i-found-a-bug-in-atlassian-connect-express-sequelize-storage-adapter-how-do-i-report-it/42399
+
 ## 6.2.0
 
 * Allow custom table name with sequelize.
