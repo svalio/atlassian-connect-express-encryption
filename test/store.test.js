@@ -141,12 +141,41 @@ describe.each([["sequelize"], ["mongodb"], ["redis"]])("Store %s", store => {
 
   it("should return a list of clientInfo objects", async () => {
     const initialClientInfos = await addon.settings.getAllClientInfos();
-    await addon.settings.set("clientInfo", { correctPayload: true }, "fake");
+
+    await addon.settings.set(
+      "clientInfo",
+      { correctPayload: true },
+      "clientKey-list-test"
+    );
     const clientInfos = await addon.settings.getAllClientInfos();
     expect(clientInfos).toHaveLength(initialClientInfos.length + 1);
+
     const latestClientInfo = clientInfos[clientInfos.length - 1];
     const correctPayload = latestClientInfo["correctPayload"];
     expect(correctPayload).toEqual(true);
+  });
+
+  it("should update for existing key-clientKey pair", async () => {
+    const initialClientInfos = await addon.settings.getAllClientInfos();
+
+    const setting1 = await addon.settings.set(
+      "clientInfo",
+      { correctPayload1: true },
+      "clientKey-update-test"
+    );
+    const setting2 = await addon.settings.set(
+      "clientInfo",
+      { correctPayload2: false },
+      "clientKey-update-test"
+    );
+    const clientInfos = await addon.settings.getAllClientInfos();
+    expect(clientInfos).toHaveLength(initialClientInfos.length + 1);
+    expect(setting1).toEqual({ correctPayload1: true });
+    expect(setting2).toEqual({ correctPayload2: false });
+
+    const latestClientInfo = clientInfos[clientInfos.length - 1];
+    expect(latestClientInfo["correctPayload1"]).toEqual(undefined);
+    expect(latestClientInfo["correctPayload2"]).toEqual(false);
   });
 
   it("should allow storing arbitrary key/values as a JSON string", async () => {
