@@ -1,6 +1,6 @@
 {
   "name": "atlassian-connect-express",
-  "version": "6.2.1",
+  "version": "6.2.2",
   "description": "Library for building Atlassian Add-ons on top of Express",
   "author": "Atlassian",
   "license": "Apache-2.0",
