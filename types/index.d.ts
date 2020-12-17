@@ -107,12 +107,10 @@ declare interface Store {
 declare class HostClient{
     constructor(addon: AddOn, context: { clientKey: string, useAccountId: string } | Request, clientKey: string);
     addon: AddOn;
-    //not sure
     context: boolean
     clientKey: string
     oauth2: OAuth2
 
-    //did i import this properly?
     asUser(userKey: string): request
     defaults(): request
     cookie(): request
@@ -169,11 +167,8 @@ declare class AddOn extends EventEmitter {
      * @returns HostClient a httpClient
      */
 
-    //not sure what im doing here
-    //options?
-    httpClient(reqOrOpts: { clientKey: string, useAccountId: string }): HostClient;
 
-    //express request
+    httpClient(reqOrOpts: { clientKey: string, useAccountId: string }): HostClient;
     httpClient(reqOrOpts: Request): HostClient;
 }
 type Opts = {config: ConfigOptions}
