@@ -1,7 +1,9 @@
 import * as express from 'express';
 import { EventEmitter } from 'events';
 import { FSWatcher } from 'fs';
-import {Sequelize} from 'sequelize';
+import { Sequelize } from 'sequelize';
+import { request } from 'request';
+import OAuth2 from '../lib/internal/oauth2';
 
 // TODO comments
 // TODO replace any with types
@@ -102,6 +104,21 @@ declare interface Store {
     register(adapter: any, factory: any): void;
 }
 
+declare class HostClient{
+    constructor(addon: AddOn, context: { clientKey: string, useAccountId: string } | Request, clientKey: string);
+    addon: AddOn;
+    //not sure
+    context: boolean
+    clientKey: string
+    oauth2: OAuth2
+
+    //did i import this properly?
+    asUser(userKey: string): request
+    defaults(): request
+    cookie(): request
+    jar(): request
+}
+
 declare class AddOn extends EventEmitter {
     constructor(app: express.Application, opts?: Options, logger?: Console, callback?: () => void);
     constructor(app: express.Application);
@@ -151,8 +168,13 @@ declare class AddOn extends EventEmitter {
      * @param reqOrOpts either an expressRequest object or options
      * @returns HostClient a httpClient
      */
-    httpClient(reqOrOpts: { clientKey: string, useAccountId: string }): any;
-    httpClient(reqOrOpts: Request): any;
+
+    //not sure what im doing here
+    //options?
+    httpClient(reqOrOpts: { clientKey: string, useAccountId: string }): HostClient;
+
+    //express request
+    httpClient(reqOrOpts: Request): HostClient;
 }
 type Opts = {config: ConfigOptions}
 
