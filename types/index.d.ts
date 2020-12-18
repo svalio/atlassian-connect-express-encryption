@@ -5,9 +5,6 @@ import { Sequelize } from 'sequelize';
 import { request } from 'request';
 import OAuth2 from '../lib/internal/oauth2';
 
-// TODO comments
-// TODO replace any with types
-
 type Descriptor = {
     key: string;
     name: string;
@@ -74,26 +71,9 @@ interface Config{
 }
 
 interface StoreAdapter{
-    del(key: string, clientKey: string): Promise<any>
+    del(key: string, clientKey: string): Promise<void>
     get(key: string, clientKey: string): Promise<any>
     set(key: string, clientKey: string): Promise<any>
-    schema?: Sequelize
-    settings: {
-        dialect: string;
-        logging: boolean
-        storage: string
-    } | 
-    {
-        connectionUrl: string;
-        collectionName: string;
-        databaseName?: string;
-        mongoDbOpts: {
-            retryWrites: boolean;
-            useNewUrlParser: boolean;
-            promiseLibrary?: PromiseConstructor
-        }
-        //opts?!
-    }
 }
 
 type MiddlewareParameters = (request: express.Request, response: express.Response, next: express.NextFunction) => void;
@@ -101,7 +81,7 @@ type MiddlewareParameters = (request: express.Request, response: express.Respons
 declare const DESCRIPTOR_FILENAME = "atlassian-connect.json";
 
 declare interface Store {
-    register(adapter: any, factory: any): void;
+    register(adapterKey: string, factory: (logger: Console, opts: any) => StoreAdapter): void;
 }
 
 declare class HostClient{
@@ -117,17 +97,30 @@ declare class HostClient{
     jar(): request
 }
 
+interface ClientInfo {
+    key: string,
+    clientKey: string,
+    publicKey: string
+    sharedSecret: string,
+    serverVersion: string,
+    pluginsVersion: string,
+    baseUrl: string,
+    productType: string,
+    description: string,
+    eventType: string,
+    oauthClientId?: string
+  }
+
 declare class AddOn extends EventEmitter {
     constructor(app: express.Application, opts?: Options, logger?: Console, callback?: () => void);
     constructor(app: express.Application);
     
-
     middleware(): MiddlewareParameters;
     authenticate(skipQshVerification: boolean): MiddlewareParameters;
-    loadClientInfo(clientKey: string): Promise<any>; // TODO what's the structure of clientInfo
+    loadClientInfo(clientKey: string): Promise<ClientInfo>; 
     checkValidToken(): MiddlewareParameters | boolean;
 
-    register() : Promise<any>;
+    register() : Promise<void>;
     key: string;
     name: string;
     config: Config;
