@@ -2,7 +2,7 @@ import * as express from 'express';
 import { EventEmitter } from 'events';
 import { FSWatcher } from 'fs';
 import { Sequelize } from 'sequelize';
-import { request } from 'request';
+import { Request } from 'request';
 import OAuth2 from '../lib/internal/oauth2';
 
 type Descriptor = {
@@ -71,9 +71,9 @@ interface Config{
 }
 
 interface StoreAdapter{
-    del(key: string, clientKey: string): Promise<void>
-    get(key: string, clientKey: string): Promise<any>
-    set(key: string, clientKey: string): Promise<any>
+    del(key: string, clientKey: string): Promise<void>;
+    get(key: string, clientKey: string): Promise<any>;
+    set(key: string, clientKey: string): Promise<any>;
 }
 
 type MiddlewareParameters = (request: express.Request, response: express.Response, next: express.NextFunction) => void;
@@ -87,14 +87,14 @@ declare interface Store {
 declare class HostClient{
     constructor(addon: AddOn, context: { clientKey: string, useAccountId: string } | Request, clientKey: string);
     addon: AddOn;
-    context: boolean
-    clientKey: string
-    oauth2: OAuth2
+    context: boolean;
+    clientKey: string;
+    oauth2: OAuth2;
 
-    asUser(userKey: string): request
-    defaults(): request
-    cookie(): request
-    jar(): request
+    asUser(userKey: string): Request;
+    defaults(): Request;
+    cookie(): Request;
+    jar(): Request;
 }
 
 interface ClientInfo {
@@ -111,12 +111,12 @@ interface ClientInfo {
     oauthClientId?: string
   }
 
-declare class AddOn extends EventEmitter {
+export declare class AddOn extends EventEmitter {
     constructor(app: express.Application, opts?: Options, logger?: Console, callback?: () => void);
     constructor(app: express.Application);
     
     middleware(): MiddlewareParameters;
-    authenticate(skipQshVerification: boolean): MiddlewareParameters;
+    authenticate(skipQshVerification?: boolean): MiddlewareParameters;
     loadClientInfo(clientKey: string): Promise<ClientInfo>; 
     checkValidToken(): MiddlewareParameters | boolean;
 
@@ -166,7 +166,7 @@ declare class AddOn extends EventEmitter {
 }
 type Opts = {config: ConfigOptions}
 
-type AddOnFactory = (app: express.Application, opts?: Opts, logger?: Console, callback?: () => void) => AddOn;
+export type AddOnFactory = (app: express.Application, opts?: Opts, logger?: Console, callback?: () => void) => AddOn;
 
 declare const addOnFactory: AddOnFactory;
 export default addOnFactory;
