@@ -5,7 +5,7 @@ import { Sequelize } from 'sequelize';
 import { Request } from 'request';
 import OAuth2 from '../lib/internal/oauth2';
 
-type Descriptor = {
+interface Descriptor {
     key: string;
     name: string;
     description: string;
@@ -24,7 +24,7 @@ type Descriptor = {
     scopes: string[];
 }
 
-type Options = {
+interface Options {
     config: {
         descriptorTransformer: (descriptor: Partial<Descriptor>, config: Config) => Descriptor
     }
@@ -50,7 +50,7 @@ interface ConfigOptions {
     userAgent: string;
 }
 
-interface Config{
+interface Config {
     port(): string
     environment(): string;
     store(): {
@@ -70,7 +70,7 @@ interface Config{
     userAgent(): string;
 }
 
-interface StoreAdapter{
+interface StoreAdapter {
     del(key: string, clientKey: string): Promise<void>;
     get(key: string, clientKey: string): Promise<any>;
     set(key: string, clientKey: string): Promise<any>;
@@ -84,7 +84,7 @@ declare interface Store {
     register(adapterKey: string, factory: (logger: Console, opts: any) => StoreAdapter): void;
 }
 
-declare class HostClient{
+declare class HostClient {
     constructor(addon: AddOn, context: { clientKey: string, useAccountId: string } | Request, clientKey: string);
     addon: AddOn;
     context: boolean;
@@ -164,7 +164,7 @@ export declare class AddOn extends EventEmitter {
     httpClient(reqOrOpts: { clientKey: string, useAccountId: string }): HostClient;
     httpClient(reqOrOpts: Request): HostClient;
 }
-type Opts = {config: ConfigOptions}
+interface Opts {config: ConfigOptions}
 
 export type AddOnFactory = (app: express.Application, opts?: Opts, logger?: Console, callback?: () => void) => AddOn;
 
