@@ -245,6 +245,47 @@ describe("Host Request", () => {
       });
     });
 
+    it("bitbucket request sets iss claim as the pre-existing key", () => {
+      clientSettings.key = "key-we-should-use";
+      return new Promise(done => {
+        // eslint-disable-next-line no-unused-vars
+        interceptRequest(
+          done,
+          function () {
+            const jwtToken = this.req.headers.authorization.slice(4);
+            const clientKey = clientSettings.clientKey;
+            const decoded = jwt.decode(jwtToken, clientKey, true);
+            expect(decoded.iss).toEqual(clientSettings.key);
+          },
+          {
+            addonConfig: {
+              product: "bitbucket"
+            }
+          }
+        );
+      });
+    });
+
+    it("bitbucket request sets iss claim as the key", () => {
+      return new Promise(done => {
+        // eslint-disable-next-line no-unused-vars
+        interceptRequest(
+          done,
+          function () {
+            const jwtToken = this.req.headers.authorization.slice(4);
+            const clientKey = clientSettings.clientKey;
+            const decoded = jwt.decode(jwtToken, clientKey, true);
+            expect(decoded.iss).toEqual(clientSettings.key);
+          },
+          {
+            addonConfig: {
+              product: "bitbucket"
+            }
+          }
+        );
+      });
+    });
+
     it('get request has Authorization header starting with "JWT "', () => {
       return new Promise(done => {
         // eslint-disable-next-line no-unused-vars
