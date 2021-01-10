@@ -12,7 +12,8 @@ describe("Host Request", () => {
     clientKey: "test-client-key",
     oauthClientId: "oauth-client-id",
     sharedSecret: "shared-secret",
-    baseUrl: "https://test.atlassian.net"
+    baseUrl: "https://test.atlassian.net",
+    key: "client-settings-key"
   };
 
   const createAddonConfig = function (opts) {
@@ -245,44 +246,15 @@ describe("Host Request", () => {
       });
     });
 
-    it("bitbucket request sets iss claim as the pre-existing key", () => {
-      clientSettings.key = "key-we-should-use";
+    it("Request sets iss claim as the pre-existing key", () => {
       return new Promise(done => {
         // eslint-disable-next-line no-unused-vars
-        interceptRequest(
-          done,
-          function () {
-            const jwtToken = this.req.headers.authorization.slice(4);
-            const clientKey = clientSettings.clientKey;
-            const decoded = jwt.decode(jwtToken, clientKey, true);
-            expect(decoded.iss).toEqual(clientSettings.key);
-          },
-          {
-            addonConfig: {
-              product: "bitbucket"
-            }
-          }
-        );
-      });
-    });
-
-    it("bitbucket request sets iss claim as the key", () => {
-      return new Promise(done => {
-        // eslint-disable-next-line no-unused-vars
-        interceptRequest(
-          done,
-          function () {
-            const jwtToken = this.req.headers.authorization.slice(4);
-            const clientKey = clientSettings.clientKey;
-            const decoded = jwt.decode(jwtToken, clientKey, true);
-            expect(decoded.iss).toEqual(clientSettings.key);
-          },
-          {
-            addonConfig: {
-              product: "bitbucket"
-            }
-          }
-        );
+        interceptRequest(done, function () {
+          const jwtToken = this.req.headers.authorization.slice(4);
+          const clientKey = clientSettings.clientKey;
+          const decoded = jwt.decode(jwtToken, clientKey, true);
+          expect(decoded.iss).toEqual(clientSettings.key);
+        });
       });
     });
 
