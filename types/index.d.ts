@@ -85,7 +85,7 @@ declare interface Store {
 }
 
 declare class HostClient {
-    constructor(addon: AddOn, context: { clientKey: string, useAccountId: string } | Request, clientKey: string);
+    constructor(addon: AddOn, context: { clientKey: string, userAccountId: string } | Request, clientKey: string);
     addon: AddOn;
     context: boolean;
     clientKey: string;
@@ -161,7 +161,7 @@ export declare class AddOn extends EventEmitter {
      */
 
 
-    httpClient(reqOrOpts: { clientKey: string, useAccountId: string }): HostClient;
+    httpClient(reqOrOpts: { clientKey: string, userAccountId: string }): HostClient;
     httpClient(reqOrOpts: Request): HostClient;
 }
 interface Opts {config: ConfigOptions}
