@@ -2,7 +2,7 @@ import * as express from 'express';
 import { EventEmitter } from 'events';
 import { FSWatcher } from 'fs';
 import { Sequelize } from 'sequelize';
-import { Request } from 'request';
+import { Request, Cookie, CookieJar, RequestCallback } from 'request';
 import OAuth2 from '../lib/internal/oauth2';
 
 interface Descriptor {
@@ -84,20 +84,53 @@ declare interface Store {
     register(adapterKey: string, factory: (logger: Console, opts: any) => StoreAdapter): void;
 }
 
-declare class HostClient {
-    constructor(addon: AddOn, context: { clientKey: string, useAccountId: string } | Request, clientKey: string);
+type Callback = (...arg: any[]) => void;
+
+type ModifyArgsOptions = {
+  url: URL|string;
+  form?: Record<string, any>;
+  urlEncodedFormData?: Record<string, any>;
+  qs?: StringifiableRecord;
+  headers?: request.Headers;
+  jar?: boolean;
+}|URL|string;
+
+type ModifyArgsOutput<
+  O extends ModifyArgsOptions,
+  Cb extends Callback
+> = Cb extends Callback
+  ? [O, Cb]
+  : [O];
+
+type HostClientArgs<O extends ModifyArgsOptions, Cb extends Callback> = [
+  O, request.Headers, Cb, string
+];
+export declare class HostClient {
+    constructor(addon: AddOn, context: { clientKey: string, userAccountId: string } | Request, clientKey: string);
     addon: AddOn;
     context: boolean;
     clientKey: string;
     oauth2: OAuth2;
+    userKey?: string; // for impersonatingClient
 
-    asUser(userKey: string): Request;
+    asUser(userKey: string): HostClient;
+    asUserByAccountId: (userAccountId: string|number) => HostClient;
+    createJwtPayload: (req: Request) => string;
     defaults(): Request;
-    cookie(): Request;
-    jar(): Request;
+    cookie(): Cookie;
+    jar(): CookieJar;
+
+    modifyArgs<O extends ModifyArgsOptions = ModifyArgsOptions, Cb extends Callback = Callback>(...args: HostClientArgs<O, Cb>): ModifyArgsOutput<O, Cb>;
+
+    get: <T = any>(options, callback?: RequestCallback) => Promise<T>;
+    post: <T = any>(options, callback?: RequestCallback) => Promise<T>;
+    put: <T = any>(options, callback?: RequestCallback) => Promise<T>;
+    del: <T = any>(options, callback?: RequestCallback) => Promise<T>;
+    head: <T = any>(options, callback?: RequestCallback) => Promise<T>;
+    patch: <T = any>(options, callback?: RequestCallback) => Promise<T>;
 }
 
-interface ClientInfo {
+export interface ClientInfo {
     key: string,
     clientKey: string,
     publicKey: string
