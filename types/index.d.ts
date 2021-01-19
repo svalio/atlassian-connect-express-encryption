@@ -4,6 +4,7 @@ import { FSWatcher } from 'fs';
 import { Sequelize } from 'sequelize';
 import { Request, Cookie, CookieJar, RequestCallback } from 'request';
 import OAuth2 from '../lib/internal/oauth2';
+import {StringifiableRecord} from 'querystring';
 
 interface Descriptor {
     key: string;
@@ -84,6 +85,14 @@ declare interface Store {
     register(adapterKey: string, factory: (logger: Console, opts: any) => StoreAdapter): void;
 }
 
+type Stringifiable = string | boolean | number | null | undefined;
+
+type StringifiableRecord = Record<
+	string,
+	Stringifiable | readonly Stringifiable[]
+>;
+
+
 type Callback = (...arg: any[]) => void;
 
 type ModifyArgsOptions = {
@@ -96,14 +105,14 @@ type ModifyArgsOptions = {
 }|URL|string;
 
 type ModifyArgsOutput<
-  O extends ModifyArgsOptions,
-  Cb extends Callback
-> = Cb extends Callback
-  ? [O, Cb]
-  : [O];
+  TOptions extends ModifyArgsOptions,
+  TCallback extends Callback
+> = TCallback extends Callback
+  ? [TOptions, TCallback]
+  : [TCallback];
 
-type HostClientArgs<O extends ModifyArgsOptions, Cb extends Callback> = [
-  O, request.Headers, Cb, string
+type HostClientArgs<TOptions extends ModifyArgsOptions, TCallback extends Callback> = [
+    TOptions, request.Headers, TCallback, string
 ];
 export declare class HostClient {
     constructor(addon: AddOn, context: { clientKey: string, userAccountId: string } | Request, clientKey: string);
@@ -120,7 +129,7 @@ export declare class HostClient {
     cookie(): Cookie;
     jar(): CookieJar;
 
-    modifyArgs<O extends ModifyArgsOptions = ModifyArgsOptions, Cb extends Callback = Callback>(...args: HostClientArgs<O, Cb>): ModifyArgsOutput<O, Cb>;
+    modifyArgs<TOptions extends ModifyArgsOptions = ModifyArgsOptions, TCallback extends Callback = Callback>(...args: HostClientArgs<TOptions, TCallback>): ModifyArgsOutput<TOptions, TCallback>;
 
     get: <T = any>(options, callback?: RequestCallback) => Promise<T>;
     post: <T = any>(options, callback?: RequestCallback) => Promise<T>;
