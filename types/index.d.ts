@@ -4,7 +4,6 @@ import { FSWatcher } from 'fs';
 import { Sequelize } from 'sequelize';
 import { Request, Cookie, CookieJar, RequestCallback, Headers } from 'request';
 import OAuth2 from '../lib/internal/oauth2';
-import {StringifiableRecord} from 'querystring';
 
 interface Descriptor {
     key: string;
@@ -203,7 +202,7 @@ export declare class AddOn extends EventEmitter {
      */
 
 
-    httpClient(reqOrOpts: { clientKey: string, useAccountId: string }): HostClient;
+    httpClient(reqOrOpts: { clientKey: string, userAccountId: string }): HostClient;
     httpClient(reqOrOpts: Request): HostClient;
 }
 interface Opts {config: ConfigOptions}
