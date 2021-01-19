@@ -2,7 +2,7 @@ import * as express from 'express';
 import { EventEmitter } from 'events';
 import { FSWatcher } from 'fs';
 import { Sequelize } from 'sequelize';
-import { Request, Cookie, CookieJar, RequestCallback } from 'request';
+import { Request, Cookie, CookieJar, RequestCallback, Headers } from 'request';
 import OAuth2 from '../lib/internal/oauth2';
 import {StringifiableRecord} from 'querystring';
 
@@ -100,7 +100,7 @@ type ModifyArgsOptions = {
   form?: Record<string, any>;
   urlEncodedFormData?: Record<string, any>;
   qs?: StringifiableRecord;
-  headers?: request.Headers;
+  headers?: Headers;
   jar?: boolean;
 }|URL|string;
 
@@ -112,7 +112,7 @@ type ModifyArgsOutput<
   : [TCallback];
 
 type HostClientArgs<TOptions extends ModifyArgsOptions, TCallback extends Callback> = [
-    TOptions, request.Headers, TCallback, string
+    TOptions, Headers, TCallback, string
 ];
 export declare class HostClient {
     constructor(addon: AddOn, context: { clientKey: string, userAccountId: string } | Request, clientKey: string);
