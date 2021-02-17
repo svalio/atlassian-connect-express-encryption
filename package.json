@@ -1,6 +1,6 @@
 {
   "name": "atlassian-connect-express",
-  "version": "6.2.1",
+  "version": "6.5.0",
   "description": "Library for building Atlassian Add-ons on top of Express",
   "author": "Atlassian",
   "license": "Apache-2.0",
@@ -22,6 +22,7 @@
     "express",
     "web"
   ],
+  "types": "types/index.d.ts",
   "main": "index.js",
   "dependencies": {
     "atlassian-connect-validator": "0.0.9",
@@ -40,6 +41,7 @@
     "urijs": "^1.19.2"
   },
   "devDependencies": {
+    "@types/express": "^4.17.9",
     "body-parser": "^1.19.0",
     "eslint": "^7.9.0",
     "eslint-config-prettier": "^6.11.0",

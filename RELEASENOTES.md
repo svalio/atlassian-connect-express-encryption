@@ -1,5 +1,21 @@
 # Atlassian Connect for Express.js Release Notes
 
+## 6.5.0
+
+* Type updates
+
+## 6.4.0
+
+* Use registered installation keys over a pre-configured key
+
+## 6.3.0
+
+* Type and style updates
+
+## 6.2.2
+
+* Fix "TypeError: Promise.resolve is not a constructor".
+
 ## 6.2.1
 
 * Fix the bug that causes sequelize adapter to always insert a new record instead of updating the existing one; this breaks reinstallation:
