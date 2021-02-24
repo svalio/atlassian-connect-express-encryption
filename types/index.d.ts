@@ -3,7 +3,6 @@ import { EventEmitter } from 'events';
 import { FSWatcher } from 'fs';
 import { Sequelize } from 'sequelize';
 import { Request, Cookie, CookieJar, RequestCallback, Headers } from 'request';
-import OAuth2 from '../lib/internal/oauth2';
 
 interface Descriptor {
     key: string;
@@ -118,7 +117,7 @@ export declare class HostClient {
     addon: AddOn;
     context: boolean;
     clientKey: string;
-    oauth2: OAuth2;
+    oauth2: any;
     userKey?: string; // for impersonatingClient
 
     asUser(userKey: string): HostClient;
@@ -130,12 +129,12 @@ export declare class HostClient {
 
     modifyArgs<TOptions extends ModifyArgsOptions = ModifyArgsOptions, TCallback extends Callback = Callback>(...args: HostClientArgs<TOptions, TCallback>): ModifyArgsOutput<TOptions, TCallback>;
 
-    get: <T = any>(options, callback?: RequestCallback) => Promise<T>;
-    post: <T = any>(options, callback?: RequestCallback) => Promise<T>;
-    put: <T = any>(options, callback?: RequestCallback) => Promise<T>;
-    del: <T = any>(options, callback?: RequestCallback) => Promise<T>;
-    head: <T = any>(options, callback?: RequestCallback) => Promise<T>;
-    patch: <T = any>(options, callback?: RequestCallback) => Promise<T>;
+    get: <T = any>(options: any, callback?: RequestCallback) => Promise<T>;
+    post: <T = any>(options: any, callback?: RequestCallback) => Promise<T>;
+    put: <T = any>(options: any, callback?: RequestCallback) => Promise<T>;
+    del: <T = any>(options: any, callback?: RequestCallback) => Promise<T>;
+    head: <T = any>(options: any, callback?: RequestCallback) => Promise<T>;
+    patch: <T = any>(options: any, callback?: RequestCallback) => Promise<T>;
 }
 
 export interface ClientInfo {
@@ -203,7 +202,7 @@ export declare class AddOn extends EventEmitter {
 
 
     httpClient(reqOrOpts: { clientKey: string, userAccountId: string }): HostClient;
-    httpClient(reqOrOpts: Request): HostClient;
+    httpClient(reqOrOpts: express.Request): HostClient;
 }
 interface Opts {config: ConfigOptions}
 

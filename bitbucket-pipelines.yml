@@ -9,3 +9,4 @@ pipelines:
           - npm install
           - npm test
           - npm run lint
+          - npm run checktypes
