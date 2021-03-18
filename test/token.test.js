@@ -134,6 +134,8 @@ describe("Token verification", () => {
 
     if (req) {
       jwtPayload.qsh = jwt.createQueryStringHash(jwt.fromExpressRequest(req));
+    } else {
+      jwtPayload.qsh = "context-qsh";
     }
 
     return jwt.encode(
