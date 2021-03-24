@@ -83,7 +83,7 @@ describe("Token verification", () => {
       // default test routes
       const routeArgs = [
         JWT_AUTH_RESPONDER_PATH,
-        addon.authenticate(),
+        addon.authenticate(true),
         function (req, res) {
           const token = res.locals.token;
           res.send(token);

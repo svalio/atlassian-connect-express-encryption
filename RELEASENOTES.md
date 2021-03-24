@@ -1,5 +1,9 @@
 # Atlassian Connect for Express.js Release Notes
 
+## 6.6.0
+
+* Enforce presence of qsh claim on lifecycle endpoints
+
 ## 6.5.0
 
 * Type updates
