@@ -107,9 +107,9 @@ The configuration for your add-on is done in two files:
 
 * `./config.json` -- This file contains the configuration for each runtime environment your plugin runs in. The file has
   comments to help you understand available settings.
-* `./atlassian-connect.json` -- This file is a manifest of all the extension points your add-on uses. To see all of the
-  available extension point options, check out the modules sections of the
-  [atlassian-connect documentation](https://developer.atlassian.com/static/connect/docs/).
+* `./atlassian-connect.json` -- This file is a manifest of all the extension points your add-on uses. To see all of the available extension point options for Jira, check out the modules sections of the
+  [atlassian-connect Jira modules documentation](https://developer.atlassian.com/cloud/jira/platform/about-connect-modules-for-jira/). To check out all the available extension point options for Confluence, check out the modules section of the
+  [atlassian-connect Confluence modules documentation](https://developer.atlassian.com/cloud/confluence/connect-modules/).
 
 The behaviour of your add-on can be further configured by setting the `AC_OPTS` environment variable (see the end of this section).
 
