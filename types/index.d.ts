@@ -206,7 +206,7 @@ export declare class AddOn extends EventEmitter {
 }
 interface Opts {config: ConfigOptions}
 
-export type AddOnFactory = (app: express.Application, opts?: Opts, logger?: Console, callback?: () => void) => AddOn;
+export type AddOnFactory = (app: express.Application, opts?: Opts, logger?: Console, callback?: () => void, descriptorFilename?: string, configFileName?: string) => AddOn;
 
 declare const addOnFactory: AddOnFactory;
 export default addOnFactory;
