@@ -15,6 +15,7 @@ let addon = {};
 const USER_ID = "admin";
 const USER_ACCOUNT_ID = "048abaf9-04ea-44d1-acb9-b37de6cc5d2f";
 const JWT_AUTH_RESPONDER_PATH = "/jwt_auth_responder";
+const JWS_AUTH_RESPONDER_PATH = "/jws_auth_responder";
 const CHECK_TOKEN_RESPONDER_PATH = "/check_token_responder";
 const JIRACONF_ALL_CDN = "https://connect-cdn.atl-paas.net/all.js";
 
@@ -81,7 +82,7 @@ describe("Token verification", () => {
       app.use(addon.middleware());
 
       // default test routes
-      const routeArgs = [
+      const jwtRouteArgs = [
         JWT_AUTH_RESPONDER_PATH,
         addon.authenticate(true),
         function (req, res) {
@@ -89,8 +90,19 @@ describe("Token verification", () => {
           res.send(token);
         }
       ];
-      app.get.apply(app, routeArgs);
-      app.post.apply(app, routeArgs);
+
+      const jwsRouteArgs = [
+        JWS_AUTH_RESPONDER_PATH,
+        addon.verifyInstallHook(),
+        function (req, res) {
+          const token = res.locals.token;
+          res.send(token);
+        }
+      ];
+      app.get.apply(app, jwtRouteArgs);
+      app.post.apply(app, jwtRouteArgs);
+      app.get.apply(app, jwsRouteArgs);
+      app.post.apply(app, jwsRouteArgs);
 
       app.get(
         CHECK_TOKEN_RESPONDER_PATH,
@@ -564,7 +576,7 @@ describe("Token verification", () => {
     });
   });
 
-  it("should validate token using old secret on reinstall", () => {
+  it.only("should validate token using old secret on reinstall", () => {
     return new Promise(resolve => {
       request(
         {
