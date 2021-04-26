@@ -33,8 +33,10 @@ interface ConfigOptions {
     environment: string;
     port: string;
     store: {
-        adapter: string,
-        type: string
+        adapter?: string,
+        type?: string,
+        url?: string,
+        storage?: string
     };
     expressErrorHandling: boolean;
     errorTemplate: boolean;
@@ -204,7 +206,7 @@ export declare class AddOn extends EventEmitter {
     httpClient(reqOrOpts: { clientKey: string, userAccountId: string }): HostClient;
     httpClient(reqOrOpts: express.Request): HostClient;
 }
-interface Opts {config: ConfigOptions}
+interface Opts {config: {development?: Partial<ConfigOptions>, production?: Partial<ConfigOptions>}}
 
 export type AddOnFactory = (app: express.Application, opts?: Opts, logger?: Console, callback?: () => void) => AddOn;
 
