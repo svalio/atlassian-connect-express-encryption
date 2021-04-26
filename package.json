@@ -38,7 +38,7 @@
     "redis": "^3.0.2",
     "request": "^2.88.2",
     "sequelize": "^6.3.5",
-    "urijs": "^1.19.2"
+    "urijs": "^1.19.6"
   },
   "devDependencies": {
     "@types/express": "^4.17.9",
