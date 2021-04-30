@@ -115,7 +115,7 @@ type HostClientArgs<TOptions extends ModifyArgsOptions, TCallback extends Callba
     TOptions, Headers, TCallback, string
 ];
 export declare class HostClient {
-    constructor(addon: AddOn, context: { clientKey: string, userAccountId: string } | Request, clientKey: string);
+    constructor(addon: AddOn, context: { clientKey: string, userAccountId?: string } | Request, clientKey: string);
     addon: AddOn;
     context: boolean;
     clientKey: string;
