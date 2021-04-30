@@ -154,7 +154,7 @@ export interface ClientInfo {
   }
 
 export declare class AddOn extends EventEmitter {
-    constructor(app: express.Application, opts?: Options, logger?: Console, callback?: () => void);
+    constructor(app: express.Application, opts?: Options, logger?: Console, fileNames?: FileNames, callback?: () => void);
     constructor(app: express.Application);
     
     verifyInstallation(): MiddlewareParameters;
@@ -210,7 +210,12 @@ export declare class AddOn extends EventEmitter {
 }
 interface Opts {config: {development?: Partial<ConfigOptions>, production?: Partial<ConfigOptions>}}
 
-export type AddOnFactory = (app: express.Application, opts?: Opts, logger?: Console, callback?: () => void) => AddOn;
+interface FileNames {
+    descriptorFilename?: string;
+    configFileName?: string;
+}
+
+export type AddOnFactory = (app: express.Application, opts?: Opts, logger?: Console, fileNames?: FileNames | Callback, callback?: Callback) => AddOn;
 
 declare const addOnFactory: AddOnFactory;
 export default addOnFactory;
