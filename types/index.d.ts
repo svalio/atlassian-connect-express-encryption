@@ -156,7 +156,9 @@ export interface ClientInfo {
 export declare class AddOn extends EventEmitter {
     constructor(app: express.Application, opts?: Options, logger?: Console, fileNames?: FileNames, callback?: () => void);
     constructor(app: express.Application);
-
+    
+    verifyInstallation(): MiddlewareParameters;
+    postInstallation(): (request: express.Request, response: express.Response) => void;
     middleware(): MiddlewareParameters;
     authenticate(skipQshVerification?: boolean): MiddlewareParameters;
     loadClientInfo(clientKey: string): Promise<ClientInfo>; 
