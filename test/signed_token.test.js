@@ -8,6 +8,8 @@ const request = require("request");
 const helper = require("./test_helper");
 const ac = require("../index");
 const logger = require("./logger");
+const nock = require("nock");
+
 
 const app = express();
 let addon = {};
@@ -33,6 +35,11 @@ describe("Token verification", () => {
   }
 
   beforeAll(() => {
+    nock("https://connect-install-keys.atlassian.com")
+      .persist()
+      .get("/" + helper.keyId)
+      .reply(200, helper.publicKey);
+
     app.set("env", "development");
     app.use(
       conditionalUseBodyParser(bodyParser.urlencoded({ extended: false }))
@@ -66,7 +73,15 @@ describe("Token verification", () => {
             {
               url: `${helper.addonBaseUrl}/installed`,
               method: "POST",
-              json: helper.installedPayload
+            json: _.extend({}, helper.installedPayload),
+            headers: {
+              Authorization: `JWT ${createJwtToken(
+                  {
+                    method: "POST",
+                    path: "/installed"
+                  }
+                )}`
+              }
             },
             (err, res) => {
               if (res.statusCode !== 204) {
@@ -115,7 +130,7 @@ describe("Token verification", () => {
     useBodyParser = true;
   });
 
-  function createJwtToken(req, secret, iss, context) {
+  function createJwtToken(req, iss, context, header) {
     const jwtPayload = {
       sub: USER_ACCOUNT_ID,
       iss: iss || helper.installedPayload.clientKey,
@@ -137,9 +152,11 @@ describe("Token verification", () => {
       jwtPayload.qsh = jwt.createQueryStringHash(jwt.fromExpressRequest(req));
     }
 
-    return jwt.encode(
+    return jwt.encodeAsymmetric(
       jwtPayload,
-      secret || helper.installedPayload.sharedSecret
+      helper.privateKey,
+      jwt.AsymmetricAlgorithm.RS256,
+      header || {kid: helper.keyId}
     );
   }
 
@@ -476,7 +493,7 @@ describe("Token verification", () => {
     });
   });
 
-  it.only("should validate token using publid key on install", () => {
+  it.only("should validate token using public key on install", () => {
     return new Promise(resolve => {
       request(
         {
@@ -484,10 +501,16 @@ describe("Token verification", () => {
           method: "POST",
           json: _.extend({}, helper.installedPayload),
           headers: {
-            Authorization: 'JWT eyJraWQiOiI3OTdlODQxNy05YTU4LTRhNmYtYjEwOS1lN2ZhNzAyMDY3Y2YiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1ZTY4YWMzYmUzYzNlNzBkMDIzYTVmNDYiLCJxc2giOiI0YTJlMWRlOGNhNzRlNmNhZmU4ODYyZDMzMmZhM2FjN2E4ZTUxZTY5MmJjNmQ3OThlYTRkZmVkYzE0OTQ4YmY0IiwiaXNzIjoiYmMwODFiMjQtNWQwZS0zNzZjLTgzODItNTAxM2NhODhjNWIwIiwiY29udGV4dCI6e30sImV4cCI6MTYxODE4NjA3MCwiaWF0IjoxNjE4MTg1MTcwfQ.qfBdhGgFSr7JIXiyN4uXZkUXhRuQM6bQkd3RmvHQD2OGlrCtnnOOwSYVhTspbWg1M80bcfZJajhtJyK5LlqxsbDUomDIbx-yNc2FVW9aEcfoXPiGY1NCVxXRRI25HdVClu8gNKSS0PLXKxApNOyO809V9K9GplzzR_Vof9Z2rFvmg4gwxWddrNfxlTweGd5JNa3DvgXLAws9valM10E3EDWuyhj-mI-vZb6lbgAFXIm-wRQVmICKCMBEq4-IBWeo-MANGdY2MldYb52-N1_gMFpcxn8VQkCRX1HDxGkLeR9TznaUiAyaDSpBKnao2Pr2XqaWsZauhwx4woXh3XoUXg'
-          }
-        },
+            Authorization: `JWT ${createJwtToken(
+                {
+                  method: "POST",
+                  path: "/installed"
+                }
+              )}`
+            }
+          },
         (err, res) => {
+          console.log(res);
           expect(err).toBeNull();
           expect(res.statusCode).toEqual(204);
           resolve();
