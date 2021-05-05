@@ -493,7 +493,7 @@ describe("Token verification", () => {
     });
   });
 
-  it.only("should validate token using public key on install", () => {
+  it("should validate token using public key on install", () => {
     return new Promise(resolve => {
       request(
         {
@@ -510,7 +510,6 @@ describe("Token verification", () => {
             }
           },
         (err, res) => {
-          console.log(res);
           expect(err).toBeNull();
           expect(res.statusCode).toEqual(204);
           resolve();
