@@ -17,7 +17,6 @@ const USER_ID = "admin";
 const USER_ACCOUNT_ID = "048abaf9-04ea-44d1-acb9-b37de6cc5d2f";
 const JWS_AUTH_RESPONDER_PATH = "/jws_auth_responder";
 const CHECK_TOKEN_RESPONDER_PATH = "/check_token_responder";
-const JIRACONF_ALL_CDN = "https://connect-cdn.atl-paas.net/all.js";
 
 describe("Token verification", () => {
   let server;
@@ -36,7 +35,7 @@ describe("Token verification", () => {
   beforeAll(() => {
     nock("https://connect-install-keys.atlassian.com")
       .persist()
-      .get("/" + helper.keyId)
+      .get(`/${helper.keyId}`)
       .reply(200, helper.publicKey);
 
     app.set("env", "development");
@@ -72,14 +71,12 @@ describe("Token verification", () => {
             {
               url: `${helper.addonBaseUrl}/installed`,
               method: "POST",
-            json: _.extend({}, helper.installedPayload),
-            headers: {
-              Authorization: `JWT ${createJwtToken(
-                  {
-                    method: "POST",
-                    path: "/installed"
-                  }
-                )}`
+              json: _.extend({}, helper.installedPayload),
+              headers: {
+                Authorization: `JWT ${createJwtToken({
+                  method: "POST",
+                  path: "/installed"
+                })}`
               }
             },
             (err, res) => {
@@ -155,39 +152,8 @@ describe("Token verification", () => {
       jwtPayload,
       privateKey || helper.privateKey,
       jwt.AsymmetricAlgorithm.RS256,
-      header || {kid: helper.keyId}
+      header || { kid: helper.keyId }
     );
-  }
-
-  function createRequestOptions(path, jwt, method) {
-    method = (method || "GET").toUpperCase();
-
-    const data = {
-      xdm_e: helper.productBaseUrl,
-      jwt:
-        jwt ||
-        createJwtToken({
-          // mock the request
-          method,
-          path,
-          query: {
-            xdm_e: helper.productBaseUrl
-          }
-        })
-    };
-
-    const option = {
-      method,
-      jar: false
-    };
-
-    if (method === "GET") {
-      option["qs"] = data;
-    } else {
-      option["form"] = data;
-    }
-
-    return option;
   }
 
   function createTokenRequestOptions(token) {
@@ -197,10 +163,6 @@ describe("Token verification", () => {
       },
       jar: false
     };
-  }
-
-  function isBase64EncodedJson(value) {
-    return value && value.indexOf("ey") === 0;
   }
 
   it("should reject requests with no token", () => {
@@ -349,14 +311,12 @@ describe("Token verification", () => {
           method: "POST",
           json: _.extend({}, helper.installedPayload),
           headers: {
-            Authorization: `JWT ${createJwtToken(
-                {
-                  method: "POST",
-                  path: "/installed"
-                }
-              )}`
-            }
-          },
+            Authorization: `JWT ${createJwtToken({
+              method: "POST",
+              path: "/installed"
+            })}`
+          }
+        },
         (err, res) => {
           expect(err).toBeNull();
           expect(res.statusCode).toEqual(204);
@@ -378,12 +338,10 @@ describe("Token verification", () => {
             sharedSecret: newSecret
           }),
           headers: {
-            Authorization: `JWT ${createJwtToken(
-              {
-                method: "POST",
-                path: "/installed"
-              },
-            )}`
+            Authorization: `JWT ${createJwtToken({
+              method: "POST",
+              path: "/installed"
+            })}`
           }
         },
         (err, res) => {
@@ -412,7 +370,10 @@ describe("Token verification", () => {
                 method: "POST",
                 path: "/installed"
               },
-              null, null, null, helper.otherPrivateKey
+              null,
+              null,
+              null,
+              helper.otherPrivateKey
             )}`
           }
         },
@@ -492,7 +453,7 @@ describe("Token verification", () => {
             sharedSecret: "newSharedSecret",
             clientKey: "client-key"
           }),
-          headers: { }
+          headers: {}
         },
         (err, res) => {
           expect(err).toBeNull();
@@ -502,5 +463,4 @@ describe("Token verification", () => {
       );
     });
   });
-
 });

@@ -82,7 +82,10 @@ describe("Auto registration (UPM)", () => {
       exp: moment().utc().add(10, "minutes").unix()
     };
 
-    return jwt.encodeSymmetric(jwtPayload, helper.installedPayload.sharedSecret);
+    return jwt.encodeSymmetric(
+      jwtPayload,
+      helper.installedPayload.sharedSecret
+    );
   }
 
   function createAddon(hosts) {

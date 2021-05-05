@@ -39,7 +39,7 @@ acOnGY+L+s522llE20yUoFTyfHeods0on4or4LtRAoGBAJ59exQUwI1cCoTPI4Qc
 vMMlMHLZ9I+eIbizu+1NsjbJ/9ECMpInC4fYc1Hl30eHOaWpM/yI23Rzx9dvveaW
 9eBqYOZZ2iV/+znVxkwX8wi/l6DoH6s3zS4qVmV6T2nQFg4iYicnagDjGfXqb0qq
 zHE5ZWQj3r8Ek2o4PlbGHGAO
------END PRIVATE KEY-----`
+-----END PRIVATE KEY-----`;
 
 exports.otherPrivateKey = `-----BEGIN PRIVATE KEY-----
 MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCtadPYu6IBj//6
@@ -78,9 +78,9 @@ XDKp6KuiM0blUs6Q2n6Wp8IK0bhfotuEJs9aokDZIPo1dH7Mkwg0F9Wv/axUAIWF
 /UW74kM9akNskkt45WwrIfvqoNZMbPcpjE2E7D9KKemEO1TVQPvNw4yLU6+NGEW3
 /IrGlu4L4IWJLxv+6qTFSWpL6PIrI+2jqhPb9c9M/p49HyXvxmAqSmTfaoRvIeof
 awIDAQAB
------END PUBLIC KEY-----`
+-----END PUBLIC KEY-----`;
 
-exports.keyId = "d2466692-d9b3-4245-8208-a601568541ae"
+exports.keyId = "d2466692-d9b3-4245-8208-a601568541ae";
 
 // Allows us to run tests from a different dir
 process.chdir(__dirname);

@@ -234,7 +234,12 @@ describe("Host Request", () => {
           function () {
             const jwtToken = this.req.headers.authorization.slice(4);
             const clientKey = clientSettings.clientKey;
-            const decoded = jwt.decodeSymmetric(jwtToken, clientKey, jwt.SymmetricAlgorithm.HS256, true);
+            const decoded = jwt.decodeSymmetric(
+              jwtToken,
+              clientKey,
+              jwt.SymmetricAlgorithm.HS256,
+              true
+            );
             expect(decoded.sub).toEqual(clientKey);
           },
           {
@@ -252,7 +257,12 @@ describe("Host Request", () => {
         interceptRequest(done, function () {
           const jwtToken = this.req.headers.authorization.slice(4);
           const clientKey = clientSettings.clientKey;
-          const decoded = jwt.decodeSymmetric(jwtToken, clientKey, jwt.SymmetricAlgorithm.HS256, true);
+          const decoded = jwt.decodeSymmetric(
+            jwtToken,
+            clientKey,
+            jwt.SymmetricAlgorithm.HS256,
+            true
+          );
           expect(decoded.iss).toEqual(clientSettings.key);
         });
       });

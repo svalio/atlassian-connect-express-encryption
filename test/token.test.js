@@ -495,7 +495,11 @@ describe("Token verification", () => {
           expect(payload.hostScriptUrl).toEqual(JIRACONF_ALL_CDN);
           expect(payload.userAccountId).toEqual(USER_ACCOUNT_ID);
           expect(payload.userId).toEqual(USER_ID);
-          jwt.decodeSymmetric(payload.token, helper.installedPayload.sharedSecret, jwt.SymmetricAlgorithm.HS256);
+          jwt.decodeSymmetric(
+            payload.token,
+            helper.installedPayload.sharedSecret,
+            jwt.SymmetricAlgorithm.HS256
+          );
           resolve();
         });
       });
@@ -545,7 +549,11 @@ describe("Token verification", () => {
           expect(payload.hostScriptUrl).toEqual(JIRACONF_ALL_CDN);
           expect(payload.userAccountId).toEqual(USER_ACCOUNT_ID);
           expect(payload.context).toEqual(context);
-          jwt.decodeSymmetric(payload.token, helper.installedPayload.sharedSecret, jwt.SymmetricAlgorithm.HS256);
+          jwt.decodeSymmetric(
+            payload.token,
+            helper.installedPayload.sharedSecret,
+            jwt.SymmetricAlgorithm.HS256
+          );
           resolve();
         });
       });
