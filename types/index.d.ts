@@ -33,8 +33,10 @@ interface ConfigOptions {
     environment: string;
     port: string;
     store: {
-        adapter: string,
-        type: string
+        adapter?: string,
+        type?: string,
+        url?: string,
+        storage?: string
     };
     expressErrorHandling: boolean;
     errorTemplate: boolean;
@@ -113,7 +115,7 @@ type HostClientArgs<TOptions extends ModifyArgsOptions, TCallback extends Callba
     TOptions, Headers, TCallback, string
 ];
 export declare class HostClient {
-    constructor(addon: AddOn, context: { clientKey: string, userAccountId: string } | Request, clientKey: string);
+    constructor(addon: AddOn, context: { clientKey: string, userAccountId?: string } | Request, clientKey: string);
     addon: AddOn;
     context: boolean;
     clientKey: string;
@@ -152,9 +154,11 @@ export interface ClientInfo {
   }
 
 export declare class AddOn extends EventEmitter {
-    constructor(app: express.Application, opts?: Options, logger?: Console, callback?: () => void);
+    constructor(app: express.Application, opts?: Options, logger?: Console, fileNames?: FileNames, callback?: () => void);
     constructor(app: express.Application);
     
+    verifyInstallation(): MiddlewareParameters;
+    postInstallation(): (request: express.Request, response: express.Response) => void;
     middleware(): MiddlewareParameters;
     authenticate(skipQshVerification?: boolean): MiddlewareParameters;
     loadClientInfo(clientKey: string): Promise<ClientInfo>; 
@@ -204,9 +208,14 @@ export declare class AddOn extends EventEmitter {
     httpClient(reqOrOpts: { clientKey: string, userAccountId: string }): HostClient;
     httpClient(reqOrOpts: express.Request): HostClient;
 }
-interface Opts {config: ConfigOptions}
+interface Opts {config: {development?: Partial<ConfigOptions>, production?: Partial<ConfigOptions>}}
 
-export type AddOnFactory = (app: express.Application, opts?: Opts, logger?: Console, callback?: () => void) => AddOn;
+interface FileNames {
+    descriptorFilename?: string;
+    configFileName?: string;
+}
+
+export type AddOnFactory = (app: express.Application, opts?: Opts, logger?: Console, fileNames?: FileNames | Callback, callback?: Callback) => AddOn;
 
 declare const addOnFactory: AddOnFactory;
 export default addOnFactory;
