@@ -10,7 +10,6 @@ const ac = require("../index");
 const logger = require("./logger");
 const nock = require("nock");
 
-
 const app = express();
 let addon = {};
 
@@ -130,7 +129,7 @@ describe("Token verification", () => {
     useBodyParser = true;
   });
 
-  function createJwtToken(req, iss, context, header) {
+  function createJwtToken(req, iss, context, header, privateKey) {
     const jwtPayload = {
       sub: USER_ACCOUNT_ID,
       iss: iss || helper.installedPayload.clientKey,
@@ -154,7 +153,7 @@ describe("Token verification", () => {
 
     return jwt.encodeAsymmetric(
       jwtPayload,
-      helper.privateKey,
+      privateKey || helper.privateKey,
       jwt.AsymmetricAlgorithm.RS256,
       header || {kid: helper.keyId}
     );
@@ -203,64 +202,6 @@ describe("Token verification", () => {
   function isBase64EncodedJson(value) {
     return value && value.indexOf("ey") === 0;
   }
-
-  it("should verifay a JWS token for authenticated GET requests", async () => {
-    const requestUrl = helper.addonBaseUrl + JWS_AUTH_RESPONDER_PATH;
-    const requestOpts = createRequestOptions(JWS_AUTH_RESPONDER_PATH);
-
-    return new Promise(resolve => {
-      request(requestUrl, requestOpts, (err, res, body) => {
-        expect(err).toBeNull();
-        expect(res.statusCode).toEqual(200);
-        expect(isBase64EncodedJson(body)).toEqual(true);
-        expect(isBase64EncodedJson(res.headers["x-acpt"])).toEqual(true);
-        resolve();
-      });
-    });
-  });
-
-  it("should verifay a JWS token for authenticated POST requests", () => {
-    const requestUrl = helper.addonBaseUrl + JWS_AUTH_RESPONDER_PATH;
-    const requestOpts = createRequestOptions(
-      JWS_AUTH_RESPONDER_PATH,
-      undefined,
-      "POST"
-    );
-
-    return new Promise(resolve => {
-      request(requestUrl, requestOpts, (err, res, body) => {
-        expect(err).toBeNull();
-        expect(res.statusCode).toEqual(200);
-        expect(isBase64EncodedJson(body)).toEqual(true);
-        expect(isBase64EncodedJson(res.headers["x-acpt"])).toEqual(true);
-        resolve();
-      });
-    });
-  });
-
-  it("should allow requests with valid tokens using the authenticate middleware", () => {
-    const requestUrl = helper.addonBaseUrl + JWS_AUTH_RESPONDER_PATH;
-    const requestOpts = createRequestOptions(JWS_AUTH_RESPONDER_PATH);
-
-    return new Promise(resolve => {
-      request(requestUrl, requestOpts, (err, res, theToken) => {
-        expect(err).toBeNull();
-        expect(res.statusCode).toEqual(200);
-
-        const tokenUrl = helper.addonBaseUrl + JWS_AUTH_RESPONDER_PATH;
-        const tokenRequestOpts = createRequestOptions(
-          JWS_AUTH_RESPONDER_PATH,
-          theToken
-        );
-
-        request(tokenUrl, tokenRequestOpts, (err, res) => {
-          expect(err).toBeNull();
-          expect(res.statusCode).toEqual(200);
-          resolve();
-        });
-      });
-    });
-  });
 
   it("should reject requests with no token", () => {
     const requestUrl = helper.addonBaseUrl + CHECK_TOKEN_RESPONDER_PATH;
@@ -384,99 +325,6 @@ describe("Token verification", () => {
     });
   });
 
-  it("should rehydrate response local variables from the token", () => {
-    app.get("/protected_resource", addon.checkValidToken(), (req, res) => {
-      res.send({
-        clientKey: res.locals.clientKey,
-        token: res.locals.token,
-        userId: res.locals.userId,
-        userAccountId: res.locals.userAccountId,
-        hostBaseUrl: res.locals.hostBaseUrl,
-        hostStylesheetUrl: res.locals.hostStylesheetUrl,
-        hostScriptUrl: res.locals.hostScriptUrl
-      });
-    });
-
-    const requestUrl = helper.addonBaseUrl + JWS_AUTH_RESPONDER_PATH;
-    const requestOpts = createRequestOptions(JWS_AUTH_RESPONDER_PATH);
-
-    return new Promise(resolve => {
-      request(requestUrl, requestOpts, (err, res, theToken) => {
-        expect(err).toBeNull();
-        expect(res.statusCode).toEqual(200);
-
-        const tokenUrl = `${helper.addonBaseUrl}/protected_resource`;
-        const tokenRequestOpts = createTokenRequestOptions(theToken);
-
-        request(tokenUrl, tokenRequestOpts, (err, res, body) => {
-          const payload = JSON.parse(body);
-          expect(err).toBeNull();
-          expect(res.statusCode).toEqual(200);
-          expect(payload.clientKey).toEqual(helper.installedPayload.clientKey);
-          expect(payload.hostBaseUrl).toEqual(helper.productBaseUrl);
-          expect(payload.hostStylesheetUrl).toEqual(
-            hostResourceUrl(app, helper.productBaseUrl, "css")
-          );
-          expect(payload.hostScriptUrl).toEqual(JIRACONF_ALL_CDN);
-          expect(payload.userAccountId).toEqual(USER_ACCOUNT_ID);
-          expect(payload.userId).toEqual(USER_ID);
-          jwt.decode(payload.token, helper.installedPayload.sharedSecret);
-          resolve();
-        });
-      });
-    });
-  });
-
-  it("should rehydrate response local variables from context JWT", () => {
-    app.get(
-      "/protected_context_resource",
-      addon.checkValidToken(),
-      (req, res) => {
-        res.send({
-          clientKey: res.locals.clientKey,
-          token: res.locals.token,
-          userId: res.locals.userId,
-          userAccountId: res.locals.userAccountId,
-          hostBaseUrl: res.locals.hostBaseUrl,
-          hostStylesheetUrl: res.locals.hostStylesheetUrl,
-          hostScriptUrl: res.locals.hostScriptUrl,
-          context: res.locals.context
-        });
-      }
-    );
-
-    const requestUrl = helper.addonBaseUrl + JWS_AUTH_RESPONDER_PATH;
-    const context = { issue: { key: "ABC-123" } };
-    const token = createJwtToken(null, null, null, context);
-    const requestOpts = createRequestOptions(JWS_AUTH_RESPONDER_PATH, token);
-
-    return new Promise(resolve => {
-      request(requestUrl, requestOpts, (err, res, theToken) => {
-        expect(err).toBeNull();
-        expect(res.statusCode).toEqual(200);
-
-        const tokenUrl = `${helper.addonBaseUrl}/protected_context_resource`;
-        const tokenRequestOpts = createTokenRequestOptions(theToken);
-
-        request(tokenUrl, tokenRequestOpts, (err, res, body) => {
-          const payload = JSON.parse(body);
-          expect(err).toBeNull();
-          expect(res.statusCode).toEqual(200);
-          expect(payload.clientKey).toEqual(helper.installedPayload.clientKey);
-          expect(payload.hostBaseUrl).toEqual(helper.productBaseUrl);
-          expect(payload.hostStylesheetUrl).toEqual(
-            hostResourceUrl(app, helper.productBaseUrl, "css")
-          );
-          expect(payload.hostScriptUrl).toEqual(JIRACONF_ALL_CDN);
-          expect(payload.userAccountId).toEqual(USER_ACCOUNT_ID);
-          expect(payload.context).toEqual(context);
-          jwt.decode(payload.token, helper.installedPayload.sharedSecret);
-          resolve();
-        });
-      });
-    });
-  });
-
   it("should check for a token on reinstall", () => {
     return new Promise(resolve => {
       request(
@@ -518,7 +366,7 @@ describe("Token verification", () => {
     });
   });
 
-  it("should not accept reinstall request signed with new secret", () => {
+  it("should accept reinstall request with new secret in body", () => {
     const newSecret = "newSharedSecret";
 
     return new Promise(resolve => {
@@ -535,7 +383,36 @@ describe("Token verification", () => {
                 method: "POST",
                 path: "/installed"
               },
-              newSecret
+            )}`
+          }
+        },
+        (err, res) => {
+          expect(err).toBeNull();
+          expect(res.statusCode).toEqual(204);
+          resolve();
+        }
+      );
+    });
+  });
+
+  it("should not accept reinstall request with wrong private key", () => {
+    const newSecret = "newSharedSecret";
+
+    return new Promise(resolve => {
+      request(
+        {
+          url: `${helper.addonBaseUrl}/installed`,
+          method: "POST",
+          json: _.extend({}, helper.installedPayload, {
+            sharedSecret: newSecret
+          }),
+          headers: {
+            Authorization: `JWT ${createJwtToken(
+              {
+                method: "POST",
+                path: "/installed"
+              },
+              null, null, null, helper.otherPrivateKey
             )}`
           }
         },
@@ -548,18 +425,7 @@ describe("Token verification", () => {
     });
   });
 
-  it("should only accept install requests for the authenticated client", () => {
-    const maliciousSecret = "mwahaha";
-    const maliciousClient = _.extend({}, helper.installedPayload, {
-      sharedSecret: maliciousSecret,
-      clientKey: "crafty-client"
-    });
-    request({
-      url: `${helper.addonBaseUrl}/installed`,
-      method: "POST",
-      json: maliciousClient
-    });
-
+  it("should only accept install requests if client key from the token matches the body", () => {
     return new Promise(resolve => {
       request(
         {
@@ -574,8 +440,7 @@ describe("Token verification", () => {
                 method: "POST",
                 path: "/installed"
               },
-              maliciousSecret,
-              maliciousClient.clientKey
+              "crafty-client"
             )}`
           }
         },
@@ -588,8 +453,54 @@ describe("Token verification", () => {
     });
   });
 
-  function hostResourceUrl(app, baseUrl, type) {
-    const suffix = app.get("env") === "development" ? "-debug" : "";
-    return `${baseUrl}/atlassian-connect/all${suffix}.${type}`;
-  }
+  it("should accept signed initial install request if client key from the token matches the body", () => {
+    return new Promise(resolve => {
+      request(
+        {
+          url: `${helper.addonBaseUrl}/installed`,
+          method: "POST",
+          json: _.extend({}, helper.installedPayload, {
+            sharedSecret: "newSharedSecret",
+            clientKey: "client-key"
+          }),
+          headers: {
+            Authorization: `JWT ${createJwtToken(
+              {
+                method: "POST",
+                path: "/installed"
+              },
+              "client-key"
+            )}`
+          }
+        },
+        (err, res) => {
+          expect(err).toBeNull();
+          expect(res.statusCode).toEqual(204);
+          resolve();
+        }
+      );
+    });
+  });
+
+  it("should reject unsigned initial install request", () => {
+    return new Promise(resolve => {
+      request(
+        {
+          url: `${helper.addonBaseUrl}/installed`,
+          method: "POST",
+          json: _.extend({}, helper.installedPayload, {
+            sharedSecret: "newSharedSecret",
+            clientKey: "client-key"
+          }),
+          headers: { }
+        },
+        (err, res) => {
+          expect(err).toBeNull();
+          expect(res.statusCode).toEqual(401);
+          resolve();
+        }
+      );
+    });
+  });
+
 });

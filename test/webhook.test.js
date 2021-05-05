@@ -91,7 +91,7 @@ describe("Webhook", () => {
       jwtPayload.qsh = jwt.createQueryStringHash(jwt.fromExpressRequest(req));
     }
 
-    return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
+    return jwt.encodeSymmetric(jwtPayload, helper.installedPayload.sharedSecret);
   }
 
   function createExpiredJwtToken(req) {
@@ -105,7 +105,7 @@ describe("Webhook", () => {
       jwtPayload.qsh = jwt.createQueryStringHash(jwt.fromExpressRequest(req));
     }
 
-    return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
+    return jwt.encodeSymmetric(jwtPayload, helper.installedPayload.sharedSecret);
   }
 
   function fireTestWebhook(route, body, assertWebhookResult, createJwtToken) {

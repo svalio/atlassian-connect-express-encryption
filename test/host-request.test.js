@@ -234,7 +234,7 @@ describe("Host Request", () => {
           function () {
             const jwtToken = this.req.headers.authorization.slice(4);
             const clientKey = clientSettings.clientKey;
-            const decoded = jwt.decode(jwtToken, clientKey, true);
+            const decoded = jwt.decodeSymmetric(jwtToken, clientKey, jwt.SymmetricAlgorithm.HS256, true);
             expect(decoded.sub).toEqual(clientKey);
           },
           {
@@ -252,7 +252,7 @@ describe("Host Request", () => {
         interceptRequest(done, function () {
           const jwtToken = this.req.headers.authorization.slice(4);
           const clientKey = clientSettings.clientKey;
-          const decoded = jwt.decode(jwtToken, clientKey, true);
+          const decoded = jwt.decodeSymmetric(jwtToken, clientKey, jwt.SymmetricAlgorithm.HS256, true);
           expect(decoded.iss).toEqual(clientSettings.key);
         });
       });
@@ -274,9 +274,10 @@ describe("Host Request", () => {
           done,
           function () {
             const jwtToken = this.req.headers.authorization.slice(4);
-            const decoded = jwt.decode(
+            const decoded = jwt.decodeSymmetric(
               jwtToken,
               clientSettings.clientKey,
+              jwt.SymmetricAlgorithm.HS256,
               true
             );
             const expectedQsh = jwt.createQueryStringHash(
@@ -303,9 +304,10 @@ describe("Host Request", () => {
           done,
           function () {
             const jwtToken = this.req.headers.authorization.slice(4);
-            const decoded = jwt.decode(
+            const decoded = jwt.decodeSymmetric(
               jwtToken,
               clientSettings.clientKey,
+              jwt.SymmetricAlgorithm.HS256,
               true
             );
             const expectedQsh = jwt.createQueryStringHash(

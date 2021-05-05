@@ -138,7 +138,7 @@ describe("Token verification", () => {
       jwtPayload.qsh = jwt.createQueryStringHash(jwt.fromExpressRequest(req));
     }
 
-    return jwt.encode(
+    return jwt.encodeSymmetric(
       jwtPayload,
       secret || helper.installedPayload.sharedSecret
     );
@@ -279,9 +279,10 @@ describe("Token verification", () => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(200);
 
-        const verifiedToken = jwt.decode(
+        const verifiedToken = jwt.decodeSymmetric(
           theToken,
-          helper.installedPayload.sharedSecret
+          helper.installedPayload.sharedSecret,
+          jwt.SymmetricAlgorithm.HS256
         );
         expect(verifiedToken.aud[0]).toEqual(helper.installedPayload.clientKey);
         expect(verifiedToken.sub).toEqual(USER_ACCOUNT_ID);
@@ -319,6 +320,7 @@ describe("Token verification", () => {
       request(requestUrl, requestOpts, (err, res, theToken) => {
         expect(err).toBeNull();
         expect(res.statusCode).toEqual(200);
+        expect(theToken).not.toHaveLength(0);
 
         const tokenUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
         const tokenRequestOpts = createRequestOptions(
@@ -493,7 +495,7 @@ describe("Token verification", () => {
           expect(payload.hostScriptUrl).toEqual(JIRACONF_ALL_CDN);
           expect(payload.userAccountId).toEqual(USER_ACCOUNT_ID);
           expect(payload.userId).toEqual(USER_ID);
-          jwt.decode(payload.token, helper.installedPayload.sharedSecret);
+          jwt.decodeSymmetric(payload.token, helper.installedPayload.sharedSecret, jwt.SymmetricAlgorithm.HS256);
           resolve();
         });
       });
@@ -543,7 +545,7 @@ describe("Token verification", () => {
           expect(payload.hostScriptUrl).toEqual(JIRACONF_ALL_CDN);
           expect(payload.userAccountId).toEqual(USER_ACCOUNT_ID);
           expect(payload.context).toEqual(context);
-          jwt.decode(payload.token, helper.installedPayload.sharedSecret);
+          jwt.decodeSymmetric(payload.token, helper.installedPayload.sharedSecret, jwt.SymmetricAlgorithm.HS256);
           resolve();
         });
       });
