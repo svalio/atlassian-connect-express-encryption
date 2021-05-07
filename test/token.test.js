@@ -3,22 +3,22 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const http = require("http");
 const _ = require("lodash");
-const moment = require("moment");
 const request = require("request");
 const helper = require("./test_helper");
 const ac = require("../index");
 const logger = require("./logger");
+const nock = require("nock");
 
 const app = express();
 let addon = {};
 
-const USER_ID = "admin";
-const USER_ACCOUNT_ID = "048abaf9-04ea-44d1-acb9-b37de6cc5d2f";
+const USER_ID = helper.userId;
+const USER_ACCOUNT_ID = helper.userAccountId;
 const JWT_AUTH_RESPONDER_PATH = "/jwt_auth_responder";
 const CHECK_TOKEN_RESPONDER_PATH = "/check_token_responder";
 const JIRACONF_ALL_CDN = "https://connect-cdn.atl-paas.net/all.js";
 
-describe.only("Token verification", () => {
+describe("Token verification", () => {
   let server;
   let useBodyParser = true;
 
@@ -33,6 +33,11 @@ describe.only("Token verification", () => {
   }
 
   beforeAll(() => {
+    nock("https://connect-install-keys.atlassian.com")
+      .persist()
+      .get(`/${helper.keyId}`)
+      .reply(200, helper.publicKey);
+
     app.set("env", "development");
     app.use(
       conditionalUseBodyParser(bodyParser.urlencoded({ extended: false }))
@@ -50,7 +55,6 @@ describe.only("Token verification", () => {
         app,
         {
           config: {
-            signedInstall: true,
             development: {
               store: {
                 adapter: "teststore",
@@ -68,7 +72,7 @@ describe.only("Token verification", () => {
               method: "POST",
               json: _.extend({}, helper.installedPayload),
               headers: {
-                Authorization: `JWT ${createJwtToken({
+                Authorization: `JWT ${helper.createJwtTokenForInstall({
                   method: "POST",
                   path: "/installed"
                 })}`
@@ -76,7 +80,6 @@ describe.only("Token verification", () => {
             },
             (err, res) => {
               if (res.statusCode !== 204) {
-                console.log(res);
                 throw new Error("Install hook failed");
               }
               resolve();
@@ -123,34 +126,6 @@ describe.only("Token verification", () => {
     useBodyParser = true;
   });
 
-  function createJwtToken(req, secret, iss, context) {
-    const jwtPayload = {
-      sub: USER_ACCOUNT_ID,
-      iss: iss || helper.installedPayload.clientKey,
-      iat: moment().utc().unix(),
-      exp: moment().utc().add(10, "minutes").unix()
-    };
-
-    jwtPayload.context = context
-      ? context
-      : {
-          user: {
-            accountId: USER_ACCOUNT_ID,
-            userKey: USER_ID,
-            userId: USER_ID
-          }
-        };
-
-    if (req) {
-      jwtPayload.qsh = jwt.createQueryStringHash(jwt.fromExpressRequest(req));
-    }
-
-    return jwt.encodeSymmetric(
-      jwtPayload,
-      secret || helper.installedPayload.sharedSecret
-    );
-  }
-
   function createRequestOptions(path, jwt, method) {
     method = (method || "GET").toUpperCase();
 
@@ -158,7 +133,7 @@ describe.only("Token verification", () => {
       xdm_e: helper.productBaseUrl,
       jwt:
         jwt ||
-        createJwtToken({
+        helper.createJwtToken({
           // mock the request
           method,
           path,
@@ -195,7 +170,7 @@ describe.only("Token verification", () => {
     return value && value.indexOf("ey") === 0;
   }
 
-  it.only("should generate a token for authenticated GET requests", async () => {
+  it("should generate a token for authenticated GET requests", async () => {
     const requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
     const requestOpts = createRequestOptions(JWT_AUTH_RESPONDER_PATH);
 
@@ -533,7 +508,7 @@ describe.only("Token verification", () => {
 
     const requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
     const context = { issue: { key: "ABC-123" } };
-    const token = createJwtToken(null, null, null, context);
+    const token = helper.createJwtToken(null, null, null, context);
     const requestOpts = createRequestOptions(JWT_AUTH_RESPONDER_PATH, token);
 
     return new Promise(resolve => {
@@ -576,99 +551,6 @@ describe.only("Token verification", () => {
           json: helper.installedPayload
         },
         (err, res) => {
-          expect(res.statusCode).toEqual(401);
-          resolve();
-        }
-      );
-    });
-  });
-
-  it("should validate token using old secret on reinstall", () => {
-    return new Promise(resolve => {
-      request(
-        {
-          url: `${helper.addonBaseUrl}/installed`,
-          method: "POST",
-          json: _.extend({}, helper.installedPayload),
-          headers: {
-            Authorization: `JWT ${createJwtToken({
-              method: "POST",
-              path: "/installed"
-            })}`
-          }
-        },
-        (err, res) => {
-          expect(err).toBeNull();
-          expect(res.statusCode).toEqual(204);
-          resolve();
-        }
-      );
-    });
-  });
-
-  it("should not accept reinstall request signed with new secret", () => {
-    const newSecret = "newSharedSecret";
-
-    return new Promise(resolve => {
-      request(
-        {
-          url: `${helper.addonBaseUrl}/installed`,
-          method: "POST",
-          json: _.extend({}, helper.installedPayload, {
-            sharedSecret: newSecret
-          }),
-          headers: {
-            Authorization: `JWT ${createJwtToken(
-              {
-                method: "POST",
-                path: "/installed"
-              },
-              newSecret
-            )}`
-          }
-        },
-        (err, res) => {
-          expect(err).toBeNull();
-          expect(res.statusCode).toEqual(400);
-          resolve();
-        }
-      );
-    });
-  });
-
-  it("should only accept install requests for the authenticated client", () => {
-    const maliciousSecret = "mwahaha";
-    const maliciousClient = _.extend({}, helper.installedPayload, {
-      sharedSecret: maliciousSecret,
-      clientKey: "crafty-client"
-    });
-    request({
-      url: `${helper.addonBaseUrl}/installed`,
-      method: "POST",
-      json: maliciousClient
-    });
-
-    return new Promise(resolve => {
-      request(
-        {
-          url: `${helper.addonBaseUrl}/installed`,
-          method: "POST",
-          json: _.extend({}, helper.installedPayload, {
-            sharedSecret: "newSharedSecret"
-          }),
-          headers: {
-            Authorization: `JWT ${createJwtToken(
-              {
-                method: "POST",
-                path: "/installed"
-              },
-              maliciousSecret,
-              maliciousClient.clientKey
-            )}`
-          }
-        },
-        (err, res) => {
-          expect(err).toBeNull();
           expect(res.statusCode).toEqual(401);
           resolve();
         }

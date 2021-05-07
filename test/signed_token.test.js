@@ -1,9 +1,7 @@
-const jwt = require("atlassian-jwt");
 const bodyParser = require("body-parser");
 const express = require("express");
 const http = require("http");
 const _ = require("lodash");
-const moment = require("moment");
 const request = require("request");
 const helper = require("./test_helper");
 const ac = require("../index");
@@ -12,7 +10,6 @@ const nock = require("nock");
 
 const app = express();
 let addon = {};
-
 
 const JWS_AUTH_RESPONDER_PATH = "/jws_auth_responder";
 const CHECK_TOKEN_RESPONDER_PATH = "/check_token_responder";
@@ -54,7 +51,6 @@ describe("Token verification", () => {
         app,
         {
           config: {
-            signedInstall: true,
             development: {
               store: {
                 adapter: "teststore",
@@ -72,7 +68,7 @@ describe("Token verification", () => {
               method: "POST",
               json: _.extend({}, helper.installedPayload),
               headers: {
-                Authorization: `JWT ${helper.createJwtToken({
+                Authorization: `JWT ${helper.createJwtTokenForInstall({
                   method: "POST",
                   path: "/installed"
                 })}`
@@ -94,7 +90,7 @@ describe("Token verification", () => {
       // default test routes
       const jwsRouteArgs = [
         JWS_AUTH_RESPONDER_PATH,
-        addon.verifyInstallHook(),
+        addon.authenticateInstall(),
         function (req, res) {
           const token = res.locals.token;
           res.send(token);
@@ -135,7 +131,8 @@ describe("Token verification", () => {
   }
 
   it("should reject requests with no token", () => {
-    const requestUrl = helper.addonSignedInstallUrl + CHECK_TOKEN_RESPONDER_PATH;
+    const requestUrl =
+      helper.addonSignedInstallUrl + CHECK_TOKEN_RESPONDER_PATH;
     return new Promise(resolve => {
       request(requestUrl, { jar: false }, (err, res) => {
         expect(err).toBeNull();
@@ -147,7 +144,8 @@ describe("Token verification", () => {
 
   it("should reject requests with no token in query and no request body", () => {
     useBodyParser = false;
-    const requestUrl = helper.addonSignedInstallUrl + CHECK_TOKEN_RESPONDER_PATH;
+    const requestUrl =
+      helper.addonSignedInstallUrl + CHECK_TOKEN_RESPONDER_PATH;
     return new Promise(resolve => {
       request(requestUrl, { jar: false }, (err, res) => {
         expect(err).toBeNull();
@@ -280,7 +278,7 @@ describe("Token verification", () => {
           method: "POST",
           json: _.extend({}, helper.installedPayload),
           headers: {
-            Authorization: `JWT ${helper.createJwtToken({
+            Authorization: `JWT ${helper.createJwtTokenForInstall({
               method: "POST",
               path: "/installed"
             })}`
@@ -307,7 +305,7 @@ describe("Token verification", () => {
             sharedSecret: newSecret
           }),
           headers: {
-            Authorization: `JWT ${helper.createJwtToken({
+            Authorization: `JWT ${helper.createJwtTokenForInstall({
               method: "POST",
               path: "/installed"
             })}`
@@ -334,7 +332,7 @@ describe("Token verification", () => {
             sharedSecret: newSecret
           }),
           headers: {
-            Authorization: `JWT ${helper.createJwtToken(
+            Authorization: `JWT ${helper.createJwtTokenForInstall(
               {
                 method: "POST",
                 path: "/installed"
@@ -365,7 +363,7 @@ describe("Token verification", () => {
             sharedSecret: "newSharedSecret"
           }),
           headers: {
-            Authorization: `JWT ${helper.createJwtToken(
+            Authorization: `JWT ${helper.createJwtTokenForInstall(
               {
                 method: "POST",
                 path: "/installed"
@@ -394,7 +392,7 @@ describe("Token verification", () => {
             clientKey: "client-key"
           }),
           headers: {
-            Authorization: `JWT ${helper.createJwtToken(
+            Authorization: `JWT ${helper.createJwtTokenForInstall(
               {
                 method: "POST",
                 path: "/installed"

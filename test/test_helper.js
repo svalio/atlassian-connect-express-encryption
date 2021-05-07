@@ -1,4 +1,5 @@
 const jwt = require("atlassian-jwt");
+const moment = require("moment");
 
 exports.productBaseUrl = "http://admin:admin@localhost:3001/confluence";
 
@@ -7,7 +8,6 @@ exports.addonSignedInstallPort = 3002;
 
 exports.addonBaseUrl = `http://localhost:${exports.addonPort}`;
 exports.addonSignedInstallUrl = `http://localhost:${exports.addonSignedInstallPort}`;
-
 
 exports.installedPayload = {
   baseUrl: this.productBaseUrl,
@@ -88,13 +88,19 @@ awIDAQAB
 
 exports.keyId = "d2466692-d9b3-4245-8208-a601568541ae";
 
-export const USER_ID = "admin";
-export const USER_ACCOUNT_ID = "048abaf9-04ea-44d1-acb9-b37de6cc5d2f";
+exports.userId = "admin";
+exports.userAccountId = "048abaf9-04ea-44d1-acb9-b37de6cc5d2f";
 
-exports.createJwtToken = function create_jwt_token(req, iss, context, header, privateKeyParam) {
+exports.createJwtTokenForInstall = function create_jwt_token_singed_install(
+  req,
+  iss,
+  context,
+  header,
+  privateKeyParam
+) {
   const jwtPayload = {
-    sub: USER_ACCOUNT_ID,
-    iss: iss || installedPayload.clientKey,
+    sub: this.userAccountId,
+    iss: iss || this.installedPayload.clientKey,
     iat: moment().utc().unix(),
     exp: moment().utc().add(10, "minutes").unix()
   };
@@ -103,9 +109,9 @@ exports.createJwtToken = function create_jwt_token(req, iss, context, header, pr
     ? context
     : {
         user: {
-          accountId: USER_ACCOUNT_ID,
-          userKey: USER_ID,
-          userId: USER_ID
+          accountId: this.userAccountId,
+          userKey: this.userId,
+          userId: this.userId
         }
       };
 
@@ -115,11 +121,39 @@ exports.createJwtToken = function create_jwt_token(req, iss, context, header, pr
 
   return jwt.encodeAsymmetric(
     jwtPayload,
-    privateKeyParam || privateKey,
+    privateKeyParam || this.privateKey,
     jwt.AsymmetricAlgorithm.RS256,
-    header || { kid: keyId }
+    header || { kid: this.keyId }
   );
-}
+};
+
+exports.createJwtToken = function create_jwt_token(req, secret, iss, context) {
+  const jwtPayload = {
+    sub: this.userAccountId,
+    iss: iss || this.installedPayload.clientKey,
+    iat: moment().utc().unix(),
+    exp: moment().utc().add(10, "minutes").unix()
+  };
+
+  jwtPayload.context = context
+    ? context
+    : {
+        user: {
+          accountId: this.userAccountId,
+          userKey: this.userId,
+          userId: this.userId
+        }
+      };
+
+  if (req) {
+    jwtPayload.qsh = jwt.createQueryStringHash(jwt.fromExpressRequest(req));
+  }
+
+  return jwt.encodeSymmetric(
+    jwtPayload,
+    secret || this.installedPayload.sharedSecret
+  );
+};
 
 // Allows us to run tests from a different dir
 process.chdir(__dirname);
