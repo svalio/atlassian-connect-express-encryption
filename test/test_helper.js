@@ -1,7 +1,13 @@
+const jwt = require("atlassian-jwt");
+
 exports.productBaseUrl = "http://admin:admin@localhost:3001/confluence";
 
 exports.addonPort = 3001;
+exports.addonSignedInstallPort = 3002;
+
 exports.addonBaseUrl = `http://localhost:${exports.addonPort}`;
+exports.addonSignedInstallUrl = `http://localhost:${exports.addonSignedInstallPort}`;
+
 
 exports.installedPayload = {
   baseUrl: this.productBaseUrl,
@@ -81,6 +87,39 @@ awIDAQAB
 -----END PUBLIC KEY-----`;
 
 exports.keyId = "d2466692-d9b3-4245-8208-a601568541ae";
+
+export const USER_ID = "admin";
+export const USER_ACCOUNT_ID = "048abaf9-04ea-44d1-acb9-b37de6cc5d2f";
+
+exports.createJwtToken = function create_jwt_token(req, iss, context, header, privateKeyParam) {
+  const jwtPayload = {
+    sub: USER_ACCOUNT_ID,
+    iss: iss || installedPayload.clientKey,
+    iat: moment().utc().unix(),
+    exp: moment().utc().add(10, "minutes").unix()
+  };
+
+  jwtPayload.context = context
+    ? context
+    : {
+        user: {
+          accountId: USER_ACCOUNT_ID,
+          userKey: USER_ID,
+          userId: USER_ID
+        }
+      };
+
+  if (req) {
+    jwtPayload.qsh = jwt.createQueryStringHash(jwt.fromExpressRequest(req));
+  }
+
+  return jwt.encodeAsymmetric(
+    jwtPayload,
+    privateKeyParam || privateKey,
+    jwt.AsymmetricAlgorithm.RS256,
+    header || { kid: keyId }
+  );
+}
 
 // Allows us to run tests from a different dir
 process.chdir(__dirname);

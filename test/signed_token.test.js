@@ -13,8 +13,7 @@ const nock = require("nock");
 const app = express();
 let addon = {};
 
-const USER_ID = "admin";
-const USER_ACCOUNT_ID = "048abaf9-04ea-44d1-acb9-b37de6cc5d2f";
+
 const JWS_AUTH_RESPONDER_PATH = "/jws_auth_responder";
 const CHECK_TOKEN_RESPONDER_PATH = "/check_token_responder";
 
@@ -69,11 +68,11 @@ describe("Token verification", () => {
         () => {
           request(
             {
-              url: `${helper.addonBaseUrl}/installed`,
+              url: `${helper.addonSignedInstallUrl}/installed`,
               method: "POST",
               json: _.extend({}, helper.installedPayload),
               headers: {
-                Authorization: `JWT ${createJwtToken({
+                Authorization: `JWT ${helper.createJwtToken({
                   method: "POST",
                   path: "/installed"
                 })}`
@@ -114,7 +113,7 @@ describe("Token verification", () => {
       );
 
       // start server
-      server = http.createServer(app).listen(helper.addonPort);
+      server = http.createServer(app).listen(helper.addonSignedInstallPort);
     });
   });
 
@@ -126,36 +125,6 @@ describe("Token verification", () => {
     useBodyParser = true;
   });
 
-  function createJwtToken(req, iss, context, header, privateKey) {
-    const jwtPayload = {
-      sub: USER_ACCOUNT_ID,
-      iss: iss || helper.installedPayload.clientKey,
-      iat: moment().utc().unix(),
-      exp: moment().utc().add(10, "minutes").unix()
-    };
-
-    jwtPayload.context = context
-      ? context
-      : {
-          user: {
-            accountId: USER_ACCOUNT_ID,
-            userKey: USER_ID,
-            userId: USER_ID
-          }
-        };
-
-    if (req) {
-      jwtPayload.qsh = jwt.createQueryStringHash(jwt.fromExpressRequest(req));
-    }
-
-    return jwt.encodeAsymmetric(
-      jwtPayload,
-      privateKey || helper.privateKey,
-      jwt.AsymmetricAlgorithm.RS256,
-      header || { kid: helper.keyId }
-    );
-  }
-
   function createTokenRequestOptions(token) {
     return {
       qs: {
@@ -166,7 +135,7 @@ describe("Token verification", () => {
   }
 
   it("should reject requests with no token", () => {
-    const requestUrl = helper.addonBaseUrl + CHECK_TOKEN_RESPONDER_PATH;
+    const requestUrl = helper.addonSignedInstallUrl + CHECK_TOKEN_RESPONDER_PATH;
     return new Promise(resolve => {
       request(requestUrl, { jar: false }, (err, res) => {
         expect(err).toBeNull();
@@ -178,7 +147,7 @@ describe("Token verification", () => {
 
   it("should reject requests with no token in query and no request body", () => {
     useBodyParser = false;
-    const requestUrl = helper.addonBaseUrl + CHECK_TOKEN_RESPONDER_PATH;
+    const requestUrl = helper.addonSignedInstallUrl + CHECK_TOKEN_RESPONDER_PATH;
     return new Promise(resolve => {
       request(requestUrl, { jar: false }, (err, res) => {
         expect(err).toBeNull();
@@ -194,7 +163,7 @@ describe("Token verification", () => {
       res.send(res.locals.hostBaseUrl);
     });
 
-    const requestUrl = `${helper.addonBaseUrl}/return-host`;
+    const requestUrl = `${helper.addonSignedInstallUrl}/return-host`;
     const requestOpts = {
       method: "POST",
       form: {
@@ -214,7 +183,7 @@ describe("Token verification", () => {
 
   it("should reject requests with token appeared in both query and body", () => {
     const requestUrl = `${
-      helper.addonBaseUrl + JWS_AUTH_RESPONDER_PATH
+      helper.addonSignedInstallUrl + JWS_AUTH_RESPONDER_PATH
     }?jwt=token_in_query`;
     const requestOpts = {
       method: "POST",
@@ -235,7 +204,7 @@ describe("Token verification", () => {
 
   it("should use token from query parameter if appears both in body and header", () => {
     const requestUrl = `${
-      helper.addonBaseUrl + JWS_AUTH_RESPONDER_PATH
+      helper.addonSignedInstallUrl + JWS_AUTH_RESPONDER_PATH
     }?jwt=token_in_query`;
     const requestOpts = {
       headers: {
@@ -254,7 +223,7 @@ describe("Token verification", () => {
   });
 
   it("should use token from request body if appears both in body and header", () => {
-    const requestUrl = helper.addonBaseUrl + JWS_AUTH_RESPONDER_PATH;
+    const requestUrl = helper.addonSignedInstallUrl + JWS_AUTH_RESPONDER_PATH;
     const requestOpts = {
       method: "POST",
       headers: {
@@ -276,7 +245,7 @@ describe("Token verification", () => {
   });
 
   it("should reject requests with invalid tokens", () => {
-    const requestUrl = helper.addonBaseUrl + JWS_AUTH_RESPONDER_PATH;
+    const requestUrl = helper.addonSignedInstallUrl + JWS_AUTH_RESPONDER_PATH;
     const requestOpts = createTokenRequestOptions("invalid");
     return new Promise(resolve => {
       request(requestUrl, requestOpts, (err, res) => {
@@ -291,7 +260,7 @@ describe("Token verification", () => {
     return new Promise(resolve => {
       request(
         {
-          url: `${helper.addonBaseUrl}/installed`,
+          url: `${helper.addonSignedInstallUrl}/installed`,
           method: "POST",
           json: helper.installedPayload
         },
@@ -307,11 +276,11 @@ describe("Token verification", () => {
     return new Promise(resolve => {
       request(
         {
-          url: `${helper.addonBaseUrl}/installed`,
+          url: `${helper.addonSignedInstallUrl}/installed`,
           method: "POST",
           json: _.extend({}, helper.installedPayload),
           headers: {
-            Authorization: `JWT ${createJwtToken({
+            Authorization: `JWT ${helper.createJwtToken({
               method: "POST",
               path: "/installed"
             })}`
@@ -332,13 +301,13 @@ describe("Token verification", () => {
     return new Promise(resolve => {
       request(
         {
-          url: `${helper.addonBaseUrl}/installed`,
+          url: `${helper.addonSignedInstallUrl}/installed`,
           method: "POST",
           json: _.extend({}, helper.installedPayload, {
             sharedSecret: newSecret
           }),
           headers: {
-            Authorization: `JWT ${createJwtToken({
+            Authorization: `JWT ${helper.createJwtToken({
               method: "POST",
               path: "/installed"
             })}`
@@ -359,13 +328,13 @@ describe("Token verification", () => {
     return new Promise(resolve => {
       request(
         {
-          url: `${helper.addonBaseUrl}/installed`,
+          url: `${helper.addonSignedInstallUrl}/installed`,
           method: "POST",
           json: _.extend({}, helper.installedPayload, {
             sharedSecret: newSecret
           }),
           headers: {
-            Authorization: `JWT ${createJwtToken(
+            Authorization: `JWT ${helper.createJwtToken(
               {
                 method: "POST",
                 path: "/installed"
@@ -390,13 +359,13 @@ describe("Token verification", () => {
     return new Promise(resolve => {
       request(
         {
-          url: `${helper.addonBaseUrl}/installed`,
+          url: `${helper.addonSignedInstallUrl}/installed`,
           method: "POST",
           json: _.extend({}, helper.installedPayload, {
             sharedSecret: "newSharedSecret"
           }),
           headers: {
-            Authorization: `JWT ${createJwtToken(
+            Authorization: `JWT ${helper.createJwtToken(
               {
                 method: "POST",
                 path: "/installed"
@@ -418,14 +387,14 @@ describe("Token verification", () => {
     return new Promise(resolve => {
       request(
         {
-          url: `${helper.addonBaseUrl}/installed`,
+          url: `${helper.addonSignedInstallUrl}/installed`,
           method: "POST",
           json: _.extend({}, helper.installedPayload, {
             sharedSecret: "newSharedSecret",
             clientKey: "client-key"
           }),
           headers: {
-            Authorization: `JWT ${createJwtToken(
+            Authorization: `JWT ${helper.createJwtToken(
               {
                 method: "POST",
                 path: "/installed"
@@ -447,11 +416,11 @@ describe("Token verification", () => {
     return new Promise(resolve => {
       request(
         {
-          url: `${helper.addonBaseUrl}/installed`,
+          url: `${helper.addonSignedInstallUrl}/installed`,
           method: "POST",
           json: _.extend({}, helper.installedPayload, {
             sharedSecret: "newSharedSecret",
-            clientKey: "client-key"
+            clientKey: "clientKey"
           }),
           headers: {}
         },

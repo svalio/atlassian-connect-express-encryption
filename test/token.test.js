@@ -18,7 +18,7 @@ const JWT_AUTH_RESPONDER_PATH = "/jwt_auth_responder";
 const CHECK_TOKEN_RESPONDER_PATH = "/check_token_responder";
 const JIRACONF_ALL_CDN = "https://connect-cdn.atl-paas.net/all.js";
 
-describe("Token verification", () => {
+describe.only("Token verification", () => {
   let server;
   let useBodyParser = true;
 
@@ -50,7 +50,7 @@ describe("Token verification", () => {
         app,
         {
           config: {
-            signedInstall: false,
+            signedInstall: true,
             development: {
               store: {
                 adapter: "teststore",
@@ -66,10 +66,17 @@ describe("Token verification", () => {
             {
               url: `${helper.addonBaseUrl}/installed`,
               method: "POST",
-              json: helper.installedPayload
+              json: _.extend({}, helper.installedPayload),
+              headers: {
+                Authorization: `JWT ${createJwtToken({
+                  method: "POST",
+                  path: "/installed"
+                })}`
+              }
             },
             (err, res) => {
               if (res.statusCode !== 204) {
+                console.log(res);
                 throw new Error("Install hook failed");
               }
               resolve();
@@ -188,7 +195,7 @@ describe("Token verification", () => {
     return value && value.indexOf("ey") === 0;
   }
 
-  it("should generate a token for authenticated GET requests", async () => {
+  it.only("should generate a token for authenticated GET requests", async () => {
     const requestUrl = helper.addonBaseUrl + JWT_AUTH_RESPONDER_PATH;
     const requestOpts = createRequestOptions(JWT_AUTH_RESPONDER_PATH);
 
