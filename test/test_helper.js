@@ -4,10 +4,8 @@ const moment = require("moment");
 exports.productBaseUrl = "http://admin:admin@localhost:3001/confluence";
 
 exports.addonPort = 3001;
-exports.addonSignedInstallPort = 3002;
 
 exports.addonBaseUrl = `http://localhost:${exports.addonPort}`;
-exports.addonSignedInstallUrl = `http://localhost:${exports.addonSignedInstallPort}`;
 
 exports.installedPayload = {
   baseUrl: this.productBaseUrl,
