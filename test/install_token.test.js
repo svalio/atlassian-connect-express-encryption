@@ -14,7 +14,7 @@ let addon = {};
 const JWS_AUTH_RESPONDER_PATH = "/jws_auth_responder";
 const CHECK_TOKEN_RESPONDER_PATH = "/check_token_responder";
 
-describe("Token verification", () => {
+describe("Token verification using RS256 asymmetric signing", () => {
   let server;
   let useBodyParser = true;
 
@@ -131,8 +131,7 @@ describe("Token verification", () => {
   }
 
   it("should reject requests with no token", () => {
-    const requestUrl =
-      helper.addonBaseUrl + CHECK_TOKEN_RESPONDER_PATH;
+    const requestUrl = helper.addonBaseUrl + CHECK_TOKEN_RESPONDER_PATH;
     return new Promise(resolve => {
       request(requestUrl, { jar: false }, (err, res) => {
         expect(err).toBeNull();
@@ -144,8 +143,7 @@ describe("Token verification", () => {
 
   it("should reject requests with no token in query and no request body", () => {
     useBodyParser = false;
-    const requestUrl =
-      helper.addonBaseUrl + CHECK_TOKEN_RESPONDER_PATH;
+    const requestUrl = helper.addonBaseUrl + CHECK_TOKEN_RESPONDER_PATH;
     return new Promise(resolve => {
       request(requestUrl, { jar: false }, (err, res) => {
         expect(err).toBeNull();

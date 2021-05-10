@@ -17,7 +17,7 @@ const JWT_AUTH_RESPONDER_PATH = "/jwt_auth_responder";
 const CHECK_TOKEN_RESPONDER_PATH = "/check_token_responder";
 const JIRACONF_ALL_CDN = "https://connect-cdn.atl-paas.net/all.js";
 
-describe("Token verification for legacy install hook using symmetric signing with sharedSecret", () => {
+describe("Token verification for fallback using legacy install hook when signedInstall is configured to `true`", () => {
   let server;
   let useBodyParser = true;
 
@@ -49,7 +49,7 @@ describe("Token verification for legacy install hook using symmetric signing wit
         app,
         {
           config: {
-            signedInstall: false,
+            signedInstall: true,
             development: {
               store: {
                 adapter: "teststore",
@@ -67,7 +67,7 @@ describe("Token verification for legacy install hook using symmetric signing wit
               method: "POST",
               json: _.extend({}, helper.installedPayload),
               headers: {
-                // Legacy install hook authentication using sharedSecret
+                // Legacy install hook authentication using sharedSecret -> Fallback install hook authentication should work
                 Authorization: `JWT ${helper.createJwtToken({
                   method: "POST",
                   path: "/installed"
@@ -75,7 +75,10 @@ describe("Token verification for legacy install hook using symmetric signing wit
               }
             },
             (err, res) => {
-              if (res.statusCode !== 204) {
+              // Assertion on response body for unexpectedInstallHook
+              expect(res.body).not.toBeNull();
+              expect(res.body.unexpectedInstallHook).toBeTruthy();
+              if (res.statusCode !== 200) {
                 throw new Error("Install hook failed");
               }
               resolve();
@@ -570,7 +573,10 @@ describe("Token verification for legacy install hook using symmetric signing wit
         },
         (err, res) => {
           expect(err).toBeNull();
-          expect(res.statusCode).toEqual(204);
+          // Assertion on response body for unexpectedInstallHook
+          expect(res.body).not.toBeNull();
+          expect(res.body.unexpectedInstallHook).toBeTruthy();
+          expect(res.statusCode).toEqual(200);
           resolve();
         }
       );
