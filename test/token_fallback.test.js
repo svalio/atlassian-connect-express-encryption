@@ -76,9 +76,9 @@ describe("Token verification for fallback using legacy install hook when signedI
             },
             (err, res) => {
               // Assertion on response body for unexpectedInstallHook
-              expect(res.body).not.toBeNull();
-              expect(res.body.unexpectedInstallHook).toBeTruthy();
-              if (res.statusCode !== 200) {
+              expect(res.headers).not.toBeNull();
+              expect(res.headers["x-unexpected-symmetric-hook"]).toBeTruthy();
+              if (res.statusCode !== 204) {
                 throw new Error("Install hook failed");
               }
               resolve();
@@ -574,9 +574,9 @@ describe("Token verification for fallback using legacy install hook when signedI
         (err, res) => {
           expect(err).toBeNull();
           // Assertion on response body for unexpectedInstallHook
-          expect(res.body).not.toBeNull();
-          expect(res.body.unexpectedInstallHook).toBeTruthy();
-          expect(res.statusCode).toEqual(200);
+          expect(res.headers).not.toBeNull();
+          expect(res.headers["x-unexpected-symmetric-hook"]).toBeTruthy();
+          expect(res.statusCode).toEqual(204);
           resolve();
         }
       );
