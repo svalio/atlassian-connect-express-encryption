@@ -26,7 +26,7 @@
   "main": "index.js",
   "dependencies": {
     "atlassian-connect-validator": "0.0.9",
-    "atlassian-jwt": "^1.0.3",
+    "atlassian-jwt": "^2.0.0",
     "atlassian-oauth2": "^0.4.2",
     "colors": "^1.4.0",
     "inquirer": "^7.3.3",

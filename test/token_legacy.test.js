@@ -7,7 +7,6 @@ const request = require("request");
 const helper = require("./test_helper");
 const ac = require("../index");
 const logger = require("./logger");
-const nock = require("nock");
 
 const app = express();
 let addon = {};
@@ -18,7 +17,7 @@ const JWT_AUTH_RESPONDER_PATH = "/jwt_auth_responder";
 const CHECK_TOKEN_RESPONDER_PATH = "/check_token_responder";
 const JIRACONF_ALL_CDN = "https://connect-cdn.atl-paas.net/all.js";
 
-describe("Token verification", () => {
+describe("Token verification for legacy install hook using symmetric signing with sharedSecret", () => {
   let server;
   let useBodyParser = true;
 
@@ -33,11 +32,6 @@ describe("Token verification", () => {
   }
 
   beforeAll(() => {
-    nock("https://connect-install-keys.atlassian.com")
-      .persist()
-      .get(`/${helper.keyId}`)
-      .reply(200, helper.publicKey);
-
     app.set("env", "development");
     app.use(
       conditionalUseBodyParser(bodyParser.urlencoded({ extended: false }))
@@ -55,6 +49,7 @@ describe("Token verification", () => {
         app,
         {
           config: {
+            signedInstall: false,
             development: {
               store: {
                 adapter: "teststore",
@@ -72,7 +67,8 @@ describe("Token verification", () => {
               method: "POST",
               json: _.extend({}, helper.installedPayload),
               headers: {
-                Authorization: `JWT ${helper.createJwtTokenForInstall({
+                // Legacy install hook authentication using sharedSecret
+                Authorization: `JWT ${helper.createJwtToken({
                   method: "POST",
                   path: "/installed"
                 })}`
@@ -551,6 +547,99 @@ describe("Token verification", () => {
           json: helper.installedPayload
         },
         (err, res) => {
+          expect(res.statusCode).toEqual(401);
+          resolve();
+        }
+      );
+    });
+  });
+
+  it("should validate token using old secret on reinstall", () => {
+    return new Promise(resolve => {
+      request(
+        {
+          url: `${helper.addonBaseUrl}/installed`,
+          method: "POST",
+          json: _.extend({}, helper.installedPayload),
+          headers: {
+            Authorization: `JWT ${helper.createJwtToken({
+              method: "POST",
+              path: "/installed"
+            })}`
+          }
+        },
+        (err, res) => {
+          expect(err).toBeNull();
+          expect(res.statusCode).toEqual(204);
+          resolve();
+        }
+      );
+    });
+  });
+
+  it("should not accept reinstall request signed with new secret", () => {
+    const newSecret = "newSharedSecret";
+
+    return new Promise(resolve => {
+      request(
+        {
+          url: `${helper.addonBaseUrl}/installed`,
+          method: "POST",
+          json: _.extend({}, helper.installedPayload, {
+            sharedSecret: newSecret
+          }),
+          headers: {
+            Authorization: `JWT ${helper.createJwtToken(
+              {
+                method: "POST",
+                path: "/installed"
+              },
+              newSecret
+            )}`
+          }
+        },
+        (err, res) => {
+          expect(err).toBeNull();
+          expect(res.statusCode).toEqual(400);
+          resolve();
+        }
+      );
+    });
+  });
+
+  it("should only accept install requests for the authenticated client", () => {
+    const maliciousSecret = "mwahaha";
+    const maliciousClient = _.extend({}, helper.installedPayload, {
+      sharedSecret: maliciousSecret,
+      clientKey: "crafty-client"
+    });
+    request({
+      url: `${helper.addonBaseUrl}/installed`,
+      method: "POST",
+      json: maliciousClient
+    });
+
+    return new Promise(resolve => {
+      request(
+        {
+          url: `${helper.addonBaseUrl}/installed`,
+          method: "POST",
+          json: _.extend({}, helper.installedPayload, {
+            sharedSecret: "newSharedSecret"
+          }),
+          headers: {
+            Authorization: `JWT ${helper.createJwtToken(
+              {
+                method: "POST",
+                path: "/installed"
+              },
+              maliciousSecret,
+              maliciousClient.clientKey
+            )}`
+          }
+        },
+        (err, res) => {
+          expect(err).toBeNull();
           expect(res.statusCode).toEqual(401);
           resolve();
         }
