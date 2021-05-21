@@ -7,6 +7,7 @@ const helper = require("./test_helper");
 const ac = require("../index");
 const request = require("request");
 const logger = require("./logger");
+const nock = require("nock");
 
 describe("Webhook", () => {
   const app = express();
@@ -16,6 +17,11 @@ describe("Webhook", () => {
   let addonRegistered = false;
 
   beforeAll(() => {
+    nock("https://connect-install-keys.atlassian.com")
+      .persist()
+      .get(`/${helper.keyId}`)
+      .reply(200, helper.publicKey);
+
     ac.store.register("teststore", (logger, opts) => {
       return require("../lib/store/sequelize")(logger, opts);
     });
@@ -54,7 +60,10 @@ describe("Webhook", () => {
       request({
         url: `${helper.addonBaseUrl}/installed`,
         qs: {
-          jwt: createValidJwtToken()
+          jwt: helper.createJwtTokenForInstall({
+            method: "POST",
+            path: "/installed"
+          })
         },
         method: "POST",
         json: installedPayload
@@ -91,7 +100,10 @@ describe("Webhook", () => {
       jwtPayload.qsh = jwt.createQueryStringHash(jwt.fromExpressRequest(req));
     }
 
-    return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
+    return jwt.encodeSymmetric(
+      jwtPayload,
+      helper.installedPayload.sharedSecret
+    );
   }
 
   function createExpiredJwtToken(req) {
@@ -105,7 +117,10 @@ describe("Webhook", () => {
       jwtPayload.qsh = jwt.createQueryStringHash(jwt.fromExpressRequest(req));
     }
 
-    return jwt.encode(jwtPayload, helper.installedPayload.sharedSecret);
+    return jwt.encodeSymmetric(
+      jwtPayload,
+      helper.installedPayload.sharedSecret
+    );
   }
 
   function fireTestWebhook(route, body, assertWebhookResult, createJwtToken) {

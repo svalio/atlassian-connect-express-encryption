@@ -115,7 +115,7 @@ type HostClientArgs<TOptions extends ModifyArgsOptions, TCallback extends Callba
     TOptions, Headers, TCallback, string
 ];
 export declare class HostClient {
-    constructor(addon: AddOn, context: { clientKey: string, userAccountId: string } | Request, clientKey: string);
+    constructor(addon: AddOn, context: { clientKey: string, userAccountId?: string } | Request, clientKey: string);
     addon: AddOn;
     context: boolean;
     clientKey: string;
@@ -156,7 +156,9 @@ export interface ClientInfo {
 export declare class AddOn extends EventEmitter {
     constructor(app: express.Application, opts?: Options, logger?: Console, fileNames?: FileNames, callback?: () => void);
     constructor(app: express.Application);
-
+    
+    verifyInstallation(): MiddlewareParameters;
+    postInstallation(): (request: express.Request, response: express.Response) => void;
     middleware(): MiddlewareParameters;
     authenticate(skipQshVerification?: boolean): MiddlewareParameters;
     loadClientInfo(clientKey: string): Promise<ClientInfo>; 

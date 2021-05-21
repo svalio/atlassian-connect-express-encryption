@@ -1,6 +1,6 @@
 {
   "name": "atlassian-connect-express",
-  "version": "6.6.0",
+  "version": "7.0.0",
   "description": "Library for building Atlassian Add-ons on top of Express",
   "author": "Atlassian",
   "license": "Apache-2.0",
@@ -26,7 +26,7 @@
   "main": "index.js",
   "dependencies": {
     "atlassian-connect-validator": "0.0.9",
-    "atlassian-jwt": "^1.0.3",
+    "atlassian-jwt": "^2.0.0",
     "atlassian-oauth2": "^0.4.2",
     "colors": "^1.4.0",
     "inquirer": "^7.3.3",
