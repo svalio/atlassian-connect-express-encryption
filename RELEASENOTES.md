@@ -1,5 +1,10 @@
 # Atlassian Connect for Express.js Release Notes
 
+## 7.0.1
+
+* Install lifecycle callback uses asymmetric JWT
+* Bug fix for missing context qsh check in v7.0.0
+
 ## 6.6.0
 
 * Enforce presence of qsh claim on lifecycle endpoints
