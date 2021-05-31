@@ -5,6 +5,7 @@ pipelines:
   default:
     - step:
         script: # Modify the commands below to build your repository.
+          - apt-get update && apt-get install -y default-jdk
           - npm --version
           - npm install
           - npm test

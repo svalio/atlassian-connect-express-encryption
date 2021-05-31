@@ -186,11 +186,26 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
     //     "url": "redis://localhost:6379",
     //   },    
     //
+    // For DynamoDB, use the following:
+    //
+    //   "store": {
+    //     "adapter": "dynamodb",
+    //     "table": "AddonSettings",
+    //     "region": "us-east-1",
+    //   },
+    //
+    //  Note that the DynamoDB table should have "clientKey" as a string
+    //  partition key and "key" as a string sort key.
+    //
     // You will also need an appropriate Sequelize driver if you choose something
     // other than the default "diaclet".  In the PostgreSQL case you'd need to
     // run the following command to add the proper support:
     //
     //   $ npm install --save pg
+    //
+    // You will also need aws-sdk if you choose the DynamoDB driver:
+    //
+    //   $ npm install --save @aws-sdk/client-dynamodb
     //
 
   },
