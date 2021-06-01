@@ -1,14 +1,14 @@
 {
-  "name": "atlassian-connect-express",
+  "name": "atlassian-connect-express-encryption",
   "version": "7.1.1",
   "description": "Library for building Atlassian Add-ons on top of Express",
   "author": "Atlassian",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "http://bitbucket.org/atlassian/atlassian-connect-express"
+    "url": "https://github.com/svalio/atlassian-connect-express-encryption"
   },
-  "homepage": "https://bitbucket.org/atlassian/atlassian-connect-express",
+  "homepage": "https://github.com/svalio/atlassian-connect-express-encryption",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
