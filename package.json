@@ -25,6 +25,7 @@
   "types": "types/index.d.ts",
   "main": "index.js",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.17.0",
     "atlassian-connect-validator": "0.0.9",
     "atlassian-jwt": "^2.0.0",
     "atlassian-oauth2": "^0.4.2",
@@ -41,7 +42,6 @@
     "urijs": "^1.19.6"
   },
   "devDependencies": {
-    "@aws-sdk/client-dynamodb": "^3.17.0",
     "@types/express": "^4.17.9",
     "@types/request": "^2.48.5",
     "@types/validator": "^13.1.3",
