@@ -42,7 +42,8 @@ describe("Webhook", () => {
               adapter: "teststore",
               type: "memory"
             },
-            hosts: [installedPayload.baseUrl]
+            hosts: [installedPayload.baseUrl],
+            localBaseUrl: helper.addonBaseUrl
           }
         }
       },

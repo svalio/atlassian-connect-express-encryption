@@ -1,6 +1,6 @@
 {
   "name": "atlassian-connect-express-encryption",
-  "version": "7.1.1",
+  "version": "7.1.4",
   "description": "Library for building Atlassian Add-ons on top of Express",
   "author": "svalio",
   "license": "Apache-2.0",
@@ -27,7 +27,7 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.17.0",
     "atlassian-connect-validator": "0.0.9",
-    "atlassian-jwt": "^2.0.0",
+    "atlassian-jwt": "^2.0.1",
     "atlassian-oauth2": "^0.4.2",
     "colors": "^1.4.0",
     "inquirer": "^7.3.3",
@@ -36,6 +36,7 @@
     "md5": "^2.3.0",
     "moment": "^2.29.0",
     "mongodb": "^3.6.2",
+    "pg": "^8.6.0",
     "redis": "^3.0.2",
     "request": "^2.88.2",
     "sequelize": "^6.3.5",

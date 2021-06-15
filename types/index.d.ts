@@ -114,7 +114,7 @@ type ModifyArgsOutput<
 type HostClientArgs<TOptions extends ModifyArgsOptions, TCallback extends Callback> = [
     TOptions, Headers, TCallback, string
 ];
-export declare class HostClient {
+declare class HostClient {
     constructor(addon: AddOn, context: { clientKey: string, userAccountId?: string } | Request, clientKey: string);
     addon: AddOn;
     context: boolean;
@@ -139,21 +139,7 @@ export declare class HostClient {
     patch: <T = any>(options: any, callback?: RequestCallback) => Promise<T>;
 }
 
-export interface ClientInfo {
-    key: string,
-    clientKey: string,
-    publicKey: string
-    sharedSecret: string,
-    serverVersion: string,
-    pluginsVersion: string,
-    baseUrl: string,
-    productType: string,
-    description: string,
-    eventType: string,
-    oauthClientId?: string
-  }
-
-export declare class AddOn extends EventEmitter {
+declare class AddOn extends EventEmitter {
     constructor(app: express.Application, opts?: Options, logger?: Console, fileNames?: FileNames, callback?: () => void);
     constructor(app: express.Application);
     
@@ -161,7 +147,7 @@ export declare class AddOn extends EventEmitter {
     postInstallation(): (request: express.Request, response: express.Response) => void;
     middleware(): MiddlewareParameters;
     authenticate(skipQshVerification?: boolean): MiddlewareParameters;
-    loadClientInfo(clientKey: string): Promise<ClientInfo>; 
+    loadClientInfo(clientKey: string): Promise<AddOnFactory.ClientInfo>; 
     checkValidToken(): MiddlewareParameters | boolean;
 
     register() : Promise<void>;
@@ -215,7 +201,25 @@ interface FileNames {
     configFileName?: string;
 }
 
-export type AddOnFactory = (app: express.Application, opts?: Opts, logger?: Console, fileNames?: FileNames | Callback, callback?: Callback) => AddOn;
+declare function AddOnFactory(app: express.Application, opts?: Opts, logger?: Console, fileNames?: FileNames | Callback, callback?: Callback): AddOn;
 
-declare const addOnFactory: AddOnFactory;
-export default addOnFactory;
+declare namespace AddOnFactory {
+    export type HostClient = InstanceType<typeof HostClient>;
+    export interface ClientInfo {
+        key: string,
+        clientKey: string,
+        publicKey: string
+        sharedSecret: string,
+        serverVersion: string,
+        pluginsVersion: string,
+        baseUrl: string,
+        productType: string,
+        description: string,
+        eventType: string,
+        oauthClientId?: string
+    }
+    export type AddOn = InstanceType<typeof AddOn>;
+    export type AddOnFactory = typeof AddOnFactory;
+}
+
+export = AddOnFactory;

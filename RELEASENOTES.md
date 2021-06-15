@@ -1,5 +1,20 @@
 # Atlassian Connect for Express.js Release Notes
 
+## 7.1.4
+* Update install lifecycle to check audience(app base url).
+
+## 7.1.3
+* Fixed typescript definition
+
+## 7.1.2
+* Removed `esModuleInterop` requirement from typescript typings
+
+## 7.1.1
+* Fixed `@aws-sdk/client-dynamodb` dependency issue
+
+## 7.1.0
+* Added dynamoDB storage adapter
+
 ## 7.0.1
 
 * Install lifecycle callback uses asymmetric JWT

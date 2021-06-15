@@ -60,7 +60,8 @@ describe("Token verification", () => {
                 adapter: "teststore",
                 type: "memory"
               },
-              hosts: [helper.productBaseUrl]
+              hosts: [helper.productBaseUrl],
+              localBaseUrl: helper.addonBaseUrl
             }
           }
         },

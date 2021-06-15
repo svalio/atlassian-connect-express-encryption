@@ -49,13 +49,14 @@ describe("Token verification for legacy install hook using symmetric signing wit
         app,
         {
           config: {
-            signedInstall: false,
+            "signed-install": false,
             development: {
               store: {
                 adapter: "teststore",
                 type: "memory"
               },
-              hosts: [helper.productBaseUrl]
+              hosts: [helper.productBaseUrl],
+              localBaseUrl: helper.addonBaseUrl
             }
           }
         },

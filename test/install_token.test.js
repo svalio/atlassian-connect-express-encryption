@@ -56,7 +56,8 @@ describe("Token verification using RS256 asymmetric signing", () => {
                 adapter: "teststore",
                 type: "memory"
               },
-              hosts: [helper.productBaseUrl]
+              hosts: [helper.productBaseUrl],
+              localBaseUrl: helper.addonBaseUrl
             }
           }
         },
