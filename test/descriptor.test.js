@@ -22,6 +22,19 @@ describe("Descriptor", () => {
     }
   };
 
+  describe("With bitbucket product", () => {
+    beforeAll(() => {
+      app.set("env", "development");
+      options.config.product = "bitbucket";
+      addon = ac(app, options, logger);
+    });
+
+    it("should not have unsupproted `apiMigrations` in the app descriptor", () => {
+      const { apiMigrations } = addon.descriptor;
+      expect(apiMigrations).toBeUndefined();
+    });
+  });
+
   describe("With default configuration", () => {
     beforeAll(() => {
       app.set("env", "development");

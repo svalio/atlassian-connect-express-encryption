@@ -17,6 +17,7 @@ const CHECK_TOKEN_RESPONDER_PATH = "/check_token_responder";
 describe("Token verification using RS256 asymmetric signing", () => {
   let server;
   let useBodyParser = true;
+  const additionalBaseUrl = "https://allowed.base.url";
 
   function conditionalUseBodyParser(fn) {
     return function (req, res, next) {
@@ -51,13 +52,15 @@ describe("Token verification using RS256 asymmetric signing", () => {
         app,
         {
           config: {
+            "signed-install": "force",
             development: {
               store: {
                 adapter: "teststore",
                 type: "memory"
               },
               hosts: [helper.productBaseUrl],
-              localBaseUrl: helper.addonBaseUrl
+              localBaseUrl: helper.addonBaseUrl,
+              allowedBaseUrls: [additionalBaseUrl]
             }
           }
         },
@@ -130,6 +133,32 @@ describe("Token verification using RS256 asymmetric signing", () => {
       jar: false
     };
   }
+
+  it("should not fallback to legacy authentication when signed-install is set to `force`", () => {
+    return new Promise(resolve => {
+      request(
+        {
+          url: `${helper.addonBaseUrl}/installed`,
+          method: "POST",
+          json: _.extend({}, helper.installedPayload),
+          headers: {
+            // Legacy install hook authentication using sharedSecret -> Fallback install hook authentication should work
+            Authorization: `JWT ${helper.createJwtToken({
+              method: "POST",
+              path: "/installed"
+            })}`
+          }
+        },
+        (err, res, body) => {
+          expect(res.statusCode).toEqual(401);
+          expect(body.message).toEqual(
+            "Invalid JWT: Could not get public key with keyId undefined"
+          );
+          resolve();
+        }
+      );
+    });
+  });
 
   it("should reject requests with no token", () => {
     const requestUrl = helper.addonBaseUrl + CHECK_TOKEN_RESPONDER_PATH;
@@ -262,6 +291,66 @@ describe("Token verification using RS256 asymmetric signing", () => {
           json: helper.installedPayload
         },
         (err, res) => {
+          expect(res.statusCode).toEqual(401);
+          resolve();
+        }
+      );
+    });
+  });
+
+  it("should check for additional allowed audience on install", () => {
+    return new Promise(resolve => {
+      request(
+        {
+          url: `${helper.addonBaseUrl}/installed`,
+          method: "POST",
+          json: _.extend({}, helper.installedPayload),
+          headers: {
+            Authorization: `JWT ${helper.createJwtTokenForInstall(
+              {
+                method: "POST",
+                path: "/installed"
+              },
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              additionalBaseUrl
+            )}`
+          }
+        },
+        (err, res) => {
+          expect(err).toBeNull();
+          expect(res.statusCode).toEqual(204);
+          resolve();
+        }
+      );
+    });
+  });
+
+  it("should check for invalid audience on install", () => {
+    return new Promise(resolve => {
+      request(
+        {
+          url: `${helper.addonBaseUrl}/installed`,
+          method: "POST",
+          json: _.extend({}, helper.installedPayload),
+          headers: {
+            Authorization: `JWT ${helper.createJwtTokenForInstall(
+              {
+                method: "POST",
+                path: "/installed"
+              },
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              "https://not.allowed.base.url"
+            )}`
+          }
+        },
+        (err, res) => {
+          expect(err).toBeNull();
           expect(res.statusCode).toEqual(401);
           resolve();
         }

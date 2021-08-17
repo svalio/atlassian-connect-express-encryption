@@ -12,9 +12,6 @@
     "authentication": {
         "type": "jwt"
     },
-    "apiMigrations":{
-        "signed-install": true
-    },
     "links": {
         "self": "{{localBaseUrl}}/atlassian-connect.json",
         "homepage": "http://www.example.com"
