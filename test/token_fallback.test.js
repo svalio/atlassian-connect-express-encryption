@@ -49,7 +49,7 @@ describe("Token verification for fallback using legacy install hook when signedI
         app,
         {
           config: {
-            "signed-install": true,
+            "signed-install": "enable",
             development: {
               store: {
                 adapter: "teststore",

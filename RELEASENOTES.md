@@ -1,5 +1,39 @@
 # Atlassian Connect for Express.js Release Notes
 
+## 7.4.2
+* Add request context for installation middleware
+* Add test support for 1st party apps
+
+## 7.4.1
+* `addon.authenticateInstall` middleware supports uninstall hook sent from an old version.
+
+## 7.4.0
+* Removed default opt-in to signed-install feature: Manually opt-in from the app descriptor
+* Support multiple baseUrls when verifying install callback audience claim. 
+
+## 7.3.0
+
+* TS type signature fix: HostClient#getAllClientInfos()
+* TS type signature addition: ConfigOptions#watch
+* TS type signature addition: HostClient#getUserBearerToken
+* TS type signature addition: addon.authenticateInstall()
+
+## 7.2.0
+
+* Add and adjust type signatures for store and client methods
+
+## 7.1.8
+* Remove lockfiles
+* Fixed typo in auth error message
+
+## 7.1.7
+* Patch to remove an unsupported descriptor field for bitbucket apps.
+* Fixing minor bug which fails to check bitbucket apps
+
+## 7.1.5
+* Add config to control whether to use secure install hook only.
+* Add authorization middleware for Jira and Confluence
+
 ## 7.1.4
 * Update install lifecycle to check audience(app base url).
 

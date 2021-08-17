@@ -94,12 +94,13 @@ exports.createJwtTokenForInstall = function create_jwt_token_singed_install(
   iss,
   context,
   header,
-  privateKeyParam
+  privateKeyParam,
+  aud
 ) {
   const jwtPayload = {
     sub: this.userAccountId,
     iss: iss || this.installedPayload.clientKey,
-    aud: this.addonBaseUrl,
+    aud: aud || this.addonBaseUrl,
     iat: moment().utc().unix(),
     exp: moment().utc().add(10, "minutes").unix()
   };
