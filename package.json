@@ -1,14 +1,14 @@
 {
-  "name": "atlassian-connect-express-encryption",
+  "name": "atlassian-connect-express-encryption-v2",
   "version": "7.4.1",
   "description": "Library for building Atlassian Add-ons on top of Express",
-  "author": "svalio",
+  "author": "rearchontis",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/svalio/atlassian-connect-express-encryption"
+    "url": "https://github.com/rearchontis/atlassian-connect-express-encryption-v2"
   },
-  "homepage": "https://github.com/svalio/atlassian-connect-express-encryption",
+  "homepage": "https://github.com/rearchontis/atlassian-connect-express-encryption-v2",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
