@@ -163,6 +163,16 @@ The `./config.json` file contains all of the settings for the add-on server. Thi
     //     "storage": ":memory:"
     //   },
     //
+    //
+    // To use sqlite with a persistent file instead of an in-memory database, the following settings can be used,
+    // and will result in a store.db file being created in the working directory of the app:
+    // 
+    //   "store": {
+    //     "adapter": "sequelize",
+    //     "dialect": "sqlite3",
+    //     "url": "sqlite://./store.db"
+    //   },
+    //
     // To instead configure, say, a PostgreSQL store, the following could be
     // used:
     //

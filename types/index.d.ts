@@ -25,7 +25,9 @@ interface Descriptor {
 
 interface Options {
     config: {
-        descriptorTransformer: (descriptor: Partial<Descriptor>, config: Config) => Descriptor
+        descriptorTransformer?: (descriptor: Partial<Descriptor>, config: Config) => Descriptor
+        development?: Partial<ConfigOptions>;
+        production?: Partial<ConfigOptions>;
     }
 }
 
@@ -217,14 +219,13 @@ declare class AddOn extends EventEmitter {
     httpClient(reqOrOpts: { clientKey: string, userAccountId?: string }): HostClient;
     httpClient(reqOrOpts: express.Request): HostClient;
 }
-interface Opts {config: {development?: Partial<ConfigOptions>, production?: Partial<ConfigOptions>}}
 
 interface FileNames {
     descriptorFilename?: string;
     configFileName?: string;
 }
 
-declare function AddOnFactory(app: express.Application, opts?: Opts, logger?: Console, fileNames?: FileNames | Callback, callback?: Callback): AddOn;
+declare function AddOnFactory(app: express.Application, opts?: Options, logger?: Console, fileNames?: FileNames | Callback, callback?: Callback): AddOn;
 
 declare namespace AddOnFactory {
     export type HostClient = InstanceType<typeof HostClient>;

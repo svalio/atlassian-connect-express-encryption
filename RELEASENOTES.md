@@ -1,6 +1,12 @@
 # Atlassian Connect for Express.js Release Notes
 
-## 7.4.2
+## 7.4.6
+* Add support to the authorization middleware for checking anonymous Jira user permissions
+
+## 7.4.4, 7.4.5
+* TS type signature fix: AddOnFactory
+
+## 7.4.3
 * Add request context for installation middleware
 * Add test support for 1st party apps
 

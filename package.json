@@ -1,6 +1,6 @@
 {
   "name": "atlassian-connect-express-encryption-v2",
-  "version": "7.4.1",
+  "version": "7.4.6",
   "description": "Library for building Atlassian Add-ons on top of Express",
   "author": "rearchontis",
   "license": "Apache-2.0",
