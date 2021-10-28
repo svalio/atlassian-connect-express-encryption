@@ -408,6 +408,26 @@ module.exports = function(app, addon) {
 
 Simply adding the `addon.authenticate()` middleware will protect your resource.
 
+### How to secure an installation callback route with JWT
+
+Install/Uninstall hooks are authenticated through asymmetric JWT. You can simply add an
+ACE `authenticateInstall` middleware to your custom install or uninstall lifecycle route:
+
+```javascript
+module.exports = function(app, addon) {
+  app.post(
+    '/uninstalled',
+
+    // Protect this install callback resource with asymmetric JWT
+    addon.authenticateInstall(),
+
+    function(req, res) {
+      res.status(204).send();
+    }
+  );
+};
+```
+
 #### Authorizing requests
 
 If your app API accepts requests from the front-end using context JWTs, it's important to perform authorization checks.

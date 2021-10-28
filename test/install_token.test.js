@@ -18,6 +18,8 @@ describe("Token verification using RS256 asymmetric signing", () => {
   let server;
   let useBodyParser = true;
   const additionalBaseUrl = "https://allowed.base.url";
+  const modifiedBaseUrlViaDescriptorTransformer =
+    "https://transformed.base.url";
 
   function conditionalUseBodyParser(fn) {
     return function (req, res, next) {
@@ -61,6 +63,10 @@ describe("Token verification using RS256 asymmetric signing", () => {
               hosts: [helper.productBaseUrl],
               localBaseUrl: helper.addonBaseUrl,
               allowedBaseUrls: [additionalBaseUrl]
+            },
+            descriptorTransformer(descriptor) {
+              descriptor.baseUrl = modifiedBaseUrlViaDescriptorTransformer;
+              return descriptor;
             }
           }
         },
@@ -316,6 +322,36 @@ describe("Token verification using RS256 asymmetric signing", () => {
               undefined,
               undefined,
               additionalBaseUrl
+            )}`
+          }
+        },
+        (err, res) => {
+          expect(err).toBeNull();
+          expect(res.statusCode).toEqual(204);
+          resolve();
+        }
+      );
+    });
+  });
+
+  it("should check for transformed baseUrl audience on install", () => {
+    return new Promise(resolve => {
+      request(
+        {
+          url: `${helper.addonBaseUrl}/installed`,
+          method: "POST",
+          json: _.extend({}, helper.installedPayload),
+          headers: {
+            Authorization: `JWT ${helper.createJwtTokenForInstall(
+              {
+                method: "POST",
+                path: "/installed"
+              },
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              modifiedBaseUrlViaDescriptorTransformer
             )}`
           }
         },
